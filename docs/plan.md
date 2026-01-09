@@ -93,6 +93,15 @@ dotfiles/
 - [ ] Create docs/setup-archlinux.md (brief, link to config/ for full history)
 - [ ] Create docs/setup-windows.md (brief, link to windows-setup/ for full history)
 
+### Feedback
+
+- sync.sh
+  - should default to help not `diff`
+  - move platform constant to top level instead of inside branches
+  - improve diff header
+  - apply/save selectively and interactively
+  - log detected platform
+
 ## Follow-up
 
 ### Linux Bash Config Review

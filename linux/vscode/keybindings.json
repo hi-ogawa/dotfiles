@@ -1,0 +1,103 @@
+[
+  // Common tab navigation
+  {
+    "key": "ctrl+tab",
+    "command": "workbench.action.nextEditor"
+  },
+  {
+    "key": "ctrl+shift+tab",
+    "command": "workbench.action.previousEditor"
+  },
+
+  // Override Go back/forward on Non Windows
+  // | Platform | Navigate Back | Navigate Forward |
+  // |----------|---------------|------------------|
+  // | Windows  | Alt+Left      | Alt+Right        |
+  // | Linux    | Ctrl+Alt+-    | Ctrl+Shift+-     |
+  // | macOS    | Ctrl+-        | Ctrl+Shift+-     |
+  {
+    "key": "alt+left",
+    "command": "workbench.action.navigateBack"
+  },
+  {
+    "key": "alt+right",
+    "command": "workbench.action.navigateForward"
+  },
+
+  // Emacs navigation
+  // {
+  //   "key": "ctrl+f",
+  //   "command": "cursorRight"
+  // },
+  // {
+  //   "key": "ctrl+b",
+  //   "command": "cursorLeft"
+  // },
+  // {
+  //   "key": "ctrl+n",
+  //   "command": "cursorDown"
+  // },
+  // {
+  //   "key": "ctrl+p",
+  //   "command": "cursorUp"
+  // },
+  // {
+  //   "key": "ctrl+e",
+  //   "command": "cursorEnd"
+  // },
+  // {
+  //   "key": "ctrl+a",
+  //   "command": "cursorHome"
+  // },
+
+  // Emacs navigation + selection (in emacs it was "ctrl+shift+?")
+  // {
+  //   "key": "ctrl+alt+f",
+  //   "command": "cursorRightSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+b",
+  //   "command": "cursorLeftSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+n",
+  //   "command": "cursorDownSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+p",
+  //   "command": "cursorUpSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+e",
+  //   "command": "cursorEndSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+a",
+  //   "command": "cursorHomeSelect"
+  // },
+
+  // Claude code new line shortcut
+  {
+    "key": "shift+enter",
+    "when": "terminalFocus",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": {
+      "text": "\\\n"
+    }
+  },
+
+  //
+  // Assign new keys to overwritten shortcuts
+  //
+
+  // // default ctrl+f
+  // {
+  //   "key": "alt+shift+f",
+  //   "command": "actions.find"
+  // },
+  // // default ctrl+p
+  // {
+  //   "key": "alt+shift+p",
+  //   "command": "workbench.action.quickOpen"
+  // }
+]

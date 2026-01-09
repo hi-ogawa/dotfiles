@@ -1,0 +1,19 @@
+{
+  "model": "opus",
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(gh:*)",
+      "Bash(node:*)",
+      "Bash(pnpm:*)",
+      "Bash(uv:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(wc:*)",
+      "Bash(sort:*)",
+      "Bash(wget:*)",
+      "Read(~/code/**)",
+      "WebSearch"
+    ]
+  }
+}

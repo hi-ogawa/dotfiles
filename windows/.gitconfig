@@ -1,0 +1,25 @@
+[user]
+  name = Hiroshi Ogawa
+  email = hi.ogawa.zz@gmail.com
+
+[init]
+  defaultBranch = main
+
+[color]
+  ui = auto
+
+[push]
+  autoSetupRemote = true
+
+[alias]
+  st = status
+  ci = commit
+  co = checkout
+  br = branch
+  lg = log --graph --oneline
+  lga = log --graph --oneline --all
+
+[core]
+  autocrlf = false
+  editor = nano
+  excludesfile = ~/.gitignore_global

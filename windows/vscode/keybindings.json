@@ -1,0 +1,22 @@
+[
+    // Direct tab navigation (overrides default Ctrl+Tab quick switcher popup)
+    // Default bindings: Ctrl+PageDown/PageUp also work for direct switching
+    {
+        "key": "ctrl+tab",
+        "command": "workbench.action.nextEditor"
+    },
+    {
+        "key": "ctrl+shift+tab",
+        "command": "workbench.action.previousEditor"
+    },
+
+    // Added by Claude Code for terminal escape sequences
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\u001b\r"
+        },
+        "when": "terminalFocus"
+    }
+]
