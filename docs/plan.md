@@ -54,16 +54,18 @@ dotfiles/
 ./sync.sh [command] [platform]
 
 # Commands
-  diff      Show differences between repo and system (default)
-  apply     Copy configs from repo to system
-  save      Copy configs from system back to repo
+  help      Show help (default)
+  diff      Show differences between repo and system
+  apply     Copy configs from repo to system (interactive)
+  save      Copy configs from system back to repo (interactive)
 
 # Platform
   linux     (default on Linux)
   windows   (default on MINGW/MSYS)
 
 # Examples
-./sync.sh                    # diff for current platform
+./sync.sh                    # show help
+./sync.sh diff               # diff for current platform
 ./sync.sh apply              # apply for current platform
 ./sync.sh save linux         # save Linux configs back to repo
 ```
@@ -72,35 +74,34 @@ dotfiles/
 
 ### Phase 1: Setup Structure
 
-- [ ] Create directory structure (linux/, windows/, docs/)
-- [ ] Write sync.sh with diff/apply/save commands
-- [ ] Create README.md and CLAUDE.md
+- [x] Create directory structure (linux/, windows/, docs/)
+- [x] Write sync.sh with diff/apply/save commands
+- [x] Create README.md and CLAUDE.md
 
 ### Phase 2: Migrate Windows Configs
 
-- [ ] Copy windows-setup/dotfiles/* to windows/
+- [x] Copy windows-setup/dotfiles/* to windows/
 - [ ] Verify sync.sh works on Windows
 
 ### Phase 3: Migrate Linux Configs
 
-- [ ] Copy git config to linux/git/
-- [ ] Copy vscode config to linux/vscode/
-- [ ] Copy claude config to linux/claude/
+- [x] Copy git config to linux/git/
+- [x] Copy vscode config to linux/vscode/
+- [x] Copy claude config to linux/claude/
 - [ ] **Review and simplify bash config** (see follow-up below)
 
 ### Phase 4: Documentation
 
-- [ ] Create docs/setup-archlinux.md (brief, link to config/ for full history)
-- [ ] Create docs/setup-windows.md (brief, link to windows-setup/ for full history)
+- [x] Create docs/setup-archlinux.md (brief, link to config/ for full history)
+- [x] Create docs/setup-windows.md (brief, link to windows-setup/ for full history)
 
-### Feedback
+### Feedback (addressed)
 
-- sync.sh
-  - should default to help not `diff`
-  - move platform constant to top level instead of inside branches
-  - improve diff header
-  - apply/save selectively and interactively
-  - log detected platform
+- [x] sync.sh should default to help not `diff`
+- [x] move platform constant to top level instead of inside branches
+- [x] improve diff header
+- [x] apply/save selectively and interactively
+- [x] log detected platform
 
 ## Follow-up
 
