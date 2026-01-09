@@ -5,9 +5,10 @@ Personal configuration files for Linux (Arch) and Windows.
 ## Usage
 
 ```bash
-./sync.sh              # show differences (auto-detect platform)
-./sync.sh apply        # apply configs to system
-./sync.sh save         # save system configs back to repo
+./sync.sh              # show help
+./sync.sh diff         # show differences
+./sync.sh apply        # apply configs to system (interactive)
+./sync.sh save         # save system configs back to repo (interactive)
 ```
 
 ## Structure
