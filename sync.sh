@@ -45,6 +45,13 @@ get_files() {
   esac
 }
 
+# Colors
+C_RESET='\033[0m'
+C_BOLD='\033[1m'
+C_RED='\033[31m'
+C_GREEN='\033[32m'
+C_CYAN='\033[36m'
+
 cmd_diff() {
   local platform="$1"
   echo "Platform: $platform"
@@ -56,15 +63,15 @@ cmd_diff() {
     src="$SCRIPT_DIR/$local"
     if [[ -f "$target" ]]; then
       if ! diff -q "$src" "$target" > /dev/null 2>&1; then
-        echo "[$local]"
-        echo "< $src"
-        echo "> $target"
+        echo -e "${C_BOLD}${C_CYAN}[$local]${C_RESET}"
+        echo -e "${C_RED}< $src${C_RESET}"
+        echo -e "${C_GREEN}> $target${C_RESET}"
         diff --color=auto "$src" "$target" || true
         echo
       fi
     else
-      echo "[$local]"
-      echo "> $target (missing)"
+      echo -e "${C_BOLD}${C_CYAN}[$local]${C_RESET}"
+      echo -e "${C_GREEN}> $target (missing)${C_RESET}"
       echo
     fi
   done < <(get_files "$platform")
