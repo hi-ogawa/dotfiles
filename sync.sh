@@ -15,6 +15,7 @@ FILES_LINUX=(
   "vscode/keybindings.json:$HOME/.config/Code - Insiders/User/keybindings.json"
   "claude/settings.json:$HOME/.claude/settings.json"
   "claude/notify.sh:$HOME/.claude/notify.sh"
+  "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
 )
 
 FILES_WINDOWS=(
@@ -27,6 +28,7 @@ FILES_WINDOWS=(
   "vscode/keybindings.json:$APPDATA/Code/User/keybindings.json"
   "claude/settings.json:$HOME/.claude/settings.json"
   "claude/notify.sh:$HOME/.claude/notify.sh"
+  "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
 )
 
 # Detect platform

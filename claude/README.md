@@ -16,6 +16,10 @@ Notifications use [hooks](https://code.claude.com/docs/en/hooks) to trigger nati
 Install-Module -Name BurntToast -Scope CurrentUser
 ```
 
+> Note: The script uses the lower-level BurntToast API (`New-BTContent` with `-ActivationType Protocol`) instead of `New-BurntToastNotification` to prevent a shell window from flashing when clicking notifications.
+
+The notification icon (`claude-icon.png`) is from [UXWing](https://uxwing.com/claude-ai-icon/) (free for commercial use, no attribution required).
+
 **Linux:** Ensure `notify-send` and `jq` are installed.
 
 ### Hook Input
