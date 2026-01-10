@@ -1,22 +1,27 @@
 #!/bin/bash
 # Claude Code notification hook script
 # Reads JSON from stdin and shows native notification (Windows/Linux)
+#
+# Hook input format:
+#   { "session_id", "transcript_path", "cwd", "hook_event_name", "message", "notification_type" }
 
 input=$(cat)
 
 case "$(uname -s)" in
   Linux*)
-    # Use jq + notify-send on Linux
     message=$(echo "$input" | jq -r '.message // "Notification"')
-    notify-send "Claude Code" "$message"
+    cwd=$(echo "$input" | jq -r '.cwd // ""')
+    project=$(basename "$cwd")
+    notify-send "Claude Code [$project]" "$message"
     ;;
   MINGW*|MSYS*|CYGWIN*)
-    # Use PowerShell + BurntToast on Windows
     powershell.exe -c "
       \$json = '$input' | ConvertFrom-Json
-      \$message = \$json.message
-      if (-not \$message) { \$message = 'Notification' }
-      New-BurntToastNotification -Text 'Claude Code', \$message
+      \$message = if (\$json.message) { \$json.message } else { 'Notification' }
+      \$cwd = \$json.cwd
+      \$project = if (\$cwd) { Split-Path \$cwd -Leaf } else { '' }
+      \$title = if (\$project) { \"Claude Code [\$project]\" } else { 'Claude Code' }
+      New-BurntToastNotification -Text \$title, \$message
     "
     ;;
 esac
