@@ -17,3 +17,7 @@ Personal configuration files for Linux (Arch) and Windows.
 
 - [Arch Linux](docs/setup-archlinux.md)
 - [Windows](docs/setup-windows.md)
+
+## TODO
+
+- [./docs/TODO.md](docs/TODO.md)
