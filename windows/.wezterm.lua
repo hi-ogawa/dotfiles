@@ -1,3 +1,5 @@
+-- https://wezterm.org/config/files.html
+
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 

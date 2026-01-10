@@ -21,3 +21,11 @@ Personal configuration files for Linux (Arch) and Windows.
 ## TODO
 
 - [./docs/TODO.md](docs/TODO.md)
+
+## References
+
+- [Git configuration](https://git-scm.com/docs/git-config)
+- [Global gitignore](https://git-scm.com/docs/gitignore)
+- [VSCode settings](https://code.visualstudio.com/docs/getstarted/settings)
+- [Claude Code settings](https://code.claude.com/docs/en/settings)
+- [WezTerm config](https://wezterm.org/config/files.html)
