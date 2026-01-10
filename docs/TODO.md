@@ -12,7 +12,6 @@ Remaining tasks for dotfiles consolidation.
 
 ## Misc
 
-- [ ] research pnpm auto completion
 - [ ] switch from `code-insiders` to `code`
 - [ ] `gt c` (graphite cli) and `brgc` like utility
 - [ ] chore: archive old repo https://github.com/hi-ogawa/config
@@ -28,3 +27,4 @@ Remaining tasks for dotfiles consolidation.
 - [x] Linux Git Config Review (kept: co-lg, co-co, sfpl, fco, difftool, SSH signing)
 - [x] Consider restructuring to shared + platform-specific (e.g., `git/.gitconfig` + `git/.gitconfig.windows`)
 - [x] `.gitignore-global` on windows (not `.gitignore_global`)
+- [x] Research pnpm completion (use official, source if exists)
