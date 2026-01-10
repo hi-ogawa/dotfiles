@@ -1,3 +1,5 @@
+PS1='\w \$ '
+
 # https://yazi-rs.github.io/docs/quick-start#shell-wrapper
 function y() {
     local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"

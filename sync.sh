@@ -16,7 +16,8 @@ FILES_LINUX=(
   "linux/git/.gitignore-global:$HOME/.gitignore-global"
   "linux/vscode/settings.json:$HOME/.config/Code - Insiders/User/settings.json"
   "linux/vscode/keybindings.json:$HOME/.config/Code - Insiders/User/keybindings.json"
-  "linux/claude/settings.json:$HOME/.claude/settings.json"
+  "claude/settings.json:$HOME/.claude/settings.json"
+  "claude/notify.sh:$HOME/.claude/notify.sh"
 )
 
 FILES_WINDOWS=(
@@ -24,9 +25,11 @@ FILES_WINDOWS=(
   "windows/.bashrc:$HOME/.bashrc"
   "windows/.gitconfig:$HOME/.gitconfig"
   "windows/.gitignore_global:$HOME/.gitignore_global"
+  "windows/.wezterm.lua:$HOME/.wezterm.lua"
   "windows/vscode/settings.json:$APPDATA/Code/User/settings.json"
   "windows/vscode/keybindings.json:$APPDATA/Code/User/keybindings.json"
-  "windows/claude/settings.json:$HOME/.claude/settings.json"
+  "claude/settings.json:$HOME/.claude/settings.json"
+  "claude/notify.sh:$HOME/.claude/notify.sh"
 )
 
 # Detect platform
