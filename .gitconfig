@@ -28,6 +28,7 @@
   defaultBranch = main
 
 [core]
+  autocrlf = false
   excludesfile = ~/.gitignore-global
 
 [color]
@@ -41,7 +42,7 @@
 
 [difftool "vscode"]
   # e.g. git difftool main -- some-path
-  cmd = code-insiders --wait --diff $LOCAL $REMOTE
+  cmd = code --wait --diff $LOCAL $REMOTE
 
 [push]
   autoSetupRemote = true
