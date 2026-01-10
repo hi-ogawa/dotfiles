@@ -12,9 +12,8 @@ Remaining tasks for dotfiles consolidation.
 
 ## Misc
 
-- [ ] switch from `code-insiders` to `code`
 - [ ] `gt c` (graphite cli) and `brgc` like utility
-- [ ] chore: archive old repo https://github.com/hi-ogawa/config
+- [ ] switch from `code-insiders` to `code`
 
 ## Completed
 
@@ -28,3 +27,4 @@ Remaining tasks for dotfiles consolidation.
 - [x] Consider restructuring to shared + platform-specific (e.g., `git/.gitconfig` + `git/.gitconfig.windows`)
 - [x] `.gitignore-global` on windows (not `.gitignore_global`)
 - [x] Research pnpm completion (use official, source if exists)
+- [x] chore: archive old repo https://github.com/hi-ogawa/config
