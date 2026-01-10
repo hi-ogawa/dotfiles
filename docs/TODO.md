@@ -25,10 +25,9 @@ The bash config has accumulated over time and likely contains stale content:
 - [ ] Check if SSH signing setup is still current
 - [ ] Compare with Windows config for potential consolidation
 
-## VSCode Consolidation
+## Misc
 
-- [ ] Compare linux/vscode/ vs windows/vscode/ - identify differences
-- [ ] If minimal differences, move to shared top-level `vscode/`
+- [ ] chore: archive old repo https://github.com/hi-ogawa/config
 
 ## Low Priority
 
@@ -40,3 +39,4 @@ The bash config has accumulated over time and likely contains stale content:
 - [x] Add notification hooks
 - [x] Slim down permissions
 - [x] Test `diff` command on Linux
+- [x] Unify vscode config across platforms (moved to top-level `vscode/`)
