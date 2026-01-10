@@ -1,0 +1,50 @@
+[user]
+  name = Hiroshi Ogawa
+  email = hi.ogawa.zz@gmail.com
+  # https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
+  signingkey = ~/.ssh/id_ed25519.pub
+
+[alias]
+  st = status
+  ci = commit
+  co = checkout
+  br = branch
+  lg = log --graph --oneline
+  lga = log --graph --oneline --all
+
+  # checkout stack log
+  co-lg = "! for ((i=1; i<${1:-10}; i++)); do echo -n \"$i: \"; git rev-parse --symbolic-full-name @{-$i} 2>/dev/null; done && true"
+  co-co = "! git checkout @{-${1}} && true"
+
+  # Fetch and merge fast-forward (thus "safe" pull)
+  # $ git sfpl <remote=origin>
+  sfpl = "! remote=${1:-origin} && branch=$(git rev-parse --abbrev-ref HEAD) && git fetch --no-tags $remote $branch && git merge --ff-only $remote/$branch && true"
+
+  # Fetch remote and checkout
+  # $ git fco <branch> <remote=origin>
+  fco = "! branch=${1} remote=${2:-origin} && git fetch --no-tags $remote $branch && git checkout -B $branch $remote/$branch && true"
+
+[init]
+  defaultBranch = main
+
+[core]
+  excludesfile = ~/.gitignore-global
+
+[color]
+  ui = auto
+
+[commit]
+  gpgsign = true
+
+[diff]
+  tool = vscode
+
+[difftool "vscode"]
+  # e.g. git difftool main -- some-path
+  cmd = code-insiders --wait --diff $LOCAL $REMOTE
+
+[push]
+  autoSetupRemote = true
+
+[gpg]
+  format = ssh

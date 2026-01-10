@@ -1,0 +1,11 @@
+{
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "workbench.editor.enablePreview": false,
+  "workbench.startupEditor": "none",
+  "terminal.integrated.defaultProfile.windows": "Git Bash",
+  "security.workspace.trust.untrustedFiles": "open",
+  "extensions.ignoreRecommendations": true
+}

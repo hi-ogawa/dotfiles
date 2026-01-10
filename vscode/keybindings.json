@@ -1,0 +1,110 @@
+[
+  // Tab navigation (override default Ctrl+Tab quick switcher popup)
+  // This aligns with common browser tabs behaivor.
+  {
+    "key": "ctrl+tab",
+    "command": "workbench.action.nextEditor"
+  },
+  {
+    "key": "ctrl+shift+tab",
+    "command": "workbench.action.previousEditor"
+  },
+
+  // Navigate back/forward (this aligns with common browser behavior)
+  // Default varies by platform:
+  // | Platform | Navigate Back | Navigate Forward |
+  // |----------|---------------|------------------|
+  // | Windows  | Alt+Left      | Alt+Right        |
+  // | Linux    | Ctrl+Alt+-    | Ctrl+Shift+-     |
+  // | macOS    | Ctrl+-        | Ctrl+Shift+-     |
+  {
+    "key": "alt+left",
+    "command": "workbench.action.navigateBack",
+    "when": "isLinux"
+  },
+  {
+    "key": "alt+right",
+    "command": "workbench.action.navigateForward",
+    "when": "isLinux"
+  },
+
+  // Claude Code terminal newline (shift+enter)
+  {
+    "key": "shift+enter",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\\\n" },
+    "when": "terminalFocus && isLinux"
+  },
+  {
+    "key": "shift+enter",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": { "text": "\u001b\r" },
+    "when": "terminalFocus && isWindows"
+  }
+
+  // Emacs navigation (commented out - keeping as escape hatch for muscle memory)
+  // {
+  //   "key": "ctrl+f",
+  //   "command": "cursorRight"
+  // },
+  // {
+  //   "key": "ctrl+b",
+  //   "command": "cursorLeft"
+  // },
+  // {
+  //   "key": "ctrl+n",
+  //   "command": "cursorDown"
+  // },
+  // {
+  //   "key": "ctrl+p",
+  //   "command": "cursorUp"
+  // },
+  // {
+  //   "key": "ctrl+e",
+  //   "command": "cursorEnd"
+  // },
+  // {
+  //   "key": "ctrl+a",
+  //   "command": "cursorHome"
+  // },
+
+  // Emacs navigation + selection
+  // {
+  //   "key": "ctrl+alt+f",
+  //   "command": "cursorRightSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+b",
+  //   "command": "cursorLeftSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+n",
+  //   "command": "cursorDownSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+p",
+  //   "command": "cursorUpSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+e",
+  //   "command": "cursorEndSelect"
+  // },
+  // {
+  //   "key": "ctrl+alt+a",
+  //   "command": "cursorHomeSelect"
+  // }
+
+  //
+  // Assign new keys to overwritten shortcuts
+  //
+  // // default ctrl+f
+  // {
+  //   "key": "alt+shift+f",
+  //   "command": "actions.find"
+  // },
+  // // default ctrl+p
+  // {
+  //   "key": "alt+shift+p",
+  //   "command": "workbench.action.quickOpen"
+  // }
+]

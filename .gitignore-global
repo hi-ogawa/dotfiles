@@ -1,0 +1,4 @@
+.venv
+.vscode
+**/.claude/settings.local.json
+.dev-notes
