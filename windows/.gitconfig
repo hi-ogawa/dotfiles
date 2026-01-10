@@ -22,4 +22,4 @@
 [core]
   autocrlf = false
   editor = nano
-  excludesfile = ~/.gitignore_global
+  excludesfile = ~/.gitignore-global

@@ -8,9 +8,9 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Platform file mappings
 FILES_LINUX=(
-  "linux/bash/.bashrc:$HOME/.bashrc"
-  "linux/git/.gitconfig:$HOME/.gitconfig"
-  "linux/git/.gitignore-global:$HOME/.gitignore-global"
+  ".bashrc:$HOME/.bashrc"
+  ".gitconfig:$HOME/.gitconfig"
+  ".gitignore-global:$HOME/.gitignore-global"
   "vscode/settings.json:$HOME/.config/Code - Insiders/User/settings.json"
   "vscode/keybindings.json:$HOME/.config/Code - Insiders/User/keybindings.json"
   "claude/settings.json:$HOME/.claude/settings.json"
@@ -21,7 +21,7 @@ FILES_WINDOWS=(
   "windows/.bash_profile:$HOME/.bash_profile"
   "windows/.bashrc:$HOME/.bashrc"
   "windows/.gitconfig:$HOME/.gitconfig"
-  "windows/.gitignore_global:$HOME/.gitignore_global"
+  ".gitignore-global:$HOME/.gitignore-global"
   "windows/.wezterm.lua:$HOME/.wezterm.lua"
   "vscode/settings.json:$APPDATA/Code/User/settings.json"
   "vscode/keybindings.json:$APPDATA/Code/User/keybindings.json"
