@@ -10,15 +10,6 @@ Remaining tasks for dotfiles consolidation.
 - [ ] Test `apply` command on Windows
 - [ ] Test `save` command on Windows
 
-## Linux Bash Config Review
-
-The bash config has accumulated over time and likely contains stale content:
-
-- [ ] Review `export.sh` - check if all exports are still needed
-- [ ] Review `misc.sh` - identify unused utility functions
-- [ ] Review `version-manager.sh` - which version managers are actually in use?
-- [ ] Consider simplifying to match Windows minimal style
-
 ## Linux Git Config Review
 
 - [ ] Review git aliases - identify unused ones
@@ -32,6 +23,7 @@ The bash config has accumulated over time and likely contains stale content:
 ## Low Priority
 
 - [ ] Consider restructuring to shared + platform-specific (e.g., `git/.gitconfig` + `git/.gitconfig.windows`)
+- [ ] research pnpm auto completion
 
 ## Completed
 
@@ -40,3 +32,4 @@ The bash config has accumulated over time and likely contains stale content:
 - [x] Slim down permissions
 - [x] Test `diff` command on Linux
 - [x] Unify vscode config across platforms (moved to top-level `vscode/`)
+- [x] Linux Bash Config Review (consolidated to single `.bashrc`)

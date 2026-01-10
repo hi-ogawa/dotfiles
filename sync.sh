@@ -9,9 +9,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Platform file mappings
 FILES_LINUX=(
   "linux/bash/.bashrc:$HOME/.bashrc"
-  "linux/bash/export.sh:$HOME/.bashrc.d/export.sh"
-  "linux/bash/misc.sh:$HOME/.bashrc.d/misc.sh"
-  "linux/bash/version-manager.sh:$HOME/.bashrc.d/version-manager.sh"
   "linux/git/.gitconfig:$HOME/.gitconfig"
   "linux/git/.gitignore-global:$HOME/.gitignore-global"
   "vscode/settings.json:$HOME/.config/Code - Insiders/User/settings.json"
