@@ -1,6 +1,6 @@
 #!/bin/bash
 # Dotfiles sync
-# Usage: ./sync.sh <command> [platform]
+# Usage: ./sync.sh <command> [filter...]
 
 set -e
 
@@ -41,11 +41,32 @@ detect_platform() {
   esac
 }
 
+PLATFORM="$(detect_platform)"
+
 get_files() {
-  case "$1" in
+  case "$PLATFORM" in
     linux) printf '%s\n' "${FILES_LINUX[@]}" ;;
     windows) printf '%s\n' "${FILES_WINDOWS[@]}" ;;
   esac
+}
+
+# Check if file matches any filter
+matches_filter() {
+  local file="$1"
+  shift
+  local filters=("$@")
+
+  # No filters = match all
+  if [[ ${#filters[@]} -eq 0 ]]; then
+    return 0
+  fi
+
+  for f in "${filters[@]}"; do
+    if [[ "$file" == *"$f"* ]]; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 # Colors
@@ -56,126 +77,103 @@ C_GREEN='\033[32m'
 C_CYAN='\033[36m'
 
 cmd_diff() {
-  local platform="$1"
-  echo "Platform: $platform"
-  echo
+  local filters=("$@")
 
   while IFS= read -r mapping; do
-    local="${mapping%%:*}"
-    target="${mapping##*:}"
-    src="$SCRIPT_DIR/$local"
-    if [[ -f "$target" ]]; then
-      if ! diff -q "$src" "$target" > /dev/null 2>&1; then
-        echo -e "${C_BOLD}${C_CYAN}[$local]${C_RESET}"
+    rel="${mapping%%:*}"
+    sys="${mapping##*:}"
+    src="$SCRIPT_DIR/$rel"
+
+    # Skip if doesn't match filter
+    matches_filter "$rel" "${filters[@]}" || continue
+
+    if [[ -f "$sys" ]]; then
+      if ! diff -q "$src" "$sys" > /dev/null 2>&1; then
+        echo -e "${C_BOLD}${C_CYAN}[$rel]${C_RESET}"
         echo -e "${C_RED}< $src${C_RESET}"
-        echo -e "${C_GREEN}> $target${C_RESET}"
-        diff --color=auto "$src" "$target" || true
+        echo -e "${C_GREEN}> $sys${C_RESET}"
+        diff --color=auto "$src" "$sys" || true
         echo
       fi
     else
-      echo -e "${C_BOLD}${C_CYAN}[$local]${C_RESET}"
-      echo -e "${C_GREEN}> $target (missing)${C_RESET}"
+      echo -e "${C_BOLD}${C_CYAN}[$rel]${C_RESET}"
+      echo -e "${C_GREEN}> $sys (missing)${C_RESET}"
       echo
     fi
-  done < <(get_files "$platform")
+  done < <(get_files)
 }
 
 cmd_apply() {
-  local platform="$1"
-  echo "Platform: $platform"
-  echo
+  local filters=("$@")
 
   while IFS= read -r mapping; do
-    local="${mapping%%:*}"
-    target="${mapping##*:}"
-    src="$SCRIPT_DIR/$local"
+    rel="${mapping%%:*}"
+    sys="${mapping##*:}"
+    src="$SCRIPT_DIR/$rel"
 
-    # Check if different
-    if [[ -f "$target" ]] && diff -q "$src" "$target" > /dev/null 2>&1; then
+    matches_filter "$rel" "${filters[@]}" || continue
+
+    if [[ -f "$sys" ]] && diff -q "$src" "$sys" > /dev/null 2>&1; then
       continue
     fi
 
-    echo "[$local] -> $target"
-    read -p "Apply? [y/N] " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      mkdir -p "$(dirname "$target")"
-      cp -f "$src" "$target"
-      echo "Applied."
-    else
-      echo "Skipped."
-    fi
-    echo
-  done < <(get_files "$platform")
+    mkdir -p "$(dirname "$sys")"
+    cp -f "$src" "$sys"
+    echo "[$rel] -> $sys"
+  done < <(get_files)
 
+  echo
   echo "Done. Run 'source ~/.bashrc' to reload."
 }
 
 cmd_save() {
-  local platform="$1"
-  echo "Platform: $platform"
-  echo
+  local filters=("$@")
 
   while IFS= read -r mapping; do
-    local="${mapping%%:*}"
-    target="${mapping##*:}"
-    src="$SCRIPT_DIR/$local"
+    rel="${mapping%%:*}"
+    sys="${mapping##*:}"
+    src="$SCRIPT_DIR/$rel"
 
-    if [[ ! -f "$target" ]]; then
-      echo "[$local] <- $target (not found, skipping)"
-      echo
+    matches_filter "$rel" "${filters[@]}" || continue
+
+    if [[ ! -f "$sys" ]]; then
       continue
     fi
 
-    # Check if different
-    if diff -q "$src" "$target" > /dev/null 2>&1; then
+    if diff -q "$src" "$sys" > /dev/null 2>&1; then
       continue
     fi
 
-    echo "[$local] <- $target"
-    read -p "Save? [y/N] " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      mkdir -p "$(dirname "$src")"
-      cp -f "$target" "$src"
-      echo "Saved."
-    else
-      echo "Skipped."
-    fi
-    echo
-  done < <(get_files "$platform")
+    mkdir -p "$(dirname "$src")"
+    cp -f "$sys" "$src"
+    echo "[$rel] <- $sys"
+  done < <(get_files)
 }
 
 cmd_help() {
-  local platform
-  platform="$(detect_platform)"
-  echo "Usage: $0 <command> [linux|windows]"
+  echo "Usage: $0 <command> [filter...]"
   echo
   echo "Commands:"
   echo "  diff   Show differences between repo and system"
-  echo "  apply  Copy dotfiles to system (interactive)"
-  echo "  save   Copy system configs back to dotfiles (interactive)"
+  echo "  apply  Copy dotfiles from repo to system"
+  echo "  save   Copy dotfiles from system to repo"
   echo "  help   Show this help"
   echo
-  echo "Detected platform: $platform"
+  echo "Filter:"
+  echo "  Optional patterns to filter files (e.g., 'vscode', 'claude')"
 }
 
 # Main
 COMMAND="${1:-help}"
-PLATFORM="${2:-$(detect_platform)}"
+shift || true
 
-case "$PLATFORM" in
-  linux|windows) ;;
-  *)
-    echo "Unknown platform: $PLATFORM"
-    exit 1
-    ;;
-esac
+echo "Platform: $PLATFORM"
+echo
 
 case "$COMMAND" in
-  diff)  cmd_diff "$PLATFORM" ;;
-  apply) cmd_apply "$PLATFORM" ;;
-  save)  cmd_save "$PLATFORM" ;;
+  diff)  cmd_diff "$@" ;;
+  apply) cmd_apply "$@" ;;
+  save)  cmd_save "$@" ;;
   help)  cmd_help ;;
   *)
     echo "Unknown command: $COMMAND"

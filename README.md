@@ -6,16 +6,20 @@ Personal configuration files for Linux (Arch) and Windows.
 
 ```bash
 ./sync.sh              # show help
-./sync.sh diff         # show differences
-./sync.sh apply        # apply configs to system (interactive)
-./sync.sh save         # save system configs back to repo (interactive)
+./sync.sh diff         # show all differences
+./sync.sh diff vscode  # show differences for vscode only
+./sync.sh apply        # apply all configs to system
+./sync.sh apply claude # apply only claude configs
+./sync.sh save         # save all system configs to repo
 ```
 
 ## Structure
 
 ```
-linux/      # Arch Linux configs (bash, git, vscode, claude)
-windows/    # Windows configs (bash, git, vscode, claude)
+claude/     # shared (cross-platform)
+vscode/     # shared (cross-platform)
+linux/      # Arch Linux configs (bash, git)
+windows/    # Windows configs (bash, git, wezterm)
 docs/       # Setup guides
 ```
 
