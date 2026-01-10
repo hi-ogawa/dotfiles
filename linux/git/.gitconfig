@@ -1,7 +1,8 @@
 [user]
   name = Hiroshi Ogawa
   email = hi.ogawa.zz@gmail.com
-	signingkey = /home/hiroshi/.ssh/id_ed25519.pub
+  # https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
+  signingkey = ~/.ssh/id_ed25519.pub
 
 [alias]
   st = status
@@ -15,26 +16,6 @@
   co-lg = "! for ((i=1; i<${1:-10}; i++)); do echo -n \"$i: \"; git rev-parse --symbolic-full-name @{-$i} 2>/dev/null; done && true"
   co-co = "! git checkout @{-${1}} && true"
 
-  # list remote-tracking branches which don't exist on remote
-  # (note that "git branch --merged" doesn't work for "squash-merge" based PR workflow)
-  # (diff lines trick from https://unix.stackexchange.com/a/28159)
-  # $ git br-diff-remote
-  # $ git br-diff-remote-clean
-  br-diff-remote = "! remote=${1:-origin} && grep -F -x -v -f <(git ls-remote --heads $remote | awk '{ print substr($2, 12) }' | sort) <(git branch -r --list $remote'/*' --format='%(refname:lstrip=3)' | sort) && true"
-  br-diff-remote-clean = "! remote=${1:-origin} && (git branch -D $(git br-diff-remote $remote) || true) && git remote prune origin && true"
-
-  # exclude lock files from git diff
-  # $ git diff -- $(git no-lock)
-  no-lock = "! echo ':!*pnpm-lock.yaml' ':!*yarn.lock' ':!*package-lock.json' ':!*Cargo.lock'"
-
-  # list names of modifed or new files
-  #  $ prettier -w $(COMMIT=master git diff-ls)
-  diff-ls = "! git diff --name-only ${COMMIT:-HEAD} && git ls-files --others --exclude-standard"
-
-  # Push
-  pc = "! git push origin $(git rev-parse --abbrev-ref HEAD) && true"
-  pcf = "! git push -f origin $(git rev-parse --abbrev-ref HEAD) && true"
-
   # Fetch and merge fast-forward (thus "safe" pull)
   # $ git sfpl <remote=origin>
   sfpl = "! remote=${1:-origin} && branch=$(git rev-parse --abbrev-ref HEAD) && git fetch --no-tags $remote $branch && git merge --ff-only $remote/$branch && true"
@@ -43,32 +24,11 @@
   # $ git fco <branch> <remote=origin>
   fco = "! branch=${1} remote=${2:-origin} && git fetch --no-tags $remote $branch && git checkout -B $branch $remote/$branch && true"
 
-  # Add remote repo
-  # $ git remote-gh hi-ogawa vitest
-  # $ git fco feat-github-actions-reporter hi-ogawa
-  # $ git sfpl hi-ogawa
-  remote-gh = "! remote=${1} repo=${2} && git remote add $remote git@github.com:$remote/$repo.git && true"
-
-  # Delete merged branch
-  # $ git brgc <branch=master>
-  brgc = "! git branch --merged | grep -E -v \"^\\*|${1:-master}\" | xargs git branch -d && true"
-
-  # Checkout github remote PR
-  # $ git ghpr-co <PR-id> <remote=upstream>
-  # $ git ghpr-reset <PR-id> <remote=upstream> <branch=master>
-  ghpr-co =    "! name=PR-$1 && remote=${2:-upstream} && git fetch --no-tags $remote pull/$1/head:PR-$1 && git co PR-$1 && true"
-  ghpr-reset = "! name=PR-$1 && remote=${2:-upstream} && branch=${3:-master} && git co $branch && (git br -D $name || true) && git ghpr-co $1 $2 && true"
-
 [init]
   defaultBranch = main
 
 [core]
   excludesfile = ~/.gitignore-global
-  # https://stackoverflow.com/a/75492196
-  pager = less --tabs 2
-
-[github]
-  user = hi-ogawa
 
 [color]
   ui = auto
@@ -87,4 +47,4 @@
   autoSetupRemote = true
 
 [gpg]
-	format = ssh
+  format = ssh

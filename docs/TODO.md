@@ -10,17 +10,14 @@ Remaining tasks for dotfiles consolidation.
 - [ ] Test `apply` command on Windows
 - [ ] Test `save` command on Windows
 
-## Linux Git Config Review
-
-- [ ] Review git aliases - identify unused ones
-- [ ] Check if SSH signing setup is still current
-- [ ] Compare with Windows config for potential consolidation
-
 ## Misc
 
 - [ ] chore: archive old repo https://github.com/hi-ogawa/config
 - [ ] Consider restructuring to shared + platform-specific (e.g., `git/.gitconfig` + `git/.gitconfig.windows`)
 - [ ] research pnpm auto completion
+- [ ] switch from `code-insiders` to `code`
+- [ ] `gt c` (graphite cli) and `brgc` like utility
+- [ ] `.gitignore-global` on windows (not `.gitignore_global`)
 
 ## Completed
 
@@ -30,3 +27,4 @@ Remaining tasks for dotfiles consolidation.
 - [x] Test `diff` command on Linux
 - [x] Unify vscode config across platforms (moved to top-level `vscode/`)
 - [x] Linux Bash Config Review (consolidated to single `.bashrc`)
+- [x] Linux Git Config Review (kept: co-lg, co-co, sfpl, fco, difftool, SSH signing)
