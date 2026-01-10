@@ -29,6 +29,7 @@
 
 [core]
   autocrlf = false
+  editor = nano
   excludesfile = ~/.gitignore-global
 
 [color]
