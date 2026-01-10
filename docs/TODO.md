@@ -4,8 +4,8 @@ Remaining tasks for dotfiles consolidation.
 
 ## sync.sh Verification
 
-- [ ] Test `apply` command on Linux
-- [ ] Test `save` command on Linux
+- [x] Test `apply` command on Linux
+- [x] Test `save` command on Linux
 - [ ] Test `diff` command on Windows
 - [ ] Test `apply` command on Windows
 - [ ] Test `save` command on Windows
@@ -19,9 +19,6 @@ Remaining tasks for dotfiles consolidation.
 ## Misc
 
 - [ ] chore: archive old repo https://github.com/hi-ogawa/config
-
-## Low Priority
-
 - [ ] Consider restructuring to shared + platform-specific (e.g., `git/.gitconfig` + `git/.gitconfig.windows`)
 - [ ] research pnpm auto completion
 
