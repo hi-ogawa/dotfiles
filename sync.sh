@@ -78,33 +78,34 @@ C_CYAN='\033[36m'
 
 cmd_diff() {
   local filters=("$@")
+  local matched=0
 
   while IFS= read -r mapping; do
     rel="${mapping%%:*}"
     sys="${mapping##*:}"
     src="$SCRIPT_DIR/$rel"
 
-    # Skip if doesn't match filter
     matches_filter "$rel" "${filters[@]}" || continue
+    matched=1
 
-    if [[ -f "$sys" ]]; then
-      if ! diff -q "$src" "$sys" > /dev/null 2>&1; then
-        echo -e "${C_BOLD}${C_CYAN}[$rel]${C_RESET}"
-        echo -e "${C_RED}< $src${C_RESET}"
-        echo -e "${C_GREEN}> $sys${C_RESET}"
-        diff --color=auto "$src" "$sys" || true
-        echo
-      fi
+    if [[ ! -f "$sys" ]]; then
+      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_RED}(missing)${C_RESET}"
+    elif diff -q "$src" "$sys" > /dev/null 2>&1; then
+      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_GREEN}(ok)${C_RESET}"
     else
-      echo -e "${C_BOLD}${C_CYAN}[$rel]${C_RESET}"
-      echo -e "${C_GREEN}> $sys (missing)${C_RESET}"
-      echo
+      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_RED}(differs)${C_RESET}"
+      diff --color=auto "$src" "$sys" || true
     fi
   done < <(get_files)
+
+  if [[ $matched -eq 0 && ${#filters[@]} -gt 0 ]]; then
+    echo "(no files matched filter: ${filters[*]})"
+  fi
 }
 
 cmd_apply() {
   local filters=("$@")
+  local matched=0
 
   while IFS= read -r mapping; do
     rel="${mapping%%:*}"
@@ -112,22 +113,25 @@ cmd_apply() {
     src="$SCRIPT_DIR/$rel"
 
     matches_filter "$rel" "${filters[@]}" || continue
+    matched=1
 
     if [[ -f "$sys" ]] && diff -q "$src" "$sys" > /dev/null 2>&1; then
-      continue
+      echo -e "${C_CYAN}[$rel]${C_RESET} (ok)"
+    else
+      mkdir -p "$(dirname "$sys")"
+      cp -f "$src" "$sys"
+      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_GREEN}(applied)${C_RESET}"
     fi
-
-    mkdir -p "$(dirname "$sys")"
-    cp -f "$src" "$sys"
-    echo "[$rel] -> $sys"
   done < <(get_files)
 
-  echo
-  echo "Done. Run 'source ~/.bashrc' to reload."
+  if [[ $matched -eq 0 && ${#filters[@]} -gt 0 ]]; then
+    echo "(no files matched filter: ${filters[*]})"
+  fi
 }
 
 cmd_save() {
   local filters=("$@")
+  local matched=0
 
   while IFS= read -r mapping; do
     rel="${mapping%%:*}"
@@ -135,19 +139,22 @@ cmd_save() {
     src="$SCRIPT_DIR/$rel"
 
     matches_filter "$rel" "${filters[@]}" || continue
+    matched=1
 
     if [[ ! -f "$sys" ]]; then
-      continue
+      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_RED}(missing)${C_RESET}"
+    elif diff -q "$src" "$sys" > /dev/null 2>&1; then
+      echo -e "${C_CYAN}[$rel]${C_RESET} (ok)"
+    else
+      mkdir -p "$(dirname "$src")"
+      cp -f "$sys" "$src"
+      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_GREEN}(saved)${C_RESET}"
     fi
-
-    if diff -q "$src" "$sys" > /dev/null 2>&1; then
-      continue
-    fi
-
-    mkdir -p "$(dirname "$src")"
-    cp -f "$sys" "$src"
-    echo "[$rel] <- $sys"
   done < <(get_files)
+
+  if [[ $matched -eq 0 && ${#filters[@]} -gt 0 ]]; then
+    echo "(no files matched filter: ${filters[*]})"
+  fi
 }
 
 cmd_help() {
