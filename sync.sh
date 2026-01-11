@@ -75,6 +75,32 @@ C_RED='\033[31m'
 C_GREEN='\033[32m'
 C_CYAN='\033[36m'
 
+cmd_status() {
+  local filters=("$@")
+  local matched=0
+
+  while IFS= read -r mapping; do
+    rel="${mapping%%:*}"
+    sys="${mapping##*:}"
+    src="$SCRIPT_DIR/$rel"
+
+    matches_filter "$rel" "${filters[@]}" || continue
+    matched=1
+
+    if [[ ! -f "$sys" ]]; then
+      echo -e "${C_CYAN}$rel${C_RESET} -> $sys ${C_RED}(missing)${C_RESET}"
+    elif diff -q "$src" "$sys" > /dev/null 2>&1; then
+      echo -e "${C_CYAN}$rel${C_RESET} -> $sys ${C_GREEN}(ok)${C_RESET}"
+    else
+      echo -e "${C_CYAN}$rel${C_RESET} -> $sys ${C_RED}(differs)${C_RESET}"
+    fi
+  done < <(get_files)
+
+  if [[ $matched -eq 0 && ${#filters[@]} -gt 0 ]]; then
+    echo "(no files matched filter: ${filters[*]})"
+  fi
+}
+
 cmd_diff() {
   local filters=("$@")
   local matched=0
@@ -88,12 +114,11 @@ cmd_diff() {
     matched=1
 
     if [[ ! -f "$sys" ]]; then
-      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_RED}(missing)${C_RESET}"
-    elif diff -q "$src" "$sys" > /dev/null 2>&1; then
-      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_GREEN}(ok)${C_RESET}"
-    else
-      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_RED}(differs)${C_RESET}"
-      diff --color=auto "$src" "$sys" || true
+      diff -u --color=auto --label "a/$rel" --label "/dev/null" "$src" /dev/null || true
+      echo
+    elif ! diff -q "$src" "$sys" > /dev/null 2>&1; then
+      diff -u --color=auto --label "a/$rel" --label "b/$rel" "$src" "$sys" || true
+      echo
     fi
   done < <(get_files)
 
@@ -160,6 +185,7 @@ cmd_help() {
   echo "Usage: $0 <command> [filter...]"
   echo
   echo "Commands:"
+  echo "  status List files with diff state"
   echo "  diff   Show differences between repo and system"
   echo "  apply  Copy dotfiles from repo to system"
   echo "  save   Copy dotfiles from system to repo"
@@ -177,6 +203,7 @@ echo "Platform: $PLATFORM"
 echo
 
 case "$COMMAND" in
+  status) cmd_status "$@" ;;
   diff)  cmd_diff "$@" ;;
   apply) cmd_apply "$@" ;;
   save)  cmd_save "$@" ;;
