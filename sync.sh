@@ -120,10 +120,12 @@ cmd_diff() {
     matched=1
 
     if [[ ! -f "$sys" ]]; then
-      diff -u --color=auto --label "a/$rel" --label "/dev/null" "$src" /dev/null || true
+      # system file missing: show what apply would add
+      diff -u --color=auto --label "/dev/null" --label "b/$rel" /dev/null "$src" || true
       echo
     elif ! diff -q "$src" "$sys" > /dev/null 2>&1; then
-      diff -u --color=auto --label "a/$rel" --label "b/$rel" "$src" "$sys" || true
+      # show system -> repo, so + means "what apply would add"
+      diff -u --color=auto --label "a/$rel" --label "b/$rel" "$sys" "$src" || true
       echo
     fi
   done < <(get_files)
