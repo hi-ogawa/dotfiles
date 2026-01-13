@@ -16,6 +16,7 @@ FILES_LINUX=(
   "claude/settings.json:$HOME/.claude/settings.json"
   "claude/notify.sh:$HOME/.claude/notify.sh"
   "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
+  "opencode/opencode.json:$HOME/.config/opencode/opencode.json"
   "opencode/notify.js:$HOME/.opencode/plugins/notify.js"
   "opencode/notify-icon.png:$HOME/.opencode/plugins/notify-icon.png"
 )
@@ -31,6 +32,7 @@ FILES_WINDOWS=(
   "claude/settings.json:$HOME/.claude/settings.json"
   "claude/notify.sh:$HOME/.claude/notify.sh"
   "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
+  "opencode/opencode.json:$HOME/.config/opencode/opencode.json"
   "opencode/notify.js:$HOME/.opencode/plugins/notify.js"
   "opencode/notify-icon.png:$HOME/.opencode/plugins/notify-icon.png"
 )
