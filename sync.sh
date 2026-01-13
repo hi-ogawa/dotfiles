@@ -86,19 +86,19 @@ cmd_status() {
   local matched=0
 
   while IFS= read -r mapping; do
-    rel="${mapping%%:*}"
-    sys="${mapping##*:}"
-    src="$SCRIPT_DIR/$rel"
+    repo_rel_path="${mapping%%:*}"
+    sys_path="${mapping##*:}"
+    repo_path="$SCRIPT_DIR/$repo_rel_path"
 
-    matches_filter "$rel" "${filters[@]}" || continue
+    matches_filter "$repo_rel_path" "${filters[@]}" || continue
     matched=1
 
-    if [[ ! -f "$sys" ]]; then
-      echo -e "${C_CYAN}$rel${C_RESET} -> $sys ${C_RED}(missing)${C_RESET}"
-    elif diff -q "$src" "$sys" > /dev/null 2>&1; then
-      echo -e "${C_CYAN}$rel${C_RESET} -> $sys ${C_GREEN}(ok)${C_RESET}"
+    if [[ ! -f "$sys_path" ]]; then
+      echo -e "${C_CYAN}$repo_rel_path${C_RESET} -> $sys_path ${C_RED}(missing)${C_RESET}"
+    elif diff -q "$repo_path" "$sys_path" > /dev/null 2>&1; then
+      echo -e "${C_CYAN}$repo_rel_path${C_RESET} -> $sys_path ${C_GREEN}(ok)${C_RESET}"
     else
-      echo -e "${C_CYAN}$rel${C_RESET} -> $sys ${C_RED}(differs)${C_RESET}"
+      echo -e "${C_CYAN}$repo_rel_path${C_RESET} -> $sys_path ${C_RED}(differs)${C_RESET}"
     fi
   done < <(get_files)
 
@@ -112,20 +112,20 @@ cmd_diff() {
   local matched=0
 
   while IFS= read -r mapping; do
-    rel="${mapping%%:*}"
-    sys="${mapping##*:}"
-    src="$SCRIPT_DIR/$rel"
+    repo_rel_path="${mapping%%:*}"
+    sys_path="${mapping##*:}"
+    repo_path="$SCRIPT_DIR/$repo_rel_path"
 
-    matches_filter "$rel" "${filters[@]}" || continue
+    matches_filter "$repo_rel_path" "${filters[@]}" || continue
     matched=1
 
-    if [[ ! -f "$sys" ]]; then
+    if [[ ! -f "$sys_path" ]]; then
       # system file missing: show what apply would add
-      diff -u --color=auto --label "/dev/null" --label "b/$rel" /dev/null "$src" || true
+      diff -u --color=auto --label "/dev/null" --label "b/$repo_rel_path" /dev/null "$repo_path" || true
       echo
-    elif ! diff -q "$src" "$sys" > /dev/null 2>&1; then
+    elif ! diff -q "$repo_path" "$sys_path" > /dev/null 2>&1; then
       # show system -> repo, so + means "what apply would add"
-      diff -u --color=auto --label "a/$rel" --label "b/$rel" "$sys" "$src" || true
+      diff -u --color=auto --label "a/$repo_rel_path" --label "b/$repo_rel_path" "$sys_path" "$repo_path" || true
       echo
     fi
   done < <(get_files)
@@ -140,19 +140,19 @@ cmd_apply() {
   local matched=0
 
   while IFS= read -r mapping; do
-    rel="${mapping%%:*}"
-    sys="${mapping##*:}"
-    src="$SCRIPT_DIR/$rel"
+    repo_rel_path="${mapping%%:*}"
+    sys_path="${mapping##*:}"
+    repo_path="$SCRIPT_DIR/$repo_rel_path"
 
-    matches_filter "$rel" "${filters[@]}" || continue
+    matches_filter "$repo_rel_path" "${filters[@]}" || continue
     matched=1
 
-    if [[ -f "$sys" ]] && diff -q "$src" "$sys" > /dev/null 2>&1; then
-      echo -e "${C_CYAN}[$rel]${C_RESET} (ok)"
+    if [[ -f "$sys_path" ]] && diff -q "$repo_path" "$sys_path" > /dev/null 2>&1; then
+      echo -e "${C_CYAN}[$repo_rel_path]${C_RESET} (ok)"
     else
-      mkdir -p "$(dirname "$sys")"
-      cp -f "$src" "$sys"
-      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_GREEN}(applied)${C_RESET}"
+      mkdir -p "$(dirname "$sys_path")"
+      cp -f "$repo_path" "$sys_path"
+      echo -e "${C_CYAN}[$repo_rel_path]${C_RESET} ${C_GREEN}(applied)${C_RESET}"
     fi
   done < <(get_files)
 
@@ -166,21 +166,21 @@ cmd_save() {
   local matched=0
 
   while IFS= read -r mapping; do
-    rel="${mapping%%:*}"
-    sys="${mapping##*:}"
-    src="$SCRIPT_DIR/$rel"
+    repo_rel_path="${mapping%%:*}"
+    sys_path="${mapping##*:}"
+    repo_path="$SCRIPT_DIR/$repo_rel_path"
 
-    matches_filter "$rel" "${filters[@]}" || continue
+    matches_filter "$repo_rel_path" "${filters[@]}" || continue
     matched=1
 
-    if [[ ! -f "$sys" ]]; then
-      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_RED}(missing)${C_RESET}"
-    elif diff -q "$src" "$sys" > /dev/null 2>&1; then
-      echo -e "${C_CYAN}[$rel]${C_RESET} (ok)"
+    if [[ ! -f "$sys_path" ]]; then
+      echo -e "${C_CYAN}[$repo_rel_path]${C_RESET} ${C_RED}(missing)${C_RESET}"
+    elif diff -q "$repo_path" "$sys_path" > /dev/null 2>&1; then
+      echo -e "${C_CYAN}[$repo_rel_path]${C_RESET} (ok)"
     else
-      mkdir -p "$(dirname "$src")"
-      cp -f "$sys" "$src"
-      echo -e "${C_CYAN}[$rel]${C_RESET} ${C_GREEN}(saved)${C_RESET}"
+      mkdir -p "$(dirname "$repo_path")"
+      cp -f "$sys_path" "$repo_path"
+      echo -e "${C_CYAN}[$repo_rel_path]${C_RESET} ${C_GREEN}(saved)${C_RESET}"
     fi
   done < <(get_files)
 
