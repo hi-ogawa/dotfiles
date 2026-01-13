@@ -6,28 +6,9 @@ Desktop notifications for OpenCode when:
 
 ## Setup
 
-1. Run `./sync.sh apply opencode` to install the plugin to:
-   - Linux: `~/.config/opencode/plugins/`
-   - Windows: `%APPDATA%/opencode/plugins/`
+Run `./sync.sh apply opencode` to install the plugin to `~/.opencode/plugins/`.
 
-2. Add to your opencode config (`~/.config/opencode/config.json`):
-
-```json
-{
-  "plugin": [
-    "file:///home/YOUR_USER/.config/opencode/plugins/notify-plugin.ts"
-  ]
-}
-```
-
-Or for Windows:
-```json
-{
-  "plugin": [
-    "file:///C:/Users/YOUR_USER/AppData/Roaming/opencode/plugins/notify-plugin.ts"
-  ]
-}
-```
+OpenCode automatically discovers and loads plugins from this directory - no additional configuration needed.
 
 ## Requirements
 

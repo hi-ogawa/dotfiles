@@ -16,8 +16,8 @@ FILES_LINUX=(
   "claude/settings.json:$HOME/.claude/settings.json"
   "claude/notify.sh:$HOME/.claude/notify.sh"
   "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
-  "opencode/notify-plugin.ts:$HOME/.config/opencode/plugins/notify-plugin.ts"
-  "opencode/opencode-icon.png:$HOME/.config/opencode/plugins/opencode-icon.png"
+  "opencode/notify-plugin.ts:$HOME/.opencode/plugins/notify-plugin.ts"
+  "opencode/opencode-icon.png:$HOME/.opencode/plugins/opencode-icon.png"
 )
 
 FILES_WINDOWS=(
@@ -31,8 +31,8 @@ FILES_WINDOWS=(
   "claude/settings.json:$HOME/.claude/settings.json"
   "claude/notify.sh:$HOME/.claude/notify.sh"
   "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
-  "opencode/notify-plugin.ts:$APPDATA/opencode/plugins/notify-plugin.ts"
-  "opencode/opencode-icon.png:$APPDATA/opencode/plugins/opencode-icon.png"
+  "opencode/notify-plugin.ts:$HOME/.opencode/plugins/notify-plugin.ts"
+  "opencode/opencode-icon.png:$HOME/.opencode/plugins/opencode-icon.png"
 )
 
 # Detect platform
