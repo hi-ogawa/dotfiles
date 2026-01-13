@@ -26,10 +26,31 @@ OpenCode automatically discovers and loads plugins from this directory - no addi
 
 ## Icon
 
-Replace `opencode-icon.png` with your preferred icon (currently using Claude icon as placeholder).
+Icon from [OpenCode VSCode extension](https://github.com/sst/opencode/blob/dev/sdks/vscode/images/icon.png).
 
 ## Events
 
 The plugin listens for these bus events:
 - `session.idle` - Fires when session transitions to idle (task complete)
 - `permission.asked` - Fires when permission approval is needed
+
+## Community Alternatives
+
+If you want sound support or npm-based installation:
+
+| Plugin | Features | Install |
+|--------|----------|---------|
+| [opencode-notificator](https://github.com/panta82/opencode-notificator) | Sound per project (hash-based), simple JS | Local or npm |
+| [opencode-notifier](https://github.com/mohak34/opencode-notifier) | Sound, error events, debouncing, external config | `@mohak34/opencode-notifier` |
+
+Both use the same plugin API:
+```typescript
+{
+  event: async ({ event }) => {
+    // session.idle, permission.asked, session.error
+  },
+  "permission.ask": async (input, output) => {
+    // Direct permission hook
+  }
+}
+```

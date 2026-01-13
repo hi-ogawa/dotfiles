@@ -11,20 +11,17 @@
 import type { Plugin } from "@opencode-ai/plugin"
 import { spawn } from "node:child_process"
 import { platform } from "node:os"
-import { dirname, basename, join } from "node:path"
-import { fileURLToPath } from "node:url"
+import {  basename, join } from "node:path"
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const ICON_PATH = join(__dirname, "opencode-icon.png")
+const ICON_PATH = join(import.meta.dirname, "opencode-icon.png")
 
 interface NotifyOptions {
-  title: string
   message: string
-  project?: string
+  project: string
 }
 
-function notify({ title, message, project }: NotifyOptions): void {
-  const fullTitle = project ? `${title} [${project}]` : title
+function notify({ message, project }: NotifyOptions): void {
+  const fullTitle = `OpenCode [${project}]`
 
   switch (platform()) {
     case "linux": {
@@ -74,26 +71,21 @@ const NotifyPlugin: Plugin = async (input) => {
       // Task completed - session is idle and waiting for input
       if (event.type === "session.idle") {
         notify({
-          title: "OpenCode",
           message: "Task completed - ready for next instruction",
           project,
         })
       }
+    },
 
-      // Permission requested - agent is blocked
-      if (event.type === "permission.asked") {
-        const permEvent = event as {
-          type: string
-          properties?: { permission?: string; patterns?: string[] }
-        }
-        const permission = permEvent.properties?.permission ?? "unknown"
-        const patterns = permEvent.properties?.patterns?.join(", ") ?? ""
-        notify({
-          title: "OpenCode",
-          message: `Permission needed: ${permission}${patterns ? ` (${patterns})` : ""}`,
-          project,
-        })
-      }
+    // Permission requested - agent is blocked (v2 hook)
+    "permission.ask": async (input, _output) => {
+      const patterns = Array.isArray(input.pattern)
+        ? input.pattern.join(", ")
+        : input.pattern ?? ""
+      notify({
+        message: `Permission needed: ${input.type}${patterns ? ` (${patterns})` : ""}`,
+        project,
+      })
     },
   }
 }
