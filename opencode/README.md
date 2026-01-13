@@ -1,10 +1,6 @@
 # OpenCode Notification Plugin
 
-Desktop notifications for OpenCode when:
-
-- **Task completed** (`session.idle`) - Agent finished and waiting for next instruction
-- **Permission needed** (`permission.ask`) - Agent blocked waiting for approval
-- **Question asked** (`question.asked`) - Agent needs user input
+Desktop notifications for OpenCode events that need user attention.
 
 ## Setup
 
@@ -35,11 +31,9 @@ Icon from [OpenCode VSCode extension](https://github.com/sst/opencode/blob/dev/s
 
 ## Events
 
-The plugin listens for:
-
-- `session.idle` - Task complete, ready for next instruction
-- `permission.ask` - Permission approval needed (v2 hook)
-- `question.asked` - Agent asked a question, needs input
+- `session.idle`
+- `question.asked`
+- `permission.ask` (v2 hook)
 
 ## Community Alternatives
 
