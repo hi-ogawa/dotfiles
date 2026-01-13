@@ -5,16 +5,15 @@
  * Works on Linux (notify-send), macOS (osascript), and Windows (BurntToast)
  */
 
-import type { Plugin } from "@opencode-ai/plugin";
 import { spawn } from "node:child_process";
 import { platform } from "node:os";
 import { basename, join } from "node:path";
 
-const ICON_PATH = join(import.meta.dirname, "opencode-icon.png");
+const ICON_PATH = join(import.meta.dirname, "notify-icon.png");
 
 const NOTIFY_EVENTS = ["session.idle", "question.asked"];
 
-function notify(project: string, message: string): void {
+function notify(project, message) {
   const title = `OpenCode [${project}]`;
   switch (platform()) {
     case "linux":
@@ -53,12 +52,12 @@ function notify(project: string, message: string): void {
   }
 }
 
-const NotifyPlugin: Plugin = async (input) => {
+export default async (input) => {
   const project = basename(input.directory);
 
   return {
     event: async ({ event }) => {
-      if (NOTIFY_EVENTS.includes(event.type as string)) {
+      if (NOTIFY_EVENTS.includes(event.type)) {
         notify(project, event.type);
       }
     },
@@ -67,5 +66,3 @@ const NotifyPlugin: Plugin = async (input) => {
     },
   };
 };
-
-export default NotifyPlugin;
