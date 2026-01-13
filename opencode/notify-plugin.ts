@@ -4,6 +4,7 @@
  * Sends desktop notifications when:
  * - Session becomes idle (task completed)
  * - Permission is requested (agent blocked)
+ * - Question is asked (agent needs input)
  *
  * Works on Linux (notify-send), macOS (osascript), and Windows (BurntToast)
  */
@@ -66,6 +67,14 @@ const NotifyPlugin: Plugin = async (input) => {
       if (event.type === "session.idle") {
         notify({
           message: "Task completed - ready for next instruction",
+          project,
+        });
+      }
+
+      // Question asked - agent needs user input (v2 event, not in SDK types)
+      if ((event.type as string) === "question.asked") {
+        notify({
+          message: "Question asked - input needed",
           project,
         });
       }
