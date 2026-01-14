@@ -40,6 +40,23 @@
     "command": "workbench.action.terminal.sendSequence",
     "args": { "text": "\u001b\r" },
     "when": "terminalFocus && isWindows"
+  },
+
+  // Explorer: Copy Path / Copy Relative Path (align Windows to Linux defaults)
+  // Default varies by platform:
+  // | Platform | Copy Path    | Copy Relative Path  |
+  // |----------|--------------|---------------------|
+  // | Windows  | Shift+Alt+C  | Ctrl+K Ctrl+Shift+C |
+  // | Linux    | Ctrl+Alt+C   | Ctrl+Shift+Alt+C    |
+  {
+    "key": "ctrl+alt+c",
+    "command": "copyFilePath",
+    "when": "isWindows && filesExplorerFocus"
+  },
+  {
+    "key": "ctrl+shift+alt+c",
+    "command": "copyRelativeFilePath",
+    "when": "isWindows && filesExplorerFocus"
   }
 
   // Emacs navigation (commented out - keeping as escape hatch for muscle memory)
