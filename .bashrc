@@ -103,3 +103,7 @@ ho_setup_pnpm_completion() {
 }
 
 ho_setup_pnpm_completion
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
