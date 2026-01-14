@@ -16,6 +16,8 @@
       "Bash(wc:*)",
       "Bash(sort:*)",
       "Bash(wget:*)",
+      "Bash(curl:*)",
+      "Bash(grep:*)",
       "Read(~/code/**)",
       "WebFetch(domain:github.com)",
       "WebSearch"
