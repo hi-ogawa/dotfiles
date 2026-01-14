@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# prompt
+PS1='\w \$ '
+
 # exports
 export EDITOR="nano"
 export PATH="$HOME/.local/bin:$PATH"
@@ -18,6 +21,9 @@ export PATH="$VOLTA_HOME/bin:$PATH"
 
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
+
+# https://docs.brew.sh/Homebrew-on-Linux
+test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 
 # https://yazi-rs.github.io/docs/quick-start#shell-wrapper
 y() {
