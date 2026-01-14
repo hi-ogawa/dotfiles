@@ -40,7 +40,13 @@ FILES_WINDOWS=(
 # Detect platform
 detect_platform() {
   case "$(uname -s)" in
-    Linux*) echo "linux" ;;
+    Linux*)
+      if grep -qi microsoft /proc/version 2>/dev/null; then
+        echo "wsl"
+      else
+        echo "linux"
+      fi
+      ;;
     MINGW*|MSYS*) echo "windows" ;;
     *) echo "linux" ;;
   esac
@@ -48,10 +54,26 @@ detect_platform() {
 
 PLATFORM="$(detect_platform)"
 
+# WSL: get Windows APPDATA path for host-side apps
+if [[ "$PLATFORM" == "wsl" ]]; then
+  WIN_APPDATA=$(wslpath -u "$(cmd.exe /c 'echo %APPDATA%' 2>/dev/null | tr -d '\r')")
+fi
+
 get_files() {
   case "$PLATFORM" in
     linux) printf '%s\n' "${FILES_LINUX[@]}" ;;
     windows) printf '%s\n' "${FILES_WINDOWS[@]}" ;;
+    wsl)
+      # Use Linux paths, but VSCode goes to Windows host
+      printf '%s\n' "${FILES_LINUX[@]}" | while IFS= read -r line; do
+        if [[ "$line" == vscode/* ]]; then
+          repo_file="${line%%:*}"
+          echo "$repo_file:$WIN_APPDATA/Code/User/${repo_file#vscode/}"
+        else
+          echo "$line"
+        fi
+      done
+      ;;
   esac
 }
 
