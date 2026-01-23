@@ -147,7 +147,7 @@ cmd_diff() {
       echo
     elif ! diff -q "$repo_path" "$sys_path" > /dev/null 2>&1; then
       # show system -> repo, so + means "what apply would add"
-      diff -u --color=auto --label "a/$repo_rel_path" --label "b/$repo_rel_path" "$sys_path" "$repo_path" || true
+      diff -u --color=auto --label "$sys_path" --label "$repo_rel_path" "$sys_path" "$repo_path" || true
       echo
     fi
   done < <(get_files)
