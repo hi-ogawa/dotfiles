@@ -1,4 +1,5 @@
 {
+  "editor.tabSize": 2,
   "files.eol": "\n",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
@@ -7,5 +8,11 @@
   "workbench.startupEditor": "none",
   "terminal.integrated.defaultProfile.windows": "Git Bash",
   "security.workspace.trust.untrustedFiles": "open",
-  "extensions.ignoreRecommendations": true
+  "extensions.ignoreRecommendations": true,
+  "git.openRepositoryInParentFolders": "never",
+  "explorer.confirmDragAndDrop": false,
+  "python.defaultInterpreterPath": "/bin/python",
+  "markdown.preview.scrollPreviewWithEditor": false,
+  "markdown.preview.scrollEditorWithPreview": false,
+  "update.mode": "none"
 }
