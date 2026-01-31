@@ -12,6 +12,7 @@ Notifications use [hooks](https://code.claude.com/docs/en/hooks) to trigger nati
 ### Setup
 
 **Windows:** Install [BurntToast](https://github.com/Windos/BurntToast):
+
 ```powershell
 Install-Module -Name BurntToast -Scope CurrentUser
 ```
@@ -25,6 +26,7 @@ The notification icon (`claude-icon.png`) is from [UXWing](https://uxwing.com/cl
 ### Hook Input
 
 The notification hook receives JSON via stdin:
+
 ```json
 {
   "session_id": "abc123",
@@ -38,11 +40,11 @@ The notification hook receives JSON via stdin:
 
 ### Notification Types
 
-| Matcher | Description |
-|---------|-------------|
-| `""` | All notifications |
+| Matcher             | Description              |
+| ------------------- | ------------------------ |
+| `""`                | All notifications        |
 | `permission_prompt` | Permission requests only |
-| `idle_prompt` | Idle for 60+ seconds |
+| `idle_prompt`       | Idle for 60+ seconds     |
 
 ## See Also
 
