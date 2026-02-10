@@ -15,10 +15,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 
-# volta (node version manager)
-export VOLTA_HOME="$HOME/.volta"
-export PATH="$VOLTA_HOME/bin:$PATH"
-
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
