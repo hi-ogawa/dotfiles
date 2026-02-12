@@ -104,9 +104,14 @@ ho_setup_pnpm_completion
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# fnm
-FNM_PATH="$HOME/.local/share/fnm"
-if [ -d "$FNM_PATH" ]; then
-  export PATH="$FNM_PATH:$PATH"
-  eval "`fnm env`"
+# https://viteplus.dev
+if [ -d "$HOME/.vite-plus" ]; then
+  . "$HOME/.vite-plus/env"
+else
+  # fnm
+  FNM_PATH="$HOME/.local/share/fnm"
+  if [ -d "$FNM_PATH" ]; then
+    export PATH="$FNM_PATH:$PATH"
+    eval "`fnm env`"
+  fi
 fi
