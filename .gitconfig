@@ -20,6 +20,10 @@
   # $ git sfpl <remote=origin>
   sfpl = "! remote=${1:-origin} && branch=$(git rev-parse --abbrev-ref HEAD) && git fetch --no-tags $remote $branch && git merge --ff-only $remote/$branch && true"
 
+  # Clone current repo remotes into a new directory
+  # $ git cp-clone <target-dir>
+  cp-clone = "!f(){ target=\"$1\"; [ -n \"$target\" ] || { echo 'usage: git cp-clone <target-dir>' >&2; return 1; }; origin_url=$(git remote get-url origin) || return 1; upstream_url=$(git remote get-url upstream 2>/dev/null || true); git clone \"$origin_url\" \"$target\" || return 1; if [ -n \"$upstream_url\" ]; then git -C \"$target\" remote add upstream \"$upstream_url\"; fi; }; f"
+
   # Fetch remote and checkout
   # $ git fco <branch> <remote=origin>
   fco = "! branch=${1} remote=${2:-origin} && git fetch --no-tags $remote $branch && git checkout -B $branch $remote/$branch && true"
