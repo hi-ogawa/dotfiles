@@ -1,11 +1,20 @@
 # Arch Linux Setup
 
-For full setup history and notes, see:
+For full setup guide (installation, post-install, dev setup), see:
 
-- https://github.com/hi-ogawa/config
-- https://gist.github.com/hi-ogawa/a873d9406f580dfdf1e391a427a4dd0b
-- https://github.com/hi-ogawa/journal/blob/main/2026-01-24-linux-setup/notes/archinstall.md
+- https://github.com/hi-ogawa/linux-setup
 
-```js
-yay -S visual-studio-code-bin
+## Apply dotfiles
+
+```bash
+git clone https://github.com/hi-ogawa/dotfiles ~/code/personal/dotfiles
+cd ~/code/personal/dotfiles
+./sync.sh apply
+```
+
+## Verify
+
+```bash
+git config --list --show-origin # Should show your aliases
+type y # Should show yazi wrapper function
 ```
