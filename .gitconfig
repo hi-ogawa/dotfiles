@@ -28,6 +28,10 @@
   # $ git fco <branch> <remote=origin>
   fco = "! branch=${1} remote=${2:-origin} && git fetch --no-tags $remote $branch && git checkout -B $branch $remote/$branch && true"
 
+  # Fetch remote and checkout (default: branch=main, remote=upstream->origin)
+  # $ git fco-x <branch=main> <remote=upstream|origin>
+  fco-x = "! branch=${1:-main}; remote=${2:-}; if [ -z \"$remote\" ]; then git remote get-url upstream >/dev/null 2>&1 && remote=upstream || remote=origin; fi; git fetch --no-tags \"$remote\" \"$branch\" && git checkout -B \"$branch\" \"$remote/$branch\" && true"
+
 [init]
   defaultBranch = main
 
