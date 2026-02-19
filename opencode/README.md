@@ -8,6 +8,36 @@ Run `./sync.sh apply opencode` to install the plugin to `~/.opencode/plugins/`.
 
 OpenCode automatically discovers and loads plugins from this directory - no additional configuration needed.
 
+## Headless Server (systemd user service)
+
+This repo also includes `opencode/opencode.service` for running `opencode serve` as a user daemon.
+
+1. Install the unit:
+
+   ```bash
+   ./sync.sh apply opencode.service
+   ```
+
+2. Start and enable:
+
+   ```bash
+   systemctl --user daemon-reload
+   systemctl --user enable --now opencode
+   ```
+
+3. Verify:
+
+   ```bash
+   systemctl --user status opencode
+   curl http://127.0.0.1:4096/global/health
+   ```
+
+4. Tail logs:
+
+   ```bash
+   journalctl --user -u opencode -f
+   ```
+
 ## Requirements
 
 ### Linux

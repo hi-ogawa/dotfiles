@@ -17,6 +17,7 @@ FILES_LINUX=(
   "claude/notify.sh:$HOME/.claude/notify.sh"
   "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
   "opencode/opencode.json:$HOME/.config/opencode/opencode.json"
+  "opencode/opencode.service:$HOME/.config/systemd/user/opencode.service"
   "opencode/notify.js:$HOME/.opencode/plugins/notify.js"
   "opencode/notify-icon.png:$HOME/.opencode/plugins/notify-icon.png"
 )
