@@ -12,6 +12,10 @@ OpenCode automatically discovers and loads plugins from this directory - no addi
 
 This repo also includes `opencode/opencode.service` for running `opencode serve` as a user daemon.
 
+The service starts through a login Bash shell so it picks up your normal shell environment
+(`~/.bash_profile` -> `~/.bashrc`), matching terminal behavior for `PATH` tools such as
+Node/Corepack/pnpm.
+
 1. Install the unit:
 
    ```bash
@@ -86,3 +90,7 @@ Both use the same plugin API:
   }
 }
 ```
+
+## References
+
+- `~/code/others/opencode` - OpenCode source
