@@ -25,6 +25,10 @@
   # $ git snd <remote-branch=main> <remote=upstream|origin>
   snd = "!f(){ main_wt=$(git worktree list | head -1 | awk '{print $1}'); current=$(git rev-parse --show-toplevel); if [ \"$current\" = \"$main_wt\" ]; then home=main; else home=$(basename \"$current\"); fi; branch=${1:-main}; remote=${2:-}; if [ -z \"$remote\" ]; then git remote get-url upstream >/dev/null 2>&1 && remote=upstream || remote=origin; fi; git fetch --no-tags \"$remote\" \"$branch\" && git checkout -B \"$home\" \"$remote/$branch\"; }; f"
 
+  # Start new branch: slugify message into branch name, auto-stage if needed, checkout + commit
+  # $ git snb "feat: did something"
+  snb = "!f(){ msg=\"$1\"; [ -n \"$msg\" ] || { echo 'usage: git snb \"commit message\"' >&2; return 1; }; branch=$(echo \"$msg\" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]\\+/-/g; s/^-//; s/-$//'); git diff --cached --quiet && git add -A; git checkout -b \"$branch\" && git commit -m \"$msg\"; }; f"
+
 [init]
   defaultBranch = main
 
