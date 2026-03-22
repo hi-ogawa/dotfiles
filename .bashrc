@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# bash completion (ubuntu/wsl: commented out in /etc/bash.bashrc, not loaded for non-login shells)
+# https://github.com/Microsoft/WSL/issues/73
+if ! type _init_completion &>/dev/null; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
 # prompt
 PS1='\w \$ '
 
