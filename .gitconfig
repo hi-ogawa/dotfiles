@@ -23,7 +23,7 @@
   # Start new day: fetch remote and checkout home branch at latest remote main
   # In primary repo: home=main. In linked worktree: home=directory basename (git's default convention).
   # $ git snd <remote-branch=main> <remote=upstream|origin>
-  snd = "!f(){ main_wt=$(git worktree list | head -1 | awk '{print $1}'); current=$(git rev-parse --show-toplevel); if [ \"$current\" = \"$main_wt\" ]; then home=main; else home=$(basename \"$current\"); fi; branch=${1:-main}; remote=${2:-}; if [ -z \"$remote\" ]; then git remote get-url upstream >/dev/null 2>&1 && remote=upstream || remote=origin; fi; git fetch --no-tags \"$remote\" \"$branch\" && git update-ref refs/heads/\"$branch\" \"$remote/$branch\" && git checkout \"$home\" && git reset --hard \"$remote/$branch\"; }; f"
+  snd = "!f(){ main_wt=$(git worktree list | head -1 | awk '{print $1}'); current=$(git rev-parse --show-toplevel); branch=${1:-main}; if [ \"$current\" = \"$main_wt\" ]; then home=$branch; else home=$(basename \"$current\"); fi; remote=${2:-}; if [ -z \"$remote\" ]; then git remote get-url upstream >/dev/null 2>&1 && remote=upstream || remote=origin; fi; git fetch --no-tags \"$remote\" \"$branch\" && git update-ref refs/heads/\"$branch\" \"$remote/$branch\" && git checkout \"$home\" && git reset --hard \"$remote/$branch\"; }; f"
 
   # Start new branch: slugify message into branch name, auto-stage if needed, checkout + commit
   # $ git snb "feat: did something"
