@@ -31,6 +31,12 @@ The feature is `UnderDevelopment` and disabled by default, so it requires explic
 - `codex-rs/core/src/codex.rs:3661` — feature gate for injection
 - `codex-rs/core/src/config/mod.rs:288` — `commit_attribution` config key (empty string disables)
 
+## User-Level Instructions (`AGENTS.md`)
+
+`~/.codex/AGENTS.md` is loaded as system instructions for every Codex session, across all projects. Use it for global policies that should always apply regardless of the project's own `AGENTS.md`.
+
+Codex resolves `AGENTS.md` files in a hierarchy: `~/.codex/AGENTS.md` (lowest priority) → repo root → subdirectory closest to the working files (highest priority). All matched files are concatenated. Note: there are known issues where the global file is not read by default in some versions — see [#960](https://github.com/openai/codex/issues/960).
+
 ## References
 
 - [Configuration reference](https://developers.openai.com/codex/config-reference)

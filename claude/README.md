@@ -5,6 +5,16 @@
 - `settings.json` - Synced to `~/.claude/settings.json`
 - `notify.sh` - Notification hook script
 
+`CLAUDE.md` is a symlink to `../codex/AGENTS.md` — shared source of truth for user-level agent instructions.
+
+## User-Level Instructions (`CLAUDE.md`)
+
+`~/.claude/CLAUDE.md` is loaded as system instructions for every Claude Code session, across all projects. Use it for global policies that should always apply regardless of the project's own `CLAUDE.md`.
+
+Multiple `CLAUDE.md` files can coexist at different scopes and are all loaded. Priority order (highest to lowest): managed policy (`/etc/claude-code/CLAUDE.md`) → project-level (`./CLAUDE.md`) → user-level (`~/.claude/CLAUDE.md`).
+
+- [Memory and instructions docs](https://code.claude.com/docs/en/memory)
+
 ## Notifications
 
 Notifications use [hooks](https://code.claude.com/docs/en/hooks) to trigger native OS notifications when Claude is waiting for input.
