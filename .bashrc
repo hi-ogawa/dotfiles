@@ -13,6 +13,15 @@ fi
 # prompt
 PS1='\w \$ '
 
+# history
+# Append rather than overwrite, and sync commands across concurrent shells.
+# - History file behavior and `histappend`:
+#   https://www.gnu.org/software/bash/manual/html_node/Bash-History-Facilities.html
+# - `history -a` and `history -n`:
+#   https://www.gnu.org/software/bash/manual/bash.html#Bash-History-Builtins
+shopt -s histappend
+HISTSIZE=10000
+
 # exports
 export EDITOR="nano"
 export PATH="$HOME/.local/bin:$PATH"
