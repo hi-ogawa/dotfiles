@@ -27,3 +27,10 @@ Personal configuration files for Linux (Arch) and Windows.
 - [Claude Code settings](https://code.claude.com/docs/en/settings)
 - [OpenCode docs](https://opencode.ai/docs)
 - [WezTerm config](https://wezterm.org/config/files.html)
+
+## TODO
+
+- remove wezterm
+- use `ID+USERNAME@users.noreply.github.com` in gitconfig
+  - https://docs.github.com/en/enterprise-cloud@latest/account-and-profile/reference/email-addresses-reference
+  - https://docs.github.com/en/account-and-profile/how-tos/email-preferences/setting-your-commit-email-address
