@@ -1,4 +1,6 @@
 #!/bin/bash
 set -e
 
-pnpm dlx skills add ./skills --all -g
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+pnpm dlx skills add "$SCRIPT_DIR/skills" --all -g "$@"
