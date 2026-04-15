@@ -1,6 +1,21 @@
 # Git policy
 
+We use a high-trust, task-scoped git workflow. Assume the user knows the current branch and worktree state unless they ask you to inspect it.
+
 Never rebase, never amend, never force push. Accumulate commits (non-destructive). Merge `origin/main` into the branch when needed.
+
+Never run destructive cleanup commands such as `git reset --hard`, `git checkout -- <path>`, `git clean`, or equivalent unless the user explicitly asks for that exact operation.
+
+When the user asks for a git action, perform the requested action directly and keep command count minimal.
+
+Do not run precautionary `git status`, `git diff`, `git log`, `git show`, or similar inspection commands by default. Only inspect when one of these is true:
+
+- the user explicitly asks to inspect, review, verify, summarize, or check something
+- the requested git action cannot proceed without discovering missing information
+- the target files or refs are genuinely ambiguous
+- a command fails and diagnosis is needed
+
+When committing after a task you just completed, stage only the file paths you intentionally changed for that task. Do not discover or include unrelated worktree changes.
 
 For GitHub and git tasks, prefer direct `git` and `gh` commands. Do not use Codex-specific publish workflows, PR helpers, or plugin abstractions unless explicitly asked. If a backend agent exposes its own GitHub workflow, treat it as optional guidance, not the default path.
 
