@@ -1,12 +1,14 @@
 ---
-name: reference-repos
-description: Use ~/code/ as a library of local repos for reference. Use when investigating how other projects solve a problem, checking upstream dependency internals, reusing patterns from prior work.
+name: local-repos
+description: 'Use ~/code/ as a local repository library. Trigger only when the user explicitly writes "local-repos".'
 ---
 
-`~/code/` is a local library of repositories. The two main directories:
+This skill is for using `~/code/` as a local library of repositories after the user has explicitly opted in with `local-repos`.
+
+The two main directories:
 
 - **`~/code/others/`** — cloned external / open-source repos (200+). The primary reference source — check here first.
-- **`~/code/personal/`** — the user's own projects.
+- **`~/code/personal/`** — the user's own projects. Use only when the user asks for prior personal patterns or the task clearly depends on another named personal repo.
 
 ## Finding the right repo
 
@@ -26,7 +28,4 @@ With hundreds of repos, efficient discovery matters:
 
 ## When to use
 
-- User says "check how X does it" or "look at Y's implementation"
-- You need to understand an upstream dependency's internals
-- Comparing approaches across projects
-- Any time reading source is more reliable than docs
+- The user explicitly writes `local-repos`

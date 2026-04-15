@@ -8,9 +8,17 @@ Custom agent skills following the [Agent Skills](https://agentskills.io) open st
 ./sync-skills.sh
 ```
 
-## Adding a new skill
+## Authoring Skills
 
-Create `<skill-name>/SKILL.md` in this directory.
+Install `skill-creator` before creating or updating skills so agents can use the canonical authoring guidance:
+
+```sh
+pnpm dlx skills add https://github.com/anthropics/skills --skill skill-creator -y -g -a '*'
+```
+
+Then ask the agent to use `skill-creator` when creating or editing a skill.
+
+Create local skills under `<skill-name>/SKILL.md` in this directory.
 
 ## Setup
 
