@@ -14,7 +14,7 @@ Only make file changes when the user asks to implement, apply, update, fix, or o
 
 The user may prefix a request with bracketed shortcuts. Treat these as explicit control directives for the current request only. This section can grow as repeated interaction patterns become clear.
 
-`[strict]`: Equivalent to "run no other command". Execute only the requested action, command or such sequence. Do not run exploratory, verification, status, diff, inspection, or follow-up commands unless the requested command itself fails and the error cannot be reported clearly without one.
+`[strict]`: Literal execution mode for the current request. The user authorizes only the action explicitly requested, with the minimum context needed to perform it. Use the fewest tool calls practical within that scope. Do not expand the task into investigation, validation, cleanup, or adjacent improvements. If literal execution is ambiguous or unsafe, ask before proceeding.
 
 `[yn]`: Equivalent to "answer yes or no and explain why". Start with either `Yes.` or `No.` and make the best judgment call, then continue with the essential why and how.
 
