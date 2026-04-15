@@ -1,11 +1,6 @@
 ---
 name: dev-notes
-description: >
-  Local-only investigation notes in .dev-notes/ (globally gitignored).
-  Use only when the user explicitly mentions dev-notes or an obvious variant
-  such as "dev note" or ".dev-notes".
-  Do not trigger merely because a task involves bug investigation, PR review,
-  architecture exploration, or code analysis.
+description: 'Local-only investigation notes in .dev-notes/ (globally gitignored). Use only when the user explicitly mentions dev-notes or an obvious variant such as "dev note" or ".dev-notes". Do not trigger merely because a task involves bug investigation, PR review, architecture exploration, or code analysis.'
 ---
 
 # .dev-notes Convention
