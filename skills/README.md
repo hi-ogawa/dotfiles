@@ -1,6 +1,12 @@
 # Personal Agent Skills
 
-Custom skills following the [Agent Skills](https://agentskills.io) open standard. Each skill is a directory with a `SKILL.md` entrypoint.
+Custom agent skills following the [Agent Skills](https://agentskills.io) open standard. Each skill is a directory with a `SKILL.md` entrypoint.
+
+## Quick Start
+
+```sh
+./sync-skills.sh
+```
 
 ## Adding a new skill
 
@@ -13,7 +19,7 @@ Create `<skill-name>/SKILL.md` in this directory.
 [`skills`](https://github.com/vercel-labs/skills) auto-detects installed agents and symlinks skills to all of them:
 
 ```bash
-pnpm dlx skills add ./skills --all -g --agent codex claude-code
+pnpm dlx skills add ./skills --all -g
 ```
 
 ### Claude Code
