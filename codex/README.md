@@ -2,6 +2,13 @@
 
 User-level config for `~/.codex/`.
 
+## Contents
+
+- `config.toml` - user-level Codex config
+- `AGENTS.md` - global instructions loaded into Codex sessions
+- `hooks.json` - global Codex hook config
+- `notify.sh` - desktop notification hook script
+
 ## Goal
 
 Match what Claude does — add a `Co-authored-by` trailer to AI-assisted commits:
@@ -37,7 +44,16 @@ The feature is `UnderDevelopment` and disabled by default, so it requires explic
 
 Codex resolves `AGENTS.md` files in a hierarchy: `~/.codex/AGENTS.md` (lowest priority) → repo root → subdirectory closest to the working files (highest priority). All matched files are concatenated. Note: there are known issues where the global file is not read by default in some versions — see [#960](https://github.com/openai/codex/issues/960).
 
+## Hooks and Notifications
+
+Codex CLI has experimental hooks behind the `codex_hooks` feature flag. See the official hooks reference instead of duplicating the event schema here.
+
+This dotfiles package enables hooks and installs a `Stop` hook that runs `~/.codex/notify.sh`. Local assessment: `Stop` is the closest current hook for desktop notifications, but Codex does not currently expose the same dedicated notification/attention events used by the local Claude and OpenCode setups.
+
+The notification script uses `last_assistant_message` when available, falls back to a generic message, and supports Linux `notify-send`, WSL/Git Bash through PowerShell BurntToast, and macOS `osascript`.
+
 ## References
 
+- [Codex hooks](https://developers.openai.com/codex/hooks)
 - [Configuration reference](https://developers.openai.com/codex/config-reference)
 - [AGENTS.md hierarchy](https://github.com/openai/codex/blob/main/codex-cli/README.md#agentsmd)

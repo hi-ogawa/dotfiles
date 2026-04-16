@@ -25,6 +25,8 @@ Personal configuration files for Linux (Arch) and Windows.
 - [Global gitignore](https://git-scm.com/docs/gitignore)
 - [VSCode settings](https://code.visualstudio.com/docs/getstarted/settings)
 - [Claude Code settings](https://code.claude.com/docs/en/settings)
+- [Codex configuration](https://developers.openai.com/codex/config-reference)
+- [Codex hooks](https://developers.openai.com/codex/hooks)
 - [OpenCode docs](https://opencode.ai/docs)
 - [WezTerm config](https://wezterm.org/config/files.html)
 
