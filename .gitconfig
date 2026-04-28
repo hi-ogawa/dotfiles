@@ -30,10 +30,10 @@
   snb = "!f(){ msg=\"$1\"; [ -z \"$msg\" ] && read -rp 'message: ' msg; [ -n \"$msg\" ] || { echo 'usage: git snb \"commit message\"' >&2; return 1; }; branch=$(echo \"$msg\" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]\\+/-/g; s/^-//; s/-$//'); git diff --cached --quiet && git add -A; git checkout -b \"$branch\" && git commit -m \"$msg\"; }; f"
 
   # Branch garbage-collection: prune remote refs, then list/delete local branches whose upstream is gone.
-  # $ git brgc-ls <remote=origin>
   # $ git brgc <remote=origin>
-  brgc-ls = "!f(){ remote=${1:-origin}; git fetch --prune \"$remote\" && git for-each-ref --format='%(refname:short)%09%(upstream:track)' refs/heads | awk -F '\\t' '$2 ~ /gone/ {print $1}'; }; f"
-  brgc = "!f(){ remote=${1:-origin}; git brgc-ls \"$remote\" | xargs -r git branch -D; }; f"
+  # $ git brgc-go <remote=origin>
+  brgc = "!f(){ remote=${1:-origin}; git fetch --prune \"$remote\" && git for-each-ref --format='%(refname:short)%09%(upstream:track)' refs/heads | awk -F '\\t' '$2 ~ /gone/ {print $1}'; }; f"
+  brgc-go = "!f(){ remote=${1:-origin}; git brgc \"$remote\" | xargs -r git branch -D; }; f"
 
 [init]
   defaultBranch = main
