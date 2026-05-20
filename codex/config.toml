@@ -1,6 +1,5 @@
-model = "gpt-5.4"
+model = "gpt-5.5"
 model_reasoning_effort = "high"
 
 [features]
 hooks = true
-codex_git_commit = true

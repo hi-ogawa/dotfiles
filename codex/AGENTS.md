@@ -4,6 +4,16 @@ Never rebase, amend, force push, reset hard, delete commits, or otherwise rewrit
 
 For GitHub and git actions, prefer direct `git` and `gh` commands unless explicitly asked otherwise.
 
+# Git commit attribution
+
+When you write or edit a git commit message, ensure the message ends with this trailer exactly once:
+Co-authored-by: Codex <noreply@openai.com>
+
+Rules:
+- Keep existing trailers and append this trailer at the end if missing.
+- Do not duplicate this trailer if it already exists.
+- Keep one blank line between the commit body and trailer block.
+
 # Interaction protocol
 
 When the user asks to "explain", "discuss", "brainstorm", "review the approach", or "suggest a change", do not edit files or run mutating commands unless explicitly asked to apply the change. In these cases, provide the proposed patch or wording in the response only.
