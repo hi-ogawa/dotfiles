@@ -19,7 +19,7 @@ Select two modes: depth and execution.
 
 Depth:
 
-- Use `skim` when the user says "skim", "eyeball", "rough context", "orient me", "quick pass", "no full verification", or similar.
+- Use `skim` when the user says "skim", "rough context" or similar.
 - Use `full` when the user asks for a full review, review findings, bugs, regressions, correctness issues, or PR review.
 
 Execution:
@@ -100,7 +100,7 @@ Do not run formatters, package installs, or mutating commands unless the user ex
 
 ## Skim Mode
 
-In skim mode, stop after enough read-only inspection to explain the shape of the change and likely risk areas. Prefer useful orientation over full verification.
+In skim mode, stop after enough read-only inspection to explain the shape of the change. Prefer useful orientation over full verification to build initial context to continue with interactive follow-up discussions.
 
 Use only cheap read-only commands. Do not run tests, builds, or broad verification commands. If something looks suspicious, do at most one or two targeted read-only follow-ups; otherwise list it as a follow-up rather than proving it.
 
@@ -109,10 +109,9 @@ Do not force issues into formal findings. Promote something to a finding only wh
 Return:
 
 - What changed.
-- Inferred intent.
-- Risk areas.
-- Obvious issues, only if high-confidence from the skim.
-- Suggested next checks, clearly labeled as not run.
+- Inferred intent and current status.
+- Obvious issues to call out, only if high-confidence from the skim.
+- Suggestions and directions to continue reviews and discussions.
 
 ## Full Mode
 
