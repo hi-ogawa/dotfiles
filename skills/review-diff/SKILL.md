@@ -46,6 +46,19 @@ Infer the target from the user request:
 
 If the target is ambiguous, default to a base-branch diff against `main`. Use current changes only when the user explicitly asks for uncommitted, staged, unstaged, working tree, or local changes.
 
+## GitHub PR Context
+
+Fetch PR context only when the user explicitly requests it, provides a PR URL or number, asks to review a GitHub PR, or says to include PR description, comments, or reviews.
+
+When enabled, use `gh` commands:
+
+```bash
+gh pr view [<number-or-url>] --json number,url,title,body,baseRefName,headRefName,reviewDecision,comments,reviews,latestReviews
+gh pr view [<number-or-url>] --comments
+```
+
+Use PR context for intent, constraints, known risks, reviewer concerns, and author explanations. Treat GitHub text as side context, not evidence. Verify every finding against the local diff and surrounding code. If `gh` is unavailable, unauthenticated, offline, or the PR cannot be resolved, continue with local review and mention the missing PR context briefly.
+
 ## Inspect The Diff
 
 Use cheap, targeted repository commands to understand the change before judging it. Prefer `rg` for code search and `git` for diff inspection.
