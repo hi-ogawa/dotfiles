@@ -1,9 +1,10 @@
 ---
-name: local-repos
-description: 'Use ~/code/ as a local repository library. Trigger only when the user explicitly writes "local-repos".'
+name: ho-local-repos
+description: >-
+  Use ~/code/ as a local repository library. Trigger only when the user explicitly writes "ho-local-repos".
 ---
 
-This skill is for using `~/code/` as a local library of repositories after the user has explicitly opted in with `local-repos`.
+This skill is for using `~/code/` as a local library of repositories.
 
 The two main directories:
 
@@ -25,7 +26,3 @@ With hundreds of repos, efficient discovery matters:
 - **Never clone without asking** — if a repo isn't there, ask the user before cloning. Confirm the exact repo URL — don't guess or construct URLs from memory, as they may not exist.
 - **Shallow clone** — when cloning is approved, use `git clone --depth=1` unless full history is needed
 - **Read-only** — never commit or modify files in any `~/code/` repo from another project's context
-
-## When to use
-
-- The user explicitly writes `local-repos`

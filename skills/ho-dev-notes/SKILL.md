@@ -1,15 +1,12 @@
 ---
-name: dev-notes
-description: 'Local-only investigation notes in .dev-notes/ (globally gitignored). Use only when the user explicitly mentions dev-notes or an obvious variant such as "dev note" or ".dev-notes". Do not trigger merely because a task involves bug investigation, PR review, architecture exploration, or code analysis.'
+name: ho-dev-notes
+description: >-
+  Local-only investigation notes in .dev-notes/ (globally gitignored). Use only when the user explicitly mentions "ho-dev-notes". Do not trigger merely because a task involves bug investigation, PR review, architecture exploration, or code analysis.
 ---
 
 # .dev-notes Convention
 
 A personal convention for local-only documentation in any codebase. Globally gitignored by personal [dotfiles/.gitignore-global](https://github.com/hi-ogawa/dotfiles/blob/main/.gitignore-global), so it works across all repos without polluting them.
-
-## Activation
-
-Use this skill only when the user explicitly mentions `dev-notes` or an obvious variant such as `dev note` or `.dev-notes`. For ordinary debugging, code review, architecture exploration, or codebase analysis, continue in the conversation unless the user refers to dev-notes.
 
 ## Purpose
 

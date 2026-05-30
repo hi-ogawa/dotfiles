@@ -1,6 +1,7 @@
 ---
-name: review-diff
-description: "Review code changes by inspecting a selected diff scope, identifying discrete actionable bugs, prioritizing findings, and avoiding broad commentary. Use only when the user explicitly invokes $review-diff."
+name: ho-review
+description: >-
+  Review code changes by inspecting a selected diff scope, identifying discrete actionable bugs, prioritizing findings, and avoiding broad commentary. Use only when the user explicitly invokes "ho-review".
 ---
 
 # Review Diff
@@ -27,7 +28,7 @@ Execution:
 - Use `inline` by default.
 - Use `subagent` only when the user explicitly asks for it, or when the diff is large enough that an independent pass is useful and subagents are available.
 
-Default to `skim + inline` for plain `$review-diff`. Use `full + inline` only when the user asks for full review behavior.
+Default to `skim + inline` for plain `ho-review`. Use `full + inline` only when the user asks for full review behavior.
 
 ## Subagent Execution
 
