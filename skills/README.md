@@ -2,27 +2,17 @@
 
 Custom agent skills following the [Agent Skills](https://agentskills.io) open standard. Each skill is a directory with a `SKILL.md` entrypoint.
 
-## Setup
+## Usage
 
-Install or refresh the skills after editing this repo:
+Create or update skills under `skills/<skill-name>/SKILL.md`, then sync them into the local agent skill directories:
 
 ```sh
 ./sync-skills.sh
 ```
 
-This delegates to the [`skills`](https://github.com/vercel-labs/skills) CLI and it requires rerun after local edits.
+Both Claude and Codex include built-in "skill creator" meta skill, so ask the agent itself to create or update skills here.
 
-## Authoring Skills
-
-Install `skill-creator` before creating or updating skills so agents can use the canonical authoring guidance:
-
-```sh
-pnpm dlx skills add https://github.com/anthropics/skills --skill skill-creator -y -g -a '*'
-```
-
-Then ask the agent to use `skill-creator` when creating or editing a skill.
-
-Create local skills under `<skill-name>/SKILL.md` in this directory.
+If a skill is renamed or removed, check the installed skill directories and clean up stale copies manually.
 
 ## Codex
 
