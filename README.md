@@ -14,6 +14,26 @@ Personal configuration files for Linux (Arch) and Windows.
 ./sync.sh save         # save all system configs to repo
 ```
 
+## Commit Style
+
+Use scope-based commit subjects:
+
+```text
+<scope>: <summary>
+```
+
+Prefer the affected area as the scope, such as `bash`, `codex`, `git`, `skill`, `sync`, or `vscode`.
+
+## Agent Skills
+
+Personal agent skills live under `skills/`. After editing skills, sync them into the local agent skill directories:
+
+```bash
+./sync-skills.sh
+```
+
+See [skills/README.md](skills/README.md).
+
 ## Setup Guides
 
 - [Arch Linux](docs/setup-archlinux.md)
