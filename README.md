@@ -48,9 +48,3 @@ See [skills/README.md](skills/README.md).
 - [Codex configuration](https://developers.openai.com/codex/config-reference)
 - [Codex hooks](https://developers.openai.com/codex/hooks)
 - [OpenCode docs](https://opencode.ai/docs)
-
-## TODO
-
-- use `ID+USERNAME@users.noreply.github.com` in gitconfig
-  - https://docs.github.com/en/enterprise-cloud@latest/account-and-profile/reference/email-addresses-reference
-  - https://docs.github.com/en/account-and-profile/how-tos/email-preferences/setting-your-commit-email-address
