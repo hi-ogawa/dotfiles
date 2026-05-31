@@ -63,3 +63,16 @@
 
 [gpg]
   format = ssh
+
+# Machine-local overrides. This file is intentionally not managed by sync.sh.
+# Common overrides:
+#   [user]
+#     name = ...
+#     email = ...
+#     signingkey = ...
+#   [commit]
+#     gpgsign = false
+#   [credential]
+#     helper = ...
+[include]
+  path = ~/.gitconfig.local
