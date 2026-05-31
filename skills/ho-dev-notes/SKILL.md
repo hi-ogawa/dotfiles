@@ -6,7 +6,7 @@ description: >-
 
 # .dev-notes Convention
 
-A personal convention for local-only documentation in any codebase. Globally gitignored by personal [dotfiles](https://github.com/hi-ogawa/dotfiles) gitconfig, so it works across all repos without polluting them.
+A personal convention for local-only documentation in any codebase. Globally gitignored by personal [dotfiles gitconfig](https://github.com/hi-ogawa/dotfiles), so it works across all repos without polluting them.
 
 ## Purpose
 
