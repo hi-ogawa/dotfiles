@@ -62,7 +62,7 @@ This is a diagnostic tool, not just a deliverable: if you can't state the minima
 
 It's a written artifact, consistent with skim-first — you're *specifying* the repro, not running it. Base it on the reported case and the code path you traced. Keep it concrete (actual snippets, config, commands — not "set up a project with X"), and mark any step you're inferring rather than confirming.
 
-When the repro outgrows a snippet, save it as a file (or the files of a minimal project) in the triage folder beside `TRIAGE.md`. Keep a project copy-out-able: only what's needed to trigger the bug, no `node_modules` or lockfiles, since the folder isn't wired into the repo's workspace and must stand alone. Put the run command (install + the single triggering command) in `TRIAGE.md`. Inline a trivial snippet in the note instead of making a file.
+When the repro is executable, prefer saving it as ready-to-run files in the triage folder beside `TRIAGE.md` rather than only inlining it. Put the project's files (manifest, sources, config, fixtures) directly beside `TRIAGE.md` unless a subdirectory is needed for clarity. Keep it copy-out-able: only what's needed to trigger the bug, no installed dependencies or lockfiles, since the folder isn't wired into the repo's workspace and must stand alone. Put the run command (install + the single triggering command) in `TRIAGE.md`. Inline only trivial snippets where separate files would not make the repro easier to run. Writing these files is still skim-first — producing them is not running them; whether to actually run follows the opt-in rules below.
 
 ## Run a reproduction: opt-in and time-boxed
 
@@ -99,7 +99,9 @@ Don't manufacture a confident root cause. Leaving good breadcrumbs is more usefu
 
 ## Output
 
-Unless instructed otherwise, the deliverable is a triage folder under `.dev-notes` (follow `ho-dev-notes` skill convention): `triage-<slug>/` holding `TRIAGE.md` (the note) and any repro artifacts beside it. Then post a short summary in chat.
+Unless instructed otherwise, the deliverable is a triage folder following the `ho-dev-notes` skill convention. Always read the `ho-dev-notes` skill first to determine the desired `.dev-notes` base location, such as `.dev-notes/dist` versus `.dev-notes`.
+
+Create `<base>/triage-<slug>/` holding `TRIAGE.md` and any repro artifacts beside it. Then post a short summary in chat.
 
 `TRIAGE.md` shape (omit empty sections):
 
