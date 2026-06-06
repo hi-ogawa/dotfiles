@@ -51,30 +51,16 @@ If the starting point is too thin to locate anything (no symptom, no error, no e
 Diagnose by reading. In most cases, reading the context plus the relevant code is enough to find the cause — and it never gets stuck the way running things can.
 
 - Follow the evidence: error messages and stack traces point at files; from there read call sites, data flow, and the surrounding logic.
-- Use cheap read-only tools — `rg` for search, `git log`/`git blame`/`git show` for history, file reads. Check comments and recent changes near the suspect code.
-- Do **not** run code, start servers, install packages, build, or edit files.
+- Use cheap read-only tools, file read, file search, `git` and `gh` for change history. Check comments and recent changes near the suspect code.
+- Do **not** run code, start servers, install packages, build, or edit files by default.
+
+Running a repro is opt-in: do it only when the user asks, an existing repro is trivial to run, or one quick run would settle what reading cannot. If it gets messy, bail after about two failed attempts and continue with the diagnosis from reading.
 
 ## Distill a minimal repro
 
-Part of triage is reducing the report to the smallest case that should still trigger the bug — the essential config, code, inputs, and steps, with everything incidental stripped. Raw issues are usually convoluted (a whole app, unrelated dependencies, narrative noise), and the minimal case is what a maintainer actually needs.
+Reduce the report to the smallest case that should still trigger the bug: the essential config, code, inputs, and steps, with incidental app noise removed. Keep it concrete, and mark any step you're inferring rather than confirming.
 
-This is a diagnostic tool, not just a deliverable: if you can't state the minimal trigger, you don't yet understand which conditions are load-bearing. Distilling it forces that clarity and often exposes the cause.
-
-It's a written artifact, consistent with skim-first — you're *specifying* the repro, not running it. Base it on the reported case and the code path you traced. Keep it concrete (actual snippets, config, commands — not "set up a project with X"), and mark any step you're inferring rather than confirming.
-
-When the repro is executable, prefer saving it as ready-to-run files in the triage folder beside `TRIAGE.md` rather than only inlining it. Put the project's files (manifest, sources, config, fixtures) directly beside `TRIAGE.md` unless a subdirectory is needed for clarity. Keep it copy-out-able: only what's needed to trigger the bug, no installed dependencies or lockfiles, since the folder isn't wired into the repo's workspace and must stand alone. Put the run command (install + the single triggering command) in `TRIAGE.md`. Inline only trivial snippets where separate files would not make the repro easier to run. Writing these files is still skim-first — producing them is not running them; whether to actually run follows the opt-in rules below.
-
-## Run a reproduction: opt-in and time-boxed
-
-Actually running a reproduction is deliberately de-emphasized. Edge-case repro tends to get messy — flaky servers, missing tooling, environment drift — and traps the agent in a loop. Skim-first avoids that entirely.
-
-Attempt repro only when one of these holds:
-
-- The user explicitly asks for it.
-- A working repro is already provided and running it is trivial.
-- Skimming genuinely can't resolve the cause and a quick run would decide it.
-
-When you do run something, **time-box it: bail after about two failed attempts** and continue with what you learned. Don't loop on server restarts, port conflicts, or install errors. A diagnosis from reading plus a note that repro wasn't confirmed beats no diagnosis because you fought the tooling.
+When the repro can be made executable, save it as ready-to-run files beside `TRIAGE.md`; inline snippets only when separate files would add nothing. Include only the files needed to trigger the bug, no installed dependencies or lockfiles, and put the install command plus the single triggering command in `TRIAGE.md`. Producing these files is still skim-first; actually running them follows the opt-in rule above.
 
 ## Bug vs. intended behavior
 
@@ -99,9 +85,7 @@ Don't manufacture a confident root cause. Leaving good breadcrumbs is more usefu
 
 ## Output
 
-Unless instructed otherwise, the deliverable is a triage folder following the `ho-dev-notes` skill convention. Always read the `ho-dev-notes` skill first to determine the desired `.dev-notes` base location, such as `.dev-notes/dist` versus `.dev-notes`.
-
-Create `<base>/triage-<slug>/` holding `TRIAGE.md` and any repro artifacts beside it. Then post a short summary in chat.
+Unless instructed otherwise, the deliverable is a triage folder following the `ho-dev-notes` skill convention. Always read the `ho-dev-notes` skill first to determine the desired `.dev-notes` base location. Create `<base>/triage-<slug>/` holding `TRIAGE.md` and any repro artifacts beside it. Then post a short summary in chat.
 
 `TRIAGE.md` shape (omit empty sections):
 
@@ -119,7 +103,7 @@ The specific logic at fault and why it produces the observed behavior.
 Point to the smallest relevant location with a clickable link.
 
 ## Minimal repro
-The smallest case that should trigger the bug — concrete config/code/steps, incidentals stripped. Inline it, or point to repro artifacts saved in this folder. Mark inferred steps.
+The smallest case that should trigger the bug. Include the saved repro artifact paths and the install/run command when executable.
 
 ## Verdict
 bug / intended-behavior / unclear, with the evidence (comment, blame, prior issue).
