@@ -58,9 +58,9 @@ Running a repro is opt-in: do it only when the user asks, an existing repro is t
 
 ## Distill a minimal repro
 
-Reduce the report to the smallest case that should still trigger the bug: the essential config, code, inputs, and steps, with incidental app noise removed. Keep it concrete, and mark any step you're inferring rather than confirming.
+Reduce the report to the smallest case that should still trigger the bug: the essential config, code, inputs, and steps, with incidental noise from the larger app removed.
 
-When the repro can be made executable, save it as ready-to-run files beside `TRIAGE.md`; inline snippets only when separate files would add nothing. Include only the files needed to trigger the bug, no installed dependencies or lockfiles, and put the install command plus the single triggering command in `TRIAGE.md`. Producing these files is still skim-first; actually running them follows the opt-in rule above.
+When the repro can be made executable, create self-contained minimal reproduction project files beside `TRIAGE.md`, then document the commands to run it in `TRIAGE.md`. Producing these files is still skim-first; actually running them follows the opt-in rule above.
 
 ## Bug vs. intended behavior
 
