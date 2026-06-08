@@ -85,7 +85,17 @@ Don't manufacture a confident root cause. Leaving good breadcrumbs is more usefu
 
 ## Output
 
-Unless instructed otherwise, the deliverable is a triage folder following the `ho-dev-notes` skill convention. Always read the `ho-dev-notes` skill first to determine the desired `.dev-notes` base location. Create `<base>/triage-<slug>/` holding `TRIAGE.md` and any repro artifacts beside it. Then post a short summary in chat.
+Unless instructed otherwise, the deliverable is a triage folder following the `ho-dev-notes` skill convention. Always read the `ho-dev-notes` skill first to determine the notes base and project folder. Create `triage-<slug>/` holding `TRIAGE.md` and any repro artifacts beside it. Then post a short summary in chat.
+
+For example, the deliverable folder might look like this:
+
+```
+triage-<slug>/
+  TRIAGE.md
+  package.json
+  repro.js
+  ...
+```
 
 `TRIAGE.md` shape (omit empty sections):
 
