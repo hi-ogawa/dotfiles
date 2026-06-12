@@ -126,12 +126,11 @@ Do not run tests, builds, formatters, package installs, or mutating commands unl
 
 Flag an issue only when all of these are true:
 
-- It meaningfully affects correctness, security, performance, reliability, maintainability, or documented behavior.
-- It is discrete and actionable.
 - It appears introduced by the reviewed change.
-- It does not rely on hidden assumptions about author intent.
-- The affected scenario is concrete enough that the author can reproduce or reason about it.
-- The patch author would likely fix it if told.
+- It affects correctness, security, performance, reliability, maintainability, documented behavior, or clear English errors, such as typos or incorrect grammar.
+- It is discrete and actionable.
+- It is grounded in an observable contract, call site, doc, or changed behavior.
+- The affected scenario is concrete enough to reproduce or reason about.
 
 Do not flag:
 
