@@ -27,24 +27,6 @@ FILES_LINUX=(
   "opencode/notify-icon.png:$HOME/.opencode/plugins/notify-icon.png"
 )
 
-FILES_WINDOWS=(
-  ".gitconfig:$HOME/.gitconfig"
-  ".gitignore.global:$HOME/.gitignore.global"
-  "vscode/settings.json:$APPDATA/Code/User/settings.json"
-  "vscode/keybindings.json:$APPDATA/Code/User/keybindings.json"
-  "claude/settings.json:$HOME/.claude/settings.json"
-  "claude/notify.sh:$HOME/.claude/notify.sh"
-  "claude/claude-icon.png:$HOME/.claude/claude-icon.png"
-  "claude/CLAUDE.md:$HOME/.claude/CLAUDE.md"
-  "codex/AGENTS.md:$HOME/.codex/AGENTS.md"
-  "codex/config.toml:$HOME/.codex/config.toml"
-  "codex/hooks.json:$HOME/.codex/hooks.json"
-  "codex/notify.sh:$HOME/.codex/notify.sh"
-  "opencode/opencode.json:$HOME/.config/opencode/opencode.json"
-  "opencode/notify.js:$HOME/.opencode/plugins/notify.js"
-  "opencode/notify-icon.png:$HOME/.opencode/plugins/notify-icon.png"
-)
-
 # Detect platform
 detect_platform() {
   case "$(uname -s)" in
@@ -62,6 +44,11 @@ detect_platform() {
 
 PLATFORM="$(detect_platform)"
 
+if [[ "$PLATFORM" == "windows" ]]; then
+  echo "Native Windows sync is not supported. Run this script from WSL; VSCode settings will still sync to the Windows host."
+  exit 1
+fi
+
 # WSL: get Windows APPDATA path for host-side apps
 if [[ "$PLATFORM" == "wsl" ]]; then
   WIN_APPDATA=$(wslpath -u "$(cmd.exe /c 'echo %APPDATA%' 2>/dev/null | tr -d '\r')")
@@ -70,7 +57,6 @@ fi
 get_files() {
   case "$PLATFORM" in
     linux) printf '%s\n' "${FILES_LINUX[@]}" ;;
-    windows) printf '%s\n' "${FILES_WINDOWS[@]}" ;;
     wsl)
       # Use Linux paths, but VSCode goes to Windows host
       printf '%s\n' "${FILES_LINUX[@]}" | while IFS= read -r line; do

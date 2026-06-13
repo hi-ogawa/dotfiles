@@ -79,7 +79,7 @@ scoop install anki
   - setup Homebrew https://docs.brew.sh/Homebrew-on-Linux
     - `brew install yazi gh`
 
-- Setup dotfiles (see https://github.com/hi-ogawa/dotfiles):
+- Setup dotfiles from WSL (see https://github.com/hi-ogawa/dotfiles):
   - `git clone https://github.com/hi-ogawa/dotfiles` and `./sync.sh apply`
 
 - Setup SSH and GitHub:
