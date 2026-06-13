@@ -28,8 +28,6 @@ FILES_LINUX=(
 )
 
 FILES_WINDOWS=(
-  "windows/.bash_profile:$HOME/.bash_profile"
-  "windows/.bashrc:$HOME/.bashrc"
   ".gitconfig:$HOME/.gitconfig"
   ".gitignore.global:$HOME/.gitignore.global"
   "vscode/settings.json:$APPDATA/Code/User/settings.json"
