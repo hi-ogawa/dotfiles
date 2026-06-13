@@ -1,13 +1,9 @@
-# Windows Setup Guide
+# Windows Setup
 
-Documentation for bootstraping Windows 11 (coming from Arch Linux).
-
-See also:
-
-- [Arch Linux setup gist](https://gist.github.com/hi-ogawa/a873d9406f580dfdf1e391a427a4dd0b)
-- [dotfiles](https://github.com/hi-ogawa/dotfiles) - Consolidated dotfiles for Linux and Windows
+Documentation for bootstrapping Windows 11 and WSL.
 
 ## Contents
 
-- **[setup.md](setup.md)** - Main reference: installation, configuration, dev tools
-- **[notes/](notes/)** - Additional documentation
+- [Setup](setup.md)
+- [Notes](notes/)
+- [Linux setup](../linux-setup/)
