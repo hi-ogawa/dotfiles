@@ -81,6 +81,10 @@ yay -S google-chrome visual-studio-code-bin ghostty jq htop nnn yazi ttf-roboto-
 
 - install Homebrew https://brew.sh/
 
+```bash
+brew install gh
+```
+
 ### Setup Dotfiles
 
 ```bash
