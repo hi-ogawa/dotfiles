@@ -40,16 +40,6 @@ export PATH="$HOME/.opencode/bin:$PATH"
 # https://docs.brew.sh/Homebrew-on-Linux
 test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 
-# https://yazi-rs.github.io/docs/quick-start#shell-wrapper
-y() {
-  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
-  yazi "$@" --cwd-file="$tmp"
-  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-    cd -- "$cwd"
-  fi
-  rm -f -- "$tmp"
-}
-
 ho_english() {
   if [ "$#" = "0" ]; then
     export LC_ALL=en_US.UTF-8
