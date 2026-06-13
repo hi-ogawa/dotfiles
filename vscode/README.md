@@ -6,6 +6,10 @@ This directory contains unified VS Code settings and keybindings designed to pro
 
 As a long-time Linux user, the goal of this configuration is to **make Windows feel like Linux**, ensuring muscle memory remains consistent regardless of the operating system.
 
+## References
+
+- [VSCode settings](https://code.visualstudio.com/docs/getstarted/settings)
+
 ## Extensions
 
 Known list of extensions often used locally. Can be exported by `code --list-extension` or `code-insiders --list-extension`
