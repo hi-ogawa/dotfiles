@@ -26,7 +26,7 @@ core.fscache = true
 
 ## User configuration
 
-See **[.gitconfig](https://github.com/hi-ogawa/dotfiles/blob/main/.gitconfig)** for the config.
+See **[git/.gitconfig](https://github.com/hi-ogawa/dotfiles/blob/main/git/.gitconfig)** for the config.
 
 Key settings:
 
