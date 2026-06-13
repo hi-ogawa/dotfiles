@@ -1,8 +1,9 @@
 # Windows Setup
 
-Documentation for bootstrapping Windows 11 and WSL.
+Bootstrap notes for Windows 11 with WSL as the development environment.
 
 ## Contents
 
 - [Setup](setup.md)
-- [Notes](notes/)
+- [WSL](wsl.md)
+- [Drivers](drivers.md)
