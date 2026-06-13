@@ -67,7 +67,7 @@ Via **gnome-tweaks**:
 - install Yay
 
 ```bash
-pacman -S git base-devel
+pacman -S git base-devel nano bash-completion man-db man-pages
 git clone https://aur.archlinux.org/yay-bin.git ~/code/installed/yay-bin
 cd ~/code/installed/yay-bin
 makepkg -si
@@ -76,7 +76,7 @@ makepkg -si
 - more packages
 
 ```bash
-yay -S google-chrome visual-studio-code-bin ghostty ttf-roboto-mono noto-fonts-cjk
+yay -S google-chrome visual-studio-code-bin ghostty jq htop nnn yazi ttf-roboto-mono noto-fonts-cjk
 ```
 
 - install Homebrew https://brew.sh/
