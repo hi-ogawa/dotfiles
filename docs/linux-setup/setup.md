@@ -76,7 +76,7 @@ makepkg -si
 - more packages
 
 ```bash
-yay -S google-chrome visual-studio-code-bin wezterm ttf-roboto-mono noto-fonts-cjk
+yay -S google-chrome visual-studio-code-bin ghostty ttf-roboto-mono noto-fonts-cjk
 ```
 
 - install Homebrew https://brew.sh/
