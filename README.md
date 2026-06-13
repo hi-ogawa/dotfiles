@@ -23,16 +23,6 @@ Personal configuration files for Linux (Arch) and Windows.
 - [Codex](codex/)
 - [OpenCode](opencode/)
 
-## Commit Style
-
-Use scope-based commit subjects:
-
-```text
-<scope>: <summary>
-```
-
-Prefer the affected area as the scope, such as `bash`, `codex`, `git`, `skill`, `sync`, or `vscode`.
-
 ## Agent Skills
 
 Personal agent skills live under `skills/`. After editing skills, sync them into the local agent skill directories:
@@ -47,3 +37,15 @@ See [skills/README.md](skills/README.md).
 
 - [Linux](docs/linux-setup/README.md)
 - [Windows](docs/windows-setup/README.md)
+
+## Development
+
+### Commit Style
+
+Use scope-based commit subjects:
+
+```text
+<scope>: <summary>
+```
+
+Prefer the affected area as the scope, such as `bash`, `codex`, `git`, `skill`, `sync`, or `vscode`.
