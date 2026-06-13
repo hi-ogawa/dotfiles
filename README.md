@@ -36,8 +36,8 @@ See [skills/README.md](skills/README.md).
 
 ## Setup Guides
 
-- [Arch Linux](docs/setup-archlinux.md)
-- [Windows](docs/setup-windows.md)
+- [Arch Linux](docs/linux-setup/setup.md)
+- [Windows](docs/windows-setup/setup.md)
 
 ## References
 
