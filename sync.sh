@@ -37,14 +37,14 @@ detect_platform() {
         echo "linux"
       fi
       ;;
-    MINGW*|MSYS*) echo "unsupported-windows" ;;
+    MINGW*|MSYS*) echo "windows" ;;
     *) echo "linux" ;;
   esac
 }
 
 PLATFORM="$(detect_platform)"
 
-if [[ "$PLATFORM" == "unsupported-windows" ]]; then
+if [[ "$PLATFORM" == "windows" ]]; then
   echo "Native Windows sync is not supported. Run this script from WSL; VSCode settings will still sync to the Windows host."
   exit 1
 fi
