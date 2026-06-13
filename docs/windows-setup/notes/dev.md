@@ -46,4 +46,4 @@
 
 ## Git Configuration
 
-See [dev-git.md](dev-git.md) and [.gitconfig](https://github.com/hi-ogawa/dotfiles/blob/main/.gitconfig)
+See [dev-git.md](dev-git.md) and [git/.gitconfig](https://github.com/hi-ogawa/dotfiles/blob/main/git/.gitconfig)

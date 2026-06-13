@@ -14,6 +14,15 @@ Personal configuration files for Linux (Arch) and Windows.
 ./sync.sh save         # save all system configs to repo
 ```
 
+## Configs
+
+- [Bash](bash/)
+- [Git](git/)
+- [VSCode](vscode/)
+- [Claude](claude/)
+- [Codex](codex/)
+- [OpenCode](opencode/)
+
 ## Commit Style
 
 Use scope-based commit subjects:
@@ -38,13 +47,3 @@ See [skills/README.md](skills/README.md).
 
 - [Linux](docs/linux-setup/README.md)
 - [Windows](docs/windows-setup/README.md)
-
-## References
-
-- [Git configuration](https://git-scm.com/docs/git-config)
-- [Global gitignore](https://git-scm.com/docs/gitignore)
-- [VSCode settings](https://code.visualstudio.com/docs/getstarted/settings)
-- [Claude Code settings](https://code.claude.com/docs/en/settings)
-- [Codex configuration](https://developers.openai.com/codex/config-reference)
-- [Codex hooks](https://developers.openai.com/codex/hooks)
-- [OpenCode docs](https://opencode.ai/docs)

@@ -58,4 +58,5 @@ The notification hook receives JSON via stdin:
 
 ## See Also
 
+- [Claude Code settings](https://code.claude.com/docs/en/settings)
 - [Claude Code Hooks Docs](https://code.claude.com/docs/en/hooks)
