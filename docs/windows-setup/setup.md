@@ -1,17 +1,57 @@
 # Windows Setup
 
-## Install Windows
+## Installation
 
-1. Download a Windows 11 ISO from Microsoft.
-2. Create a bootable USB with Ventoy.
-3. Boot from the USB stick and launch the installer in normal mode.
-4. Delete all partitions on the target disk and install into the unallocated space.
-5. At the network screen, press `Shift + F10`, run `OOBE\BYPASSNRO`, then choose offline setup after reboot.
-6. Create a local user and skip optional services and personalization prompts.
+- USB installer
+  - Download Windows 11 ISO from Microsoft
+  - _Download ISO matching your target language (e.g., English US) to avoid slow language pack downloads during install_
+  - Create bootable USB with Ventoy from Linux
+- Boot and install
+  - Boot from USB stick with Ventoy + Windows ISO
+  - Launch installer via Ventoy (Normal mode)
+  - _Pick English (US) for language/keyboard - UK is hard to remove later_
+- Disk setup
+  - Delete all partitions on target disk, leave as unallocated space
+  - Let Windows auto-create partitions
+  - _Note: Laptops shipped with Windows have OEM license that activates automatically_
+- Network setup
+  - At "Connect to network" screen: `Shift + F10`
+  - Run: `OOBE\BYPASSNRO`
+  - System reboots, then select "I don't have internet"
+  - _See [Troubleshooting](#no-wifi-networks-during-installation) if WiFi networks don't appear_
+- Local account creation
+  - _With BYPASSNRO, this goes straight to local user setup (no Microsoft sign-in prompt)_
+  - _Alternative (if you have network): `Shift + F10`, run `start ms-cxh:localonly` to skip Microsoft sign-in_
+  - Create local user in the dialog that appears
+  - _Skip optional services and personalization prompts during setup_
 
-## Post-Install
+## Post-install
 
-Install basic desktop apps:
+- Verify activation
+  - Settings → System → Activation (should show "Activated with a digital license")
+- Desktop settings
+  - Display scaling
+    - Settings → Display → Scale
+    - _Windows defaults to 150% on laptops - consider 100% if you prefer more screen space_
+  - Keyboard repeat
+    - Settings → Accessibility → Keyboard
+    - Adjust key repeat delay and rate
+  - Mouse/Touchpad speed
+    - Settings → Bluetooth & devices → Mouse → Mouse pointer speed
+    - Settings → Bluetooth & devices → Touchpad → Touchpad speed, Taps
+    - Settings → Bluetooth & devices → Touchpad → Three-finger gestures → Taps: Middle mouse button
+  - File Explorer
+    - File Explorer → View → Show → File name extensions
+    - Disable folder tracking: File Explorer → ... (three dots) → Options → Privacy → Uncheck "Show frequently used folders"
+  - Taskbar
+    - Right-click taskbar → Taskbar settings
+    - Hide unnecessary UI through Taskbar behaviors, items, etc
+      - Show taskbar on all displays: OFF
+  - PowerToys
+    - Swap Ctrl/Cap: Keyboard Manager → Remap keys: Caps Lock ↔ Left Ctrl
+    - Disable "find my mouse" (triggered by Ctrl double tap)
+- Install Chrome
+  - Install, sign in, sync bookmarks and extensions
 
 ```powershell
 winget install -e --id Microsoft.PowerToys
@@ -20,59 +60,92 @@ winget install -e --id Git.Git
 winget install -e --id Microsoft.VisualStudioCode
 ```
 
-Install Scoop and native Windows apps:
+- Install scoop (https://scoop.sh) for Windows native apps:
 
 ```powershell
 scoop install anki
 ```
 
-Apply desktop settings:
+## Dev setup (WSL)
 
-- Verify activation: Settings -> System -> Activation.
-- Show file extensions in File Explorer.
-- Hide unneeded taskbar items.
-- Set touchpad three-finger tap to middle mouse button.
-- In PowerToys, remap Caps Lock and Left Ctrl.
-- Disable PowerToys "Find My Mouse" if Ctrl double-tap gets in the way.
+- Install WSL
+  - `wsl --install Ubuntu`
+  - See [wsl.md](wsl.md) for details.
 
-Check OEM drivers after Windows Update. See [drivers.md](drivers.md).
+- Install tools
+  - `sudo apt update`
+  - setup Homebrew https://docs.brew.sh/Homebrew-on-Linux
+    - `brew install yazi gh`
 
-## Development
+- Setup dotfiles from WSL (see https://github.com/hi-ogawa/dotfiles):
+  - `git clone https://github.com/hi-ogawa/dotfiles` and `./sync.sh apply`
 
-Use WSL for development. See [wsl.md](wsl.md).
+- Setup SSH and GitHub:
+  - `ssh-keygen -t ed25519 -C <email>`
+  - https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
-From WSL, clone and apply dotfiles:
+### Dotfiles: WSL vs Windows
 
-```bash
-git clone https://github.com/hi-ogawa/dotfiles ~/code/personal/dotfiles
-cd ~/code/personal/dotfiles
-./sync.sh apply
-```
+The [sync script](https://github.com/hi-ogawa/dotfiles) detects WSL and routes config appropriately:
 
-The sync script applies Linux dotfiles inside WSL and writes VSCode settings to the Windows host.
+- Linux dotfiles → WSL home (`~/.bashrc`, `~/.gitconfig`, etc.)
+- VSCode settings → Windows host (`%APPDATA%/Code/User/...`)
 
-Set up SSH and GitHub from WSL:
+## Desktop tips
 
-```bash
-ssh-keygen -t ed25519 -C <email>
-gh auth login
-```
+- Search and launch apps: Windows key, then type app name
+- Shell
+  - PowerShell (no need for Command Prompt)
+  - Bash (from Git.Git)
+- Window management
+  - Alt + Tab: cycle through all windows
+  - Alt + ` (backtick): cycle through windows of same app
+  - Win + Shift + Left/Right Arrow: move window between monitors
+- File Explorer
+  - Ctrl + Shift + N: create new folder
+
+## Drivers and OEM Software
+
+See [drivers.md](drivers.md) for details on:
+
+- Where drivers come from (Windows Update vs OEM vs vendor)
+- OEM support tools and workflows
+- Background software (what to keep/disable)
+- Troubleshooting audio glitches
+
+**Quick summary:** If you installed from a clean Microsoft ISO (not OEM recovery image), check your laptop manufacturer's support page for driver updates. Windows Update includes drivers but they're often outdated. Prioritize BIOS, chipset, and audio drivers.
 
 ## Troubleshooting
 
-### No WiFi Networks During Installation
+### No WiFi networks during installation
 
-If the network selection screen is empty:
+If the network selection screen is empty and shows "Install driver", the WiFi adapter driver isn't included in the Windows installer.
 
-1. Use `OOBE\BYPASSNRO` to skip network setup.
-2. Use USB tethering from a phone.
-3. Use Ethernet.
-4. Load the WiFi driver manually from a USB stick.
+**Solutions (pick one):**
 
-### Winget `msstore` Error
+1. **Skip network requirement** - Easiest option
+   - Press `Shift + F10` to open command prompt
+   - Run: `OOBE\BYPASSNRO`
+   - System reboots, then select "I don't have internet"
+   - Install WiFi driver after Windows setup completes
 
-If `winget` fails searching `msstore` with `0x8a15005e`, run from an admin terminal:
+2. **USB tethering from phone**
+   - Connect phone via USB cable
+   - Enable USB tethering in phone settings
+   - Usually works without additional drivers
 
-```powershell
+3. **Use Ethernet**
+   - Connect via USB-to-Ethernet adapter or docking station
+
+4. **Load driver manually**
+   - Download WiFi driver from laptop manufacturer's website on another computer
+   - Extract and copy to USB stick
+   - Click "Install driver" and browse to USB
+
+### Winget "Failed when searching source: msstore" (0x8a15005e)
+
+Certificate pinning error. Fix with (requires admin terminal):
+
+```bash
 winget settings --enable BypassCertificatePinningForMicrosoftStore
 ```
