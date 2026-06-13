@@ -1,7 +1,5 @@
 # Windows Setup
 
-The same content is found in https://github.com/hi-ogawa/windows-setup
-
 ## Installation
 
 - USB installer
@@ -72,7 +70,7 @@ scoop install anki
 
 - Install WSL
   - `wsl --install Ubuntu`
-  - See [notes/dev-wsl.md](notes/dev-wsl.md) for details.
+  - See [wsl.md](wsl.md) for details.
 
 - Install tools
   - `sudo apt update`
@@ -108,7 +106,7 @@ The [sync script](https://github.com/hi-ogawa/dotfiles) detects WSL and routes c
 
 ## Drivers and OEM Software
 
-See [notes/drivers.md](notes/drivers.md) for details on:
+See [drivers.md](drivers.md) for details on:
 
 - Where drivers come from (Windows Update vs OEM vs vendor)
 - OEM support tools and workflows
