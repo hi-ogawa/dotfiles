@@ -27,6 +27,10 @@ esac
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
+opencode-yolo() {
+  OPENCODE_PERMISSION='{"*":"allow"}' opencode "$@"
+}
+
 ho_english() {
   if [ "$#" = "0" ]; then
     export LC_ALL=en_US.UTF-8
