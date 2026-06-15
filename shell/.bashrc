@@ -41,6 +41,10 @@ esac
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
+opencode-yolo() {
+  OPENCODE_PERMISSION='{"*":"allow"}' opencode "$@"
+}
+
 # Homebrew
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
