@@ -22,6 +22,7 @@ FILES_LINUX=(
   "codex/config.toml:$HOME/.codex/config.toml"
   "codex/hooks.json:$HOME/.codex/hooks.json"
   "codex/notify.sh:$HOME/.codex/notify.sh"
+  "opencode/AGENTS.md:$HOME/.config/opencode/AGENTS.md"
   "opencode/opencode.json:$HOME/.config/opencode/opencode.json"
   "opencode/opencode.service:$HOME/.config/systemd/user/opencode.service"
   "opencode/notify.js:$HOME/.opencode/plugins/notify.js"
