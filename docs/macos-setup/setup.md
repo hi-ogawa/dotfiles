@@ -53,7 +53,7 @@ Common Rectangle shortcuts:
 
 ## Dotfiles
 
-`sync.sh` detects macOS and rewrites VS Code settings to the macOS user settings path. It also skips the Linux-only systemd service for OpenCode.
+`sync.sh` detects macOS and rewrites VS Code settings to the macOS user settings path.
 
 During early setup, prefer narrow filters until the full macOS list has been used in practice.
 

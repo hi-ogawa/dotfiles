@@ -66,8 +66,6 @@ get_files() {
           vscode/*)
             echo "$repo_file:$HOME/Library/Application Support/Code/User/${repo_file#vscode/}"
             ;;
-          opencode/opencode.service)
-            ;;
           *)
             echo "$line"
             ;;
