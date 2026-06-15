@@ -37,8 +37,12 @@ esac
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
-# https://docs.brew.sh/Homebrew-on-Linux
-test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+# Homebrew
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 ho_english() {
   if [ "$#" = "0" ]; then
