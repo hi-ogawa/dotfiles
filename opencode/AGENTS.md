@@ -6,20 +6,4 @@ For GitHub and git actions, prefer direct `git` and `gh` commands unless explici
 
 # Git commit attribution
 
-When you write or edit a git commit message, ensure the message ends with this trailer exactly once:
-Co-authored-by: OpenCode <noreply@opencode.ai>
-
-Rules:
-- Keep existing trailers and append this trailer at the end if missing.
-- Do not duplicate this trailer if it already exists.
-- Keep one blank line between the commit body and trailer block.
-
-# Interaction protocol
-
-When the user asks to "explain", "discuss", "brainstorm", "review the approach", or "suggest a change", do not edit files or run mutating commands unless explicitly asked to apply the change. In these cases, provide the proposed patch or wording in the response only.
-
-Only make file changes when the user asks to implement, apply, update, fix, or otherwise clearly requests workspace mutation.
-
-# Markdown style
-
-Do not hard-wrap prose paragraphs in Markdown unless explicitly asked.
+When you write or edit a git commit message, ensure the message ends with the `AI-Agent: Opencode` trailer. Keep existing trailers, append this trailer at the end if missing, do not duplicate it if it already exists, and keep one blank line between the commit body and trailer block. If OpenCode later publishes a recommended email-based attribution format, this trailer may be changed to match that recommendation.
