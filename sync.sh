@@ -25,8 +25,8 @@ FILES_LINUX=(
   "opencode/AGENTS.md:$HOME/.config/opencode/AGENTS.md"
   "opencode/opencode.json:$HOME/.config/opencode/opencode.json"
   "opencode/opencode.service:$HOME/.config/systemd/user/opencode.service"
-  "opencode/notify.js:$HOME/.config/opencode/plugins/notify.js"
-  "opencode/notify-icon.png:$HOME/.config/opencode/plugins/notify-icon.png"
+  "opencode/notify.js:$HOME/.opencode/plugins/notify.js"
+  "opencode/notify-icon.png:$HOME/.opencode/plugins/notify-icon.png"
 )
 
 # Detect platform

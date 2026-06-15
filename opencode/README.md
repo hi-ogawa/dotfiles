@@ -1,24 +1,40 @@
-# OpenCode Notification Plugin
+# OpenCode Configuration
 
-Desktop notifications for OpenCode events that need user attention.
+User-level OpenCode config, global instructions, desktop notifications, and optional headless server setup.
+
+## Contents
+
+- `opencode.json` - user-level OpenCode config
+- `AGENTS.md` - global instructions loaded across OpenCode sessions
+- `notify.js` - desktop notification plugin
+- `notify-icon.png` - notification icon
+- `opencode.service` - optional systemd user service for `opencode serve`
 
 ## Setup
 
-Run `./sync.sh apply opencode` to install the global rules to `~/.config/opencode/AGENTS.md` and the notification plugin to `~/.config/opencode/plugins/`.
+Run `./sync.sh apply opencode` to install:
 
-OpenCode automatically discovers and loads plugins from this directory - no additional configuration needed.
+- global rules to `~/.config/opencode/AGENTS.md`
+- config to `~/.config/opencode/opencode.json`
+- notification plugin files to `~/.opencode/plugins/`
 
 ## Global Rules
 
 `AGENTS.md` is installed to `~/.config/opencode/AGENTS.md` and loaded as user-level global instructions across OpenCode sessions.
 
-It includes personal Git policy and commit attribution:
+It includes personal Git policy and agent attribution:
 
 ```text
-Co-authored-by: OpenCode <noreply@opencode.ai>
+AI-Agent: Opencode
 ```
 
-This is instruction-based only, matching the Codex setup in this repo. OpenCode does not currently enforce or deduplicate the trailer outside the model instructions.
+This is instruction-based only. It tags commits with the agent used without using GitHub co-author semantics or a synthetic email identity.
+
+## Notification Plugin
+
+The notification plugin sends desktop notifications for OpenCode events that need user attention.
+
+OpenCode automatically discovers and loads plugins from `~/.opencode/plugins/` in this setup; no additional configuration is needed.
 
 ## Headless Server (systemd user service)
 
