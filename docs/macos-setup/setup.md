@@ -53,7 +53,9 @@ Common Rectangle shortcuts:
 
 ## Dotfiles
 
-`sync.sh` does not have a Darwin/macOS platform branch yet. Until it does, do not run a full apply on macOS. Apply narrow filters only.
+`sync.sh` detects macOS and rewrites VS Code settings to the macOS user settings path. It also skips the Linux-only systemd service for OpenCode.
+
+During early setup, prefer narrow filters until the full macOS list has been used in practice.
 
 ```sh
 ./sync.sh apply .zshrc

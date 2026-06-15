@@ -38,6 +38,7 @@ detect_platform() {
         echo "linux"
       fi
       ;;
+    Darwin*) echo "macos" ;;
     MINGW*|MSYS*) echo "windows" ;;
     *) echo "linux" ;;
   esac
@@ -58,6 +59,21 @@ fi
 get_files() {
   case "$PLATFORM" in
     linux) printf '%s\n' "${FILES_LINUX[@]}" ;;
+    macos)
+      printf '%s\n' "${FILES_LINUX[@]}" | while IFS= read -r line; do
+        repo_file="${line%%:*}"
+        case "$repo_file" in
+          vscode/*)
+            echo "$repo_file:$HOME/Library/Application Support/Code/User/${repo_file#vscode/}"
+            ;;
+          opencode/opencode.service)
+            ;;
+          *)
+            echo "$line"
+            ;;
+        esac
+      done
+      ;;
     wsl)
       # Use Linux paths, but VSCode goes to Windows host
       printf '%s\n' "${FILES_LINUX[@]}" | while IFS= read -r line; do
