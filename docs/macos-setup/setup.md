@@ -72,10 +72,9 @@ Authenticate `gh` and prefer SSH for Git remotes:
 gh auth login --git-protocol ssh --web
 ```
 
-Add the public key to GitHub as both an authentication key and a signing key:
+Add the public key to GitHub:
 
 - https://github.com/settings/keys
-- https://github.com/settings/ssh/new
 
 Verify:
 
