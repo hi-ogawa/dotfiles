@@ -58,6 +58,32 @@ brew install git gh jq htop yazi nnn bash
 
 After installing VS Code, enable the `code` CLI from the Command Palette: `Shell Command: Install 'code' command in PATH`.
 
+## SSH And GitHub
+
+Generate the default SSH key used for GitHub auth and SSH commit signing:
+
+```sh
+ssh-keygen -t ed25519 -C <email>
+```
+
+Authenticate `gh` and prefer SSH for Git remotes:
+
+```sh
+gh auth login --git-protocol ssh --web
+```
+
+Add the public key to GitHub as both an authentication key and a signing key:
+
+- https://github.com/settings/keys
+- https://github.com/settings/ssh/new
+
+Verify:
+
+```sh
+ssh -T git@github.com
+gh auth status
+```
+
 ## Control vs Command
 
 macOS splits what Linux/Windows usually put on Control into two layers:
