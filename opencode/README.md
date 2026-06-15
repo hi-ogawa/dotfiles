@@ -122,4 +122,3 @@ Both use the same plugin API:
 ## References
 
 - [OpenCode docs](https://opencode.ai/docs)
-- `~/code/others/opencode` - OpenCode source
