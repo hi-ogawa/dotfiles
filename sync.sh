@@ -60,16 +60,14 @@ get_files() {
   case "$PLATFORM" in
     linux) printf '%s\n' "${FILES_LINUX[@]}" ;;
     macos)
+      # Use Linux paths, but VSCode goes to macOS user settings
       printf '%s\n' "${FILES_LINUX[@]}" | while IFS= read -r line; do
-        repo_file="${line%%:*}"
-        case "$repo_file" in
-          vscode/*)
-            echo "$repo_file:$HOME/Library/Application Support/Code/User/${repo_file#vscode/}"
-            ;;
-          *)
-            echo "$line"
-            ;;
-        esac
+        if [[ "$line" == vscode/* ]]; then
+          repo_file="${line%%:*}"
+          echo "$repo_file:$HOME/Library/Application Support/Code/User/${repo_file#vscode/}"
+        else
+          echo "$line"
+        fi
       done
       ;;
     wsl)
