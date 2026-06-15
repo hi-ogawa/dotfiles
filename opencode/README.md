@@ -18,7 +18,7 @@ It includes personal Git policy and commit attribution:
 Co-authored-by: OpenCode <noreply@opencode.ai>
 ```
 
-This is instruction-based only. Unlike Codex's built-in `commit_attribution` feature, OpenCode does not currently enforce or deduplicate the trailer outside the model instructions.
+This is instruction-based only, matching the Codex setup in this repo. OpenCode does not currently enforce or deduplicate the trailer outside the model instructions.
 
 ## Headless Server (systemd user service)
 
