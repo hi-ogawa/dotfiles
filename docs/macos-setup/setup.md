@@ -5,21 +5,8 @@
 The goal is not to make macOS behave exactly like GNOME. Carry over the small baseline that removes daily friction.
 
 - Enable tap-to-click: System Settings > Trackpad > Tap to click.
-- Use short key repeat delay and fast repeat.
+- Use short key repeat delay and fast repeat: System Settings > Keyboard > Key repeat rate / Delay until repeat.
 - Swap Caps Lock and Control: System Settings > Keyboard > Keyboard Shortcuts > Modifier Keys.
-- Use a familiar monospace font, such as Roboto Mono, in the terminal and editor.
-
-Useful `defaults` equivalents:
-
-```sh
-# tap to click
-defaults write com.apple.AppleMultitouchTrackpad Clicking -bool true
-defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
-
-# key repeat
-defaults write -g InitialKeyRepeat -int 15
-defaults write -g KeyRepeat -int 2
-```
 
 ## Dotfiles
 
