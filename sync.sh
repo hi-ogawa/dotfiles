@@ -8,7 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Platform file mappings
 FILES_LINUX=(
-  "bash/.bashrc:$HOME/.bashrc"
+  "shell/.bashrc:$HOME/.bashrc"
+  "shell/.zshrc:$HOME/.zshrc"
   "git/.gitconfig:$HOME/.gitconfig"
   "git/.gitignore.global:$HOME/.gitignore.global"
   "vscode/settings.json:$HOME/.config/Code/User/settings.json"
