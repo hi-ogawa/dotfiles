@@ -1,6 +1,6 @@
 # dotfiles
 
-Personal configuration files for Linux (Arch) and Windows.
+Personal configuration files for Linux (Arch), Windows, and macOS.
 
 ## Usage
 
@@ -16,7 +16,7 @@ Personal configuration files for Linux (Arch) and Windows.
 
 ## Configs
 
-- [Bash](bash/)
+- [Shell](shell/)
 - [Git](git/)
 - [VSCode](vscode/)
 - [Claude](claude/)
@@ -36,6 +36,7 @@ See [skills/README.md](skills/README.md).
 ## Setup Guides
 
 - [Linux](docs/linux-setup/README.md)
+- [macOS](docs/macos-setup/README.md)
 - [Windows](docs/windows-setup/README.md)
 
 ## Development
@@ -48,4 +49,4 @@ Use scope-based commit subjects:
 <scope>: <summary>
 ```
 
-Prefer the affected area as the scope, such as `bash`, `codex`, `git`, `skill`, `sync`, or `vscode`.
+Prefer the affected area as the scope, such as `shell`, `codex`, `git`, `skill`, `sync`, or `vscode`.

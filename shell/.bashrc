@@ -27,8 +27,12 @@ export EDITOR="nano"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# pnpm
+# pnpm v11 uses `$PNPM_HOME/bin`; keep `$PNPM_HOME` for older installs during migration.
 export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -37,8 +41,12 @@ esac
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
-# https://docs.brew.sh/Homebrew-on-Linux
-test -d /home/linuxbrew/.linuxbrew && eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
+# Homebrew
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
 
 ho_english() {
   if [ "$#" = "0" ]; then

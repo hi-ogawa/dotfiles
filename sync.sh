@@ -8,7 +8,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Platform file mappings
 FILES_LINUX=(
-  "bash/.bashrc:$HOME/.bashrc"
+  "shell/.bashrc:$HOME/.bashrc"
+  "shell/.zshrc:$HOME/.zshrc"
   "git/.gitconfig:$HOME/.gitconfig"
   "git/.gitignore.global:$HOME/.gitignore.global"
   "vscode/settings.json:$HOME/.config/Code/User/settings.json"
@@ -37,6 +38,7 @@ detect_platform() {
         echo "linux"
       fi
       ;;
+    Darwin*) echo "macos" ;;
     MINGW*|MSYS*) echo "windows" ;;
     *) echo "linux" ;;
   esac
@@ -57,6 +59,17 @@ fi
 get_files() {
   case "$PLATFORM" in
     linux) printf '%s\n' "${FILES_LINUX[@]}" ;;
+    macos)
+      # Use Linux paths, but VSCode goes to macOS user settings
+      printf '%s\n' "${FILES_LINUX[@]}" | while IFS= read -r line; do
+        if [[ "$line" == vscode/* ]]; then
+          repo_file="${line%%:*}"
+          echo "$repo_file:$HOME/Library/Application Support/Code/User/${repo_file#vscode/}"
+        else
+          echo "$line"
+        fi
+      done
+      ;;
     wsl)
       # Use Linux paths, but VSCode goes to Windows host
       printf '%s\n' "${FILES_LINUX[@]}" | while IFS= read -r line; do
