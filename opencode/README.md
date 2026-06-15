@@ -4,9 +4,21 @@ Desktop notifications for OpenCode events that need user attention.
 
 ## Setup
 
-Run `./sync.sh apply opencode` to install the plugin to `~/.opencode/plugins/`.
+Run `./sync.sh apply opencode` to install the global rules to `~/.config/opencode/AGENTS.md` and the notification plugin to `~/.config/opencode/plugins/`.
 
 OpenCode automatically discovers and loads plugins from this directory - no additional configuration needed.
+
+## Global Rules
+
+`AGENTS.md` is installed to `~/.config/opencode/AGENTS.md` and loaded as user-level global instructions across OpenCode sessions.
+
+It includes personal Git policy and commit attribution:
+
+```text
+Co-authored-by: OpenCode <noreply@opencode.ai>
+```
+
+This is instruction-based only. Unlike Codex's built-in `commit_attribution` feature, OpenCode does not currently enforce or deduplicate the trailer outside the model instructions.
 
 ## Headless Server (systemd user service)
 
