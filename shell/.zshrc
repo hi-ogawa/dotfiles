@@ -5,10 +5,11 @@ elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-# prompt
+# zsh equivalent of Bash's `PS1='\w \$ '`, with `~` shortening.
 PROMPT='%~ %# '
 
-# history
+# Keep history persistence explicit instead of relying on system zsh defaults.
+HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
 setopt APPEND_HISTORY
@@ -19,7 +20,7 @@ export EDITOR="nano"
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# pnpm
+# pnpm v11 uses `$PNPM_HOME/bin`; keep `$PNPM_HOME` for older installs during migration.
 export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME/bin:"*) ;;

@@ -21,6 +21,43 @@ defaults write -g InitialKeyRepeat -int 15
 defaults write -g KeyRepeat -int 2
 ```
 
+## Dotfiles
+
+`sync.sh` detects macOS and rewrites VS Code settings to the macOS user settings path.
+
+During early setup, prefer narrow filters until the full macOS list has been used in practice.
+
+```sh
+./sync.sh apply .zshrc
+```
+
+Current macOS shell setup is `shell/.zshrc`.
+
+## Homebrew
+
+Install Homebrew from https://brew.sh/. The managed shell config handles the Homebrew `PATH` setup.
+
+## Apps And Tools
+
+Install GUI apps with [Homebrew Cask](https://docs.brew.sh/Cask-Cookbook) where practical:
+
+```sh
+brew install --cask google-chrome
+brew install --cask visual-studio-code
+brew install --cask ghostty
+brew install --cask rectangle
+```
+
+Install CLI basics:
+
+```sh
+brew install git gh jq htop yazi nnn bash
+```
+
+`git` and `bash` are built into macOS, but Homebrew provides newer, predictable versions for development.
+
+After installing VS Code, enable the `code` CLI from the Command Palette: `Shell Command: Install 'code' command in PATH`.
+
 ## Control vs Command
 
 macOS splits what Linux/Windows usually put on Control into two layers:
@@ -50,46 +87,3 @@ Common Rectangle shortcuts:
 - `Ctrl+Option+Right`: right half.
 - `Ctrl+Option+Cmd+Right`: move to next display.
 - `Ctrl+Option+Cmd+Left`: move to previous display.
-
-## Dotfiles
-
-`sync.sh` detects macOS and rewrites VS Code settings to the macOS user settings path.
-
-During early setup, prefer narrow filters until the full macOS list has been used in practice.
-
-```sh
-./sync.sh apply .zshrc
-```
-
-Current macOS shell setup is `shell/.zshrc`.
-
-## Homebrew
-
-Install Homebrew from https://brew.sh/ and make sure it is on `PATH`.
-
-For Apple Silicon Macs, the usual bootstrap line is:
-
-```sh
-eval "$(/opt/homebrew/bin/brew shellenv)"
-```
-
-The managed `.zshrc` handles both Apple Silicon macOS Homebrew and Linux Homebrew paths.
-
-## Apps And Tools
-
-Install GUI apps with Homebrew Cask where practical:
-
-```sh
-brew install --cask google-chrome
-brew install --cask visual-studio-code
-brew install --cask ghostty
-brew install --cask rectangle
-```
-
-Install CLI basics:
-
-```sh
-brew install git gh jq htop yazi nnn bash
-```
-
-After installing VS Code, enable the `code` CLI from the Command Palette: `Shell Command: Install 'code' command in PATH`.
