@@ -5,15 +5,8 @@ elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
 
-# zsh equivalent of Bash's `PS1='\w \$ '`, with `~` shortening.
-PROMPT='%~ %# '
-
-# Keep history persistence explicit instead of relying on system zsh defaults.
-HISTFILE="$HOME/.zsh_history"
-HISTSIZE=10000
-SAVEHIST=10000
-setopt APPEND_HISTORY
-setopt SHARE_HISTORY
+# prompt
+PROMPT='%~ $ '
 
 # exports
 export EDITOR="nano"
