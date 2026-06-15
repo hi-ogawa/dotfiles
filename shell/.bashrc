@@ -128,11 +128,4 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # https://viteplus.dev
 if [ -d "$HOME/.vite-plus" ]; then
   . "$HOME/.vite-plus/env"
-else
-  # fnm
-  FNM_PATH="$HOME/.local/share/fnm"
-  if [ -d "$FNM_PATH" ]; then
-    export PATH="$FNM_PATH:$PATH"
-    eval "`fnm env`"
-  fi
 fi
