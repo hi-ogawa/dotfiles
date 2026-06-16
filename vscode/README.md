@@ -12,10 +12,10 @@ As a long-time Linux user, the goal of this configuration is to **make Windows f
 
 ## Extensions
 
-Known list of extensions often used locally. Can be exported by `code --list-extension` or `code-insiders --list-extension`
+Known list of extensions often used locally. Can be exported by `code --list-extensions` or `code-insiders --list-extensions`
 
 ```js
-$ code-insiders --list-extension
+$ code-insiders --list-extensions
 // anthropic.claude-code
 // arcanis.vscode-zipfs
 // astro-build.astro-vscode
@@ -51,5 +51,18 @@ tamasfe.even-better-toml
 // vadimcn.vscode-lldb
 // vitest.explorer
 // vue.volar
-``
+```
+
+Install extensions:
+
+```sh
+# install one
+code --install-extension github.vscode-pull-request-github
+
+# install multiple
+xargs -n 1 code --install-extension <<EOF
+github.vscode-pull-request-github
+tamasfe.even-better-toml
+...
+EOF
 ```
