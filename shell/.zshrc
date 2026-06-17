@@ -39,11 +39,13 @@ ho_english() {
   fi
 }
 
+# completion
+autoload -Uz compinit
+compinit -C
+
 # pnpm completion for package.json scripts
 # - completes `pnpm <script>` and `pnpm -C <dir> <script>`
 # - uses jq to parse package.json (faster than official pnpm completion)
-autoload -Uz compinit
-compinit
 
 _ho_pnpm_scripts() {
   local package_json="$1"
