@@ -54,44 +54,46 @@ compinit -C
 # pnpm completion for package.json scripts
 # - completes `pnpm <script>` and `pnpm -C <dir> <script>`
 # - uses jq to parse package.json (faster than official pnpm completion)
+ho_setup_pnpm_completion() {
+  # skip if jq is not installed
+  command -v jq >/dev/null 2>&1 || return
 
-_ho_pnpm_scripts() {
-  local package_json="$1"
-  local -a scripts
+  _ho_pnpm_scripts() {
+    local package_json="$1"
+    local -a scripts
 
-  [[ -f "$package_json" ]] || return 1
-  scripts=("${(@f)$(jq -r '.scripts | keys[]?' "$package_json" 2>/dev/null)}")
-  (( ${#scripts[@]} )) || return 1
+    [[ -f "$package_json" ]] || return 1
+    scripts=("${(@f)$(jq -r '.scripts | keys[]?' "$package_json" 2>/dev/null)}")
+    (( ${#scripts[@]} )) || return 1
 
-  compadd -Q -- "${scripts[@]}"
-}
+    compadd -Q -- "${scripts[@]}"
+  }
 
-_ho_pnpm_completion() {
-  if ! command -v jq >/dev/null 2>&1; then
+  _ho_pnpm_completion() {
+    if [[ "${words[2]}" == "-C" ]]; then
+      if (( CURRENT == 3 )); then
+        _files -/
+        return
+      fi
+
+      if (( CURRENT == 4 )); then
+        _ho_pnpm_scripts "${words[3]}/package.json"
+        return
+      fi
+    else
+      if (( CURRENT == 2 )); then
+        _ho_pnpm_scripts "package.json"
+        return
+      fi
+    fi
+
     return 1
-  fi
+  }
 
-  if [[ "${words[2]}" == "-C" ]]; then
-    if (( CURRENT == 3 )); then
-      _files -/
-      return
-    fi
-
-    if (( CURRENT == 4 )); then
-      _ho_pnpm_scripts "${words[3]}/package.json"
-      return
-    fi
-  else
-    if (( CURRENT == 2 )); then
-      _ho_pnpm_scripts "package.json"
-      return
-    fi
-  fi
-
-  return 1
+  compdef _ho_pnpm_completion pnpm
 }
 
-compdef _ho_pnpm_completion pnpm
+ho_setup_pnpm_completion
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
