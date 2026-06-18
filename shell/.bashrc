@@ -21,6 +21,7 @@ PS1='\w \$ '
 #   https://www.gnu.org/software/bash/manual/bash.html#Bash-History-Builtins
 shopt -s histappend
 HISTSIZE=10000
+HISTFILESIZE=10000
 
 # exports
 export EDITOR="nano"

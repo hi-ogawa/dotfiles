@@ -8,6 +8,12 @@ fi
 # prompt
 PROMPT='%~ $ '
 
+# history (append across sessions; don't rely on /etc/zshrc defaults)
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+setopt APPEND_HISTORY
+
 # exports
 export EDITOR="nano"
 export PATH="$HOME/.local/bin:$PATH"
