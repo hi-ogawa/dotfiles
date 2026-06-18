@@ -11,8 +11,8 @@ if ! type _init_completion &>/dev/null; then
 fi
 
 # Homebrew
-# Load first so later PATH entries (cargo, pnpm, opencode, bun) prepend after
-# brew and take precedence over brew-installed tools on name collisions.
+# Load first so later PATH entries prepend after brew and take precedence
+# over brew-installed tools on name collisions.
 if [ -x /opt/homebrew/bin/brew ]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
