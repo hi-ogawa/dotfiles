@@ -10,6 +10,15 @@ if ! type _init_completion &>/dev/null; then
   fi
 fi
 
+# Homebrew
+# Load first so later PATH entries (cargo, pnpm, opencode, bun) prepend after
+# brew and take precedence over brew-installed tools on name collisions.
+if [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
 # prompt
 PS1='\w \$ '
 
@@ -45,13 +54,6 @@ export PATH="$HOME/.opencode/bin:$PATH"
 opencode-yolo() {
   OPENCODE_PERMISSION='{"*":"allow"}' opencode "$@"
 }
-
-# Homebrew
-if [ -x /opt/homebrew/bin/brew ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-elif [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-fi
 
 ho_english() {
   if [ "$#" = "0" ]; then
