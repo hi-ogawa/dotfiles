@@ -102,5 +102,5 @@ Common Rectangle shortcuts:
 
 As a personal ergonomic choice, the shortcuts can be customized and distilled down to:
 
-- `Ctrl+Option+Enter`: maximize/fill screen.
+- `Ctrl+Option+Up`: maximize/fill screen.
 - `Ctrl+Option+Right`: move to next display.
