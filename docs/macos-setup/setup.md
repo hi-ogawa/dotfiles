@@ -99,3 +99,8 @@ Common Rectangle shortcuts:
 - `Ctrl+Option+Right`: right half.
 - `Ctrl+Option+Cmd+Right`: move to next display.
 - `Ctrl+Option+Cmd+Left`: move to previous display.
+
+As a personal ergonomic choice, the shortcuts can be customized and distilled down to:
+
+- `Ctrl+Option+Enter`: maximize/fill screen.
+- `Ctrl+Option+Right`: move to next display.
