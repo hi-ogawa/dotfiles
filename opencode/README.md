@@ -16,7 +16,7 @@ Run `./sync.sh apply opencode` to install:
 
 - global rules to `~/.config/opencode/AGENTS.md`
 - config to `~/.config/opencode/opencode.json`
-- notification plugin files to `~/.opencode/plugins/`
+- notification plugin files to `~/.config/opencode/plugins/`
 
 ## Global Rules
 
@@ -34,7 +34,7 @@ This is instruction-based only. It uses GitHub co-author semantics with the curr
 
 The notification plugin sends desktop notifications for OpenCode events that need user attention.
 
-OpenCode automatically discovers and loads plugins from `~/.opencode/plugins/` in this setup; no additional configuration is needed.
+OpenCode automatically discovers and loads global plugins from `~/.config/opencode/plugins/`; no additional configuration is needed.
 
 ## Headless Server (systemd user service)
 
