@@ -6,7 +6,7 @@ For GitHub and git actions, prefer direct `git` and `gh` commands unless explici
 
 # Git commit attribution
 
-When you write or edit a git commit message, ensure the message ends with the `AI-Agent: Opencode` trailer. Keep existing trailers, append this trailer at the end if missing, do not duplicate it if it already exists, and keep one blank line between the commit body and trailer block. If OpenCode later publishes a recommended email-based attribution format, this trailer may be changed to match that recommendation.
+When you write or edit a git commit message, ensure the message ends with a `Co-authored-by: OpenCode (<model>) <noreply@opencode.ai>` trailer, where `<model>` is the current model name without the provider prefix. For example, `openai/gpt-5.5` becomes `Co-authored-by: OpenCode (gpt-5.5) <noreply@opencode.ai>`. Keep existing trailers, append this trailer at the end if missing, do not duplicate it if it already exists, and keep one blank line between the commit body and trailer block.
 
 # AGENTS.md file references
 

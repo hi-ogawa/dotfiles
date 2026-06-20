@@ -25,10 +25,10 @@ Run `./sync.sh apply opencode` to install:
 It includes personal Git policy and agent attribution:
 
 ```text
-AI-Agent: Opencode
+Co-authored-by: OpenCode (gpt-5.5) <noreply@opencode.ai>
 ```
 
-This is instruction-based only. It tags commits with the agent used without using GitHub co-author semantics or a synthetic email identity.
+This is instruction-based only. It uses GitHub co-author semantics with the current OpenCode model name in parentheses.
 
 ## Notification Plugin
 
