@@ -61,35 +61,3 @@ Because notes live outside the repo, use `file://` links plus a repo-relative fa
 ```markdown
 The issue starts in [packages/runner/src/suite.ts:918](file:///home/hiroshi/code/repo/packages/runner/src/suite.ts#L918).
 ```
-
-## Sharing via Gist
-
-<!-- TODO: move or remove gist gotchas -->
-
-Use `gh gist create` to share notes for PR reviews. Always use `-d` to set a description; without it, the gist title defaults to the filename. `-p` makes the gist public.
-
-```bash
-# Single file
-gh gist create -p -d "pretty-format OOM when printing large objects (#9329)" ~/.local/share/ho-dev-notes/project-name/pretty-format-oom-9329/NOTE.md
-
-# Multiple files in one gist
-gh gist create -p -d "snapshot serializer investigation" ~/.local/share/ho-dev-notes/project-name/snapshot-serializer/*
-```
-
-Then link the gist URL in the PR description. The link persists even if the local file is deleted.
-
-### Updating a Gist
-
-`gh gist edit <id> -f <filename>` with stdin redirect does **not** pipe content — it opens an interactive editor, which silently does nothing in non-interactive environments. To replace a file's content, remove and re-add:
-
-```bash
-# Remove old file, then add the new version
-gh gist edit <id> -r old-filename.md
-gh gist edit <id> -a /path/to/new-file.md
-```
-
-To add a new file to an existing gist:
-
-```bash
-gh gist edit <id> -a /path/to/file.md
-```
