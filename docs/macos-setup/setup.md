@@ -7,6 +7,7 @@ The goal is not to make macOS behave exactly like GNOME. Carry over the small ba
 - Enable tap-to-click: System Settings > Trackpad > Tap to click.
 - Use short key repeat delay and fast repeat: System Settings > Keyboard > Key repeat rate / Delay until repeat.
 - Swap Caps Lock and Control: System Settings > Keyboard > Keyboard Shortcuts > Modifier Keys.
+- Disable the `Ctrl+Space` / `Ctrl+Option+Space` input-source combos under System Settings > Keyboard > Keyboard Shortcuts > Input Sources, freeing those Control combinations for app shortcuts (e.g. editor autocomplete). The Globe (🌐) key still switches input sources.
 
 ## Dotfiles
 
