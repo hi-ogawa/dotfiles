@@ -17,10 +17,10 @@ for skill in "$SCRIPT_DIR"/skills/*; do
   [[ -f "$skill/SKILL.md" ]] || continue
 
   name="$(basename "$skill")"
-  echo "Installing skill: $name"
+  echo "Linking skill: $name"
 
   for target_dir in "${TARGET_DIRS[@]}"; do
     rm -rf "$target_dir/$name"
-    cp -R "$skill" "$target_dir/"
+    ln -s "$skill" "$target_dir/$name"
   done
 done
