@@ -14,6 +14,8 @@ For inspiration sources and bits worth stealing later, read `references/inspired
 
 Turn a thin starting point into a root-cause diagnosis. This consolidates a manual step: given an issue, a repro, or a vague description, figure out *what is actually wrong and where*, and point at how to fix it — without going further.
 
+The deliverable is a `triage-<slug>/` folder — a `TRIAGE.md` holding the diagnosis (root cause, verdict, fix direction) plus any minimal repro files beside it. Details in Output below.
+
 The agent is usually already inside the relevant repo. Lean on that: the answer is almost always reachable by reading the codebase, not by running it.
 
 This is the inverse of a diff review. A review starts from a change and looks for bugs it introduced; triage starts from a symptom and works backward to the cause in existing code.
@@ -52,15 +54,17 @@ Diagnose by reading. In most cases, reading the context plus the relevant code i
 
 - Follow the evidence: error messages and stack traces point at files; from there read call sites, data flow, and the surrounding logic.
 - Use cheap read-only tools, file read, file search, `git` and `gh` for change history. Check comments and recent changes near the suspect code.
-- Do **not** run code, start servers, install packages, build, or edit files by default.
+- Do **not** run code, start servers, install packages, build, or edit files by default — and never create repro scaffolding inside the inspected repo (it goes in the triage dir).
 
-Running a repro is opt-in: do it only when the user asks, an existing repro is trivial to run, or one quick run would settle what reading cannot. If it gets messy, bail after about two failed attempts and continue with the diagnosis from reading.
+Default to *not* running. Constructing the educated-guess repro is the deliverable; verifying it by running is opt-in — only when the user asks, an existing repro is trivial to run, or one quick run would settle what reading cannot. If it gets messy, bail after about two failed attempts and continue with the diagnosis from reading.
 
 ## Distill a minimal repro
 
-Reduce the report to the smallest case that should still trigger the bug: the essential config, code, inputs, and steps, with incidental noise from the larger app removed.
+The first move is an *educated-guess* repro built from the report plus the code you've read — **not** a verified one. Reduce the report to the smallest case that should still trigger the bug: the essential config, code, inputs, and steps, with incidental noise from the larger app removed. Reason about which ingredients are load-bearing. Do not run anything to confirm at this stage.
 
-When the repro can be made executable, create self-contained minimal reproduction project files beside `TRIAGE.md`, then document the commands to run it in `TRIAGE.md`. Producing these files is still skim-first; actually running them follows the opt-in rule above.
+Place these files **directly in `triage-<slug>/` as siblings of `TRIAGE.md`** — the triage dir itself *is* the reproduction (e.g. `triage-<slug>/package.json`, **never** `triage-<slug>/repro/package.json` for js projects). Do **not** create a dedicated repro subdirectory such as `triage-<slug>/repro/`, and never scaffold inside the repo being inspected. Document the install/run commands in `TRIAGE.md`. For JavaScript/TypeScript projects, prefer `pnpm` over `npm`, `yarn`, etc., unless the report hinges on a specific package manager.
+
+Producing these files is still skim-first. Actually running them to verify is a separate, opt-in step (see default mode).
 
 ## Bug vs. intended behavior
 
@@ -85,7 +89,7 @@ Don't manufacture a confident root cause. Leaving good breadcrumbs is more usefu
 
 ## Output
 
-Unless instructed otherwise, the deliverable is a triage folder following the `ho-dev-notes` skill convention. Always read the `ho-dev-notes` skill first to determine the notes base and project folder. Create `triage-<slug>/` holding `TRIAGE.md` and any repro artifacts beside it.
+Unless instructed otherwise, the deliverable is a triage folder following the `ho-dev-notes` skill convention. Always read the `ho-dev-notes` skill first to determine the notes base and project folder. Create `triage-<slug>/` holding `TRIAGE.md` and any repro artifacts directly beside it (flat, not in a subfolder).
 
 Then post a short summary in chat, starting with both paths on separate lines:
 
@@ -94,17 +98,7 @@ Triage folder: /path/to/triage-<slug>
 Triage note: /path/to/triage-<slug>/TRIAGE.md
 ```
 
-Keep the rest brief: root cause and fix direction.
-
-For example, the deliverable folder might look like this:
-
-```
-triage-<slug>/
-  TRIAGE.md
-  package.json
-  repro.js
-  ...
-```
+Keep the rest brief: root cause, fix direction, and the likely follow-up directions for review to pursue.
 
 `TRIAGE.md` shape (omit empty sections):
 
@@ -130,6 +124,6 @@ bug / intended-behavior / unclear, with the evidence (comment, blame, prior issu
 ## Fix direction
 Where and roughly how to fix. Not a patch.
 
-## Open questions
-Anything unconfirmed, and what would confirm it (note if repro wasn't run).
+## Follow-up directions
+The concrete next probes for review to pursue — typically: confirm the repro actually triggers the bug, confirm it's minimal (which ingredients are load-bearing), and probe upstream dependencies when the cause may originate there. Add any genuinely open, case-specific uncertainty and what would settle it. Don't restate that the repro is unrun/unconfirmed — an unverified educated-guess repro is the expected state of a first pass.
 ```
