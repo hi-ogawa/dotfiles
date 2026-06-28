@@ -42,7 +42,7 @@ Only cross these lines if the user explicitly asks.
 
 Accept any one of:
 
-- **Issue link or number** — fetch with `gh issue view <n> --comments` for the description, expected vs actual, and clarifying comments.
+- **Issue link or number** — fetch with `gh issue view <n> --json number,url,title,body,comments,state,labels,author`.
 - **Local repro** — a pointer to a failing case already set up (a directory, a test, a command). Read it; don't assume it must be run.
 - **A sentence of context** — an informal description or stack trace in the conversation.
 

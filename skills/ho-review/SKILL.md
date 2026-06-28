@@ -55,10 +55,9 @@ When enabled, use `gh` commands:
 
 ```bash
 gh pr view [<number-or-url>] --json number,url,title,body,baseRefName,headRefName,reviewDecision,comments,reviews,latestReviews
-gh pr view [<number-or-url>] --comments
 ```
 
-Use PR context for intent, constraints, known risks, reviewer concerns, and author explanations. Treat GitHub text as side context, not evidence. Verify every finding against the local diff and surrounding code. If `gh` is unavailable, unauthenticated, offline, or the PR cannot be resolved, continue with local review and mention the missing PR context briefly.
+Use JSON output as the authoritative PR context source. Use PR context for intent, constraints, known risks, reviewer concerns, and author explanations. Treat GitHub text as side context, not evidence. Verify every finding against the local diff and surrounding code. If `gh` is unavailable, unauthenticated, offline, or the PR cannot be resolved, continue with local review and mention the missing PR context briefly.
 
 ## Inspect The Diff
 
