@@ -54,10 +54,24 @@ Start each note with enough source context to reconnect it to the exact checkout
 
 Use `git rev-parse --show-toplevel`, `git remote get-url origin`, `git rev-parse HEAD`, and `git branch --show-current` when the note is tied to a git repo.
 
-## Clickable Source Links
+## Source Links
 
-Because notes live outside the repo, use `file://` links plus a repo-relative fallback:
+Because notes live outside the repo, link to source with a path **relative to the note file**, and use the repo-relative `path:line` as the link text so the reference stays readable even if the path later breaks:
 
 ```markdown
-The issue starts in [packages/runner/src/suite.ts:918](file:///home/hiroshi/code/repo/packages/runner/src/suite.ts#L918).
+The issue starts in [src/foo/bar.ts:42](../../../../../code/myrepo/src/foo/bar.ts#L42).
+```
+
+- Use `#Lnnn` for the line anchor. VS Code Markdown preview opens the file and jumps to the line.
+- The relative path is from the note's directory to the file under the `Worktree:` path in the header. Compute it rather than hand-counting `../`:
+
+```sh
+node -e "console.log(require('path').relative(process.argv[1], process.argv[2]))" \
+  "$note_dir" "$worktree/src/foo/bar.ts"
+```
+
+When a note is meant to be shared (for example published as a gist), use a public GitHub permalink instead, built from the `Repo`, `Commit`, and path in the header so it stays pinned to the exact checkout:
+
+```markdown
+[src/foo/bar.ts:42](https://github.com/<owner>/<repo>/blob/<commit-sha>/src/foo/bar.ts#L42)
 ```
