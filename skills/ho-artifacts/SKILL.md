@@ -1,14 +1,28 @@
 ---
 name: ho-artifacts
 description: >-
-  Author self-contained HTML visualization artifacts with a consistent visual style, iterate on them locally (alongside ho-dev-notes), and optionally publish them to the public artifacts host. Use only when the user explicitly invokes "ho-artifacts".
+  Author self-contained HTML visualization artifacts, iterate on them locally (alongside ho-dev-notes), and optionally publish them to the public artifacts host. Use only when the user explicitly invokes "ho-artifacts".
 ---
 
 # Artifacts
 
+## Reference Note
+
+`references/patterns.md` is an optional meta reference — a catalog of known artifact structures (phased plan, code understanding, feature explainer, option comparison) with reusable section pipelines and example anchors. Consult it for inspiration when picking a layout, and mine it when iterating on this skill. Not a required authoring step.
+
 ## Purpose
 
-Turn a dev process (PR review, architecture exploration, bug triage) into a single self-contained HTML page that communicates the finding with high visual impact, then optionally share it via a public URL.
+Turn a dev process (PR review, architecture exploration, bug triage) into a single self-contained HTML page when visual encoding, rendered diagrams, or nonlinear layout makes the finding easier to inspect than Markdown — then optionally share it via a public URL.
+
+## Why HTML
+
+HTML is worth the effort when it materially improves inspection over plain prose. Build the artifact around at least one of these advantages — and let that advantage drive the layout:
+
+- **Visual encoding:** color/shape/size correlates or contrasts concepts.
+- **Embedded visual components:** rendered flows, connections, diagrams, callouts.
+- **Nonlinear reading:** columns, boxes, sidebars, anchors, or progressive disclosure reduce cognitive load.
+
+Aim for inspection value, not decoration: the page should change how the finding is read, not just style the prose.
 
 ## Location
 
@@ -18,20 +32,16 @@ Author the `.html` inside the relevant `ho-dev-notes` topic dir (per that skill'
 
 A page that reads at a glance and stays accurate to the code:
 
-- **Self-contained.** One `.html` file. All CSS inline in `<style>`; inline any SVG. No external fonts, CDNs, or network/runtime JS dependencies — it must render offline and as a static asset.
-- **Lead with the narrative.** Open with the core story (often a before/after or comparison), not raw detail. Detail tables and code refs come after.
-- **Legend first.** Define the meaning of every color and token up front so the reader decodes the rest quickly.
-- **One token per recurring concept.** When an entity appears more than once (e.g. "a Vite server instance"), define a single reusable visual token — an icon + chip via an SVG `<symbol>` + `<use>` sprite — and use the *same* token everywhere it occurs. This makes instances recognizable and countable at a glance (e.g. "2 servers before → 1 after"). Never restyle the same concept differently in different places.
-- **Separate entities from labels.** Keep the color/shape language for *entities* (servers, configs) distinct from phase/status *badges*, so a color never means two things.
-- **Summarize.** Include an at-a-glance differences table for before/after work.
-- **Anchor to code.** Put `file.ts:line` references on nodes. Verify every architectural claim against the actual diff/code before drawing it — do not invent structure. If a claim is corrected later, fix the visualization, don't paper over it.
-- **House style.** Dark GitHub-ish palette, rounded panels, vertical flow with arrows, two-column before/after grid. Reuse it across artifacts unless the user wants otherwise.
+- **Self-contained.** One `.html` file, all CSS and SVG inline. No external fonts, CDNs, or runtime JS — it must render offline as a static asset.
+- **Consistent visual language.** Define what each color/shape/token means up front (a legend), reuse the same token for the same concept everywhere so instances stay recognizable and countable, and never let one color mean two things.
+- **Anchor to code.** Reference the relevant `file.ts:line` (clickable GitHub permalinks for published artifacts), and verify every claim against the actual code before drawing it — don't invent structure.
+- **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace — so the content stays the focus. Pick the rest per artifact; don't decorate.
 
 ## Publishing
 
 Optional, only when the user wants it public. Target repo `~/code/personal/artifacts`, where `src/` is served at the site root via a Cloudflare worker at `https://artifacts.hiro18181.workers.dev`.
 
-1. Copy to `src/<slug>.html` (slug usually `<project>-<topic>`, e.g. `vitest-pr-10554`).
+1. Copy to `src/<slug>.html` (slug usually `<project>-<topic>`).
 2. Link it from `src/index.html`.
 3. Commit and push `main` — Cloudflare deploys on push.
 
