@@ -35,7 +35,7 @@ The `<repo>` prefix is the main worktree's directory name. Avoid opaque names li
 
 Determine the type from context:
 
-- **PR**: `git worktree add ../<repo>-pr-<N>`, then `gh pr checkout <N>` inside it.
+- **PR**: `git worktree add --detach ../<repo>-pr-<N>`, then `gh pr checkout <N>` inside it. The `--detach` avoids git auto-creating a leftover branch named after the directory.
 - **Issue fix**: `git worktree add ../<repo>-issue-<N> -b fix/issue-<N>`.
 - **Experiment**: `git worktree add ../<repo>-<slug> -b <slug>`.
 
