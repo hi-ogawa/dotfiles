@@ -1,6 +1,6 @@
 [
   // Tab navigation (override default Ctrl+Tab quick switcher popup)
-  // This aligns with common browser tabs behaivor.
+  // This aligns with common browser tabs behavior.
   {
     "key": "ctrl+tab",
     "command": "workbench.action.nextEditor"
@@ -48,7 +48,7 @@
     "key": "shift+enter",
     "command": "workbench.action.terminal.sendSequence",
     "args": { "text": "\\\n" },
-    "when": "terminalFocus && isLinux"
+    "when": "terminalFocus && !isWindows"
   },
   {
     "key": "shift+enter",
