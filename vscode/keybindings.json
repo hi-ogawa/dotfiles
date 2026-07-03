@@ -28,19 +28,21 @@
     "when": "isLinux"
   },
   // macOS: align with Chrome's Cmd+Left/Right (back/forward).
-  // Bound globally on purpose: back/forward is most useful inside the editor
-  // (e.g. after Go to Definition), so guarding it out of the editor would
-  // defeat the point. This overrides the editor's default Cmd+Left/Right
-  // (line start/end); use Ctrl+A / Ctrl+E for line start/end instead.
+  // Scoped to editorTextFocus so the override applies only where we want it:
+  // the code editor (e.g. after Go to Definition). This overrides the editor's
+  // default Cmd+Left/Right (line start/end); use Ctrl+A / Ctrl+E instead.
+  // Everything else keeps Cmd+Left/Right for its native meaning: the terminal
+  // for shell line editing, and input widgets (find, quick-open, rename) for
+  // start/end of the input text.
   {
     "key": "cmd+left",
     "command": "workbench.action.navigateBack",
-    "when": "isMac"
+    "when": "isMac && editorTextFocus"
   },
   {
     "key": "cmd+right",
     "command": "workbench.action.navigateForward",
-    "when": "isMac"
+    "when": "isMac && editorTextFocus"
   },
 
   // Claude Code terminal newline (shift+enter)
