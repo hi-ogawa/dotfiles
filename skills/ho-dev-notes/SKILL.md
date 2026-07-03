@@ -75,3 +75,7 @@ When a note is meant to be shared (for example published as a gist), use a publi
 ```markdown
 [src/foo/bar.ts:42](https://github.com/<owner>/<repo>/blob/<commit-sha>/src/foo/bar.ts#L42)
 ```
+
+## Markdown Style
+
+Do not hard-wrap prose paragraphs in Markdown unless explicitly asked.
