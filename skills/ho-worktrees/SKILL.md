@@ -54,17 +54,18 @@ Gather what's needed to classify each non-main worktree:
 
 Classification:
 
-- **stale** — clean, zero ahead, no open PR.
-- **local work** — dirty or commits ahead, no PR yet.
 - **pr open** — PR exists and is open.
-- **pr merged/closed** — PR is done; worktree can likely be removed.
+- **pr merged/closed** — PR exists and is merged or closed; if clean, worktree can likely be removed even when commits are ahead of `main` because squash/rebase merges often leave branch commits not reachable from `main`.
+- **stale** — clean, zero ahead, and no PR or no open PR.
+- **local work** — dirty, or commits ahead with no PR explaining them.
 
 ## Cleanup
 
 When the user asks to clean up or remove worktrees:
 
-1. Run a survey first (which prunes stale entries), collect stale candidates (clean, zero ahead, no open PR).
-2. List the candidates and confirm with the user before removing.
+1. Run a survey first (which prunes stale entries).
+2. Collect cleanup candidates: clean `stale` worktrees and clean `pr merged/closed` worktrees.
+3. List candidates and confirm with the user before removing. Include ahead counts for `pr merged/closed` candidates as context, but do not exclude them solely because they are ahead of `main`.
 
 ## Output
 
@@ -79,6 +80,6 @@ Match the output to the intent:
   vitest-wt4         stale        vitest-wt4                  same as main
   ```
 
-  Flag stale worktrees. After the table, list any worktrees whose names don't follow the convention as **unnamed**.
+  Flag stale and clean merged/closed PR worktrees as cleanup candidates. After the table, list any worktrees whose names don't follow the convention as **unnamed**.
 
 - **Create / Clean** — confirm the action taken or the proposed commands.
