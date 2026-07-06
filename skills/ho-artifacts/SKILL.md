@@ -34,7 +34,8 @@ A page that reads at a glance and stays accurate to the code:
 
 - **Self-contained.** One `.html` file, all CSS and SVG inline. No external fonts, CDNs, or runtime JS — it must render offline as a static asset.
 - **Consistent visual language.** Define what each color/shape/token means up front (a legend), reuse the same token for the same concept everywhere so instances stay recognizable and countable, and never let one color mean two things.
-- **Anchor to code.** Reference the relevant `file.ts:line` (clickable GitHub permalinks for published artifacts), and verify every claim against the actual code before drawing it — don't invent structure.
+- **Provenance from the first draft.** Include high-level pointers — repo, PR, issue — as clickable links from the initial draft, not just at publish time. They are stable, never rot, and cost nothing (you already cite the numbers in prose). A self-contained artifact travels without its surrounding context, so it needs provenance even more than the note beside it.
+- **Anchor to code.** Reference the relevant `file.ts:line`, and verify every claim against the actual code before drawing it — don't invent structure. Prefer pinned GitHub permalinks (tied to a commit SHA so they don't rot); this is the more expensive tier, so it's fine to add or upgrade these at publish time or whenever cheap.
 - **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace — so the content stays the focus. Pick the rest per artifact; don't decorate.
 
 ## Publishing
