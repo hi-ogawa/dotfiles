@@ -35,7 +35,7 @@ The `<repo>` prefix is the main worktree's directory name. Avoid opaque names li
 
 Determine the type from context:
 
-- **PR**: `git worktree add --detach ../<repo>-pr-<N>`, then `gh pr checkout <N>` inside it. The `--detach` avoids git auto-creating a leftover branch named after the directory.
+- **PR**: `git worktree add --detach ../<repo>-pr-<N> && cd ../<repo>-pr-<N> && gh pr checkout <N>`. Keep this chained so `gh` cannot accidentally check out the PR in the main worktree.
 - **Issue fix**: `git worktree add ../<repo>-issue-<N> -b fix/issue-<N>`.
 - **Experiment**: `git worktree add ../<repo>-<slug> -b <slug>`.
 
@@ -54,18 +54,18 @@ Gather what's needed to classify each non-main worktree:
 
 Classification:
 
-- **pr open** — PR exists and is open.
-- **pr merged/closed** — PR exists and is merged or closed; if clean, worktree can likely be removed even when commits are ahead of `main` because squash/rebase merges often leave branch commits not reachable from `main`.
-- **stale** — clean, zero ahead, and no PR or no open PR.
-- **local work** — dirty, or commits ahead with no PR explaining them.
+- **active** — dirty, has unexplained local commits, or belongs to an open PR.
+- **stale** — clean and either has no commits ahead of `main`, or belongs to a merged or closed PR. Ahead commits do not prevent a merged or closed PR worktree from being stale because squash and rebase merges commonly leave commits unreachable from `main`.
+
+Do not distinguish **stale** from **cleanup candidate** in user-facing output. A stale worktree is one that is safe to propose for cleanup.
 
 ## Cleanup
 
 When the user asks to clean up or remove worktrees:
 
 1. Run a survey first (which prunes stale entries).
-2. Collect cleanup candidates: clean `stale` worktrees and clean `pr merged/closed` worktrees.
-3. List candidates and confirm with the user before removing. Include ahead counts for `pr merged/closed` candidates as context, but do not exclude them solely because they are ahead of `main`.
+2. Collect stale worktrees.
+3. List them and confirm with the user before removing. Include ahead counts for merged or closed PR worktrees as context, but do not exclude them solely because they are ahead of `main`.
 
 ## Output
 
@@ -75,11 +75,11 @@ Match the output to the intent:
 - **Survey** — terse table, one row per non-main worktree:
 
   ```
-  vitest-pr-10466    pr open      "Fix snapshot serializer"   clean, 2 ahead
-  vitest-issue-9812  local work   fix/issue-9812              3 files dirty
+  vitest-pr-10466    active       "Fix snapshot serializer"   clean, 2 ahead
+  vitest-issue-9812  active       fix/issue-9812              3 files dirty
   vitest-wt4         stale        vitest-wt4                  same as main
   ```
 
-  Flag stale and clean merged/closed PR worktrees as cleanup candidates. After the table, list any worktrees whose names don't follow the convention as **unnamed**.
+  After the table, list any worktrees whose names don't follow the convention as **unnamed**.
 
 - **Create / Clean** — confirm the action taken or the proposed commands.
