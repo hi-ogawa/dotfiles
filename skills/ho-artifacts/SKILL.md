@@ -48,6 +48,8 @@ Optional, only when the user wants it public. Target repo `~/code/personal/artif
 
 The page then lives at `https://artifacts.hiro18181.workers.dev/<slug>`.
 
+After a successful push, return the expected URL. Do not poll deployment availability unless the user explicitly requests verification.
+
 ## Guardrails
 
 - **Public repo.** Anyone with the URL can read it. No secrets, tokens, absolute home paths, private hostnames, or unreleased details. If the content might be sensitive, confirm before publishing.
