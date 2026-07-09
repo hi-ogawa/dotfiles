@@ -55,4 +55,5 @@ After a successful push, return the expected URL. Do not poll deployment availab
 
 ## Guardrails
 
+- Artifacts support lightweight review, so rendered-content verification is not required unless explicitly requested.
 - **Public repo.** Anyone with the URL can read it. No secrets, tokens, absolute home paths, private hostnames, or unreleased details. If the content might be sensitive, confirm before publishing.
