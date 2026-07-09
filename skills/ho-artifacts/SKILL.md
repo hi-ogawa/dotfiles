@@ -37,6 +37,9 @@ A page that reads at a glance and stays accurate to the code:
 - **Provenance from the first draft.** Include high-level pointers — repo, PR, issue — as clickable links from the initial draft, not just at publish time. They are stable, never rot, and cost nothing (you already cite the numbers in prose). A self-contained artifact travels without its surrounding context, so it needs provenance even more than the note beside it.
 - **Anchor to code.** Reference the relevant `file.ts:line`, and verify every claim against the actual code before drawing it — don't invent structure. Prefer pinned GitHub permalinks (tied to a commit SHA so they don't rot); this is the more expensive tier, so it's fine to add or upgrade these at publish time or whenever cheap.
 - **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace — so the content stays the focus. Pick the rest per artifact; don't decorate.
+- **Progressive disclosure.** Lead with the idea and observable behavior; move implementation detail later. Keep the artifact focused on its stated purpose.
+- **Semantic fidelity.** Visual simplification must preserve the causal units and boundaries that matter. Keep examples internally consistent and distinguish illustrative values from measurements.
+- **Navigability.** Give longer pages clear section structure and direct anchors without turning navigation into decoration. For vertically stacked multi-section pages, consider a sticky sidebar that collapses to compact mobile navigation.
 
 ## Publishing
 
