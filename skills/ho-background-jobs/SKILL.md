@@ -36,9 +36,16 @@ The purpose lets one worktree own multiple independent jobs. If unrelated
 working directories have the same basename, list the existing session and
 verify its `pane_current_path` before reusing or modifying it.
 
-Use exact tmux targets by prefixing the session name with `=` when a tmux
-command accepts a target. This avoids tmux's prefix matching selecting another
-job.
+Use exact tmux targets by prefixing the session name with `=` only for commands
+whose target argument supports exact matching in the installed tmux version.
+This avoids tmux's prefix matching selecting another job. Commands such as
+`set-option` may require the plain quoted session name; do not assume that
+`=$job` is accepted by every `-t` option.
+
+When asked to inspect, reuse, restart, or stop an existing job, probe the exact
+session first. Verify its working directory, pane command, running or exited
+state, exit status, and recent output before acting. Do not adopt, restart, or
+remove an existing session unless the requested operation requires it.
 
 ## Lifecycle
 
@@ -48,10 +55,12 @@ job.
 2. Check it with `tmux has-session -t "=$job"`.
 3. If it exists, inspect its command and recent output. Reuse it only when it
    is the intended healthy job.
-4. Otherwise, create a detached session in the canonical working directory
-   with `tmux new-session -d -s "$job" -c "$root" <command>`.
-5. Set `remain-on-exit` for the session so startup failures and exit status
-   remain inspectable.
+4. Otherwise, create a detached session running its default shell in the
+   canonical working directory.
+5. Set `remain-on-exit` while that shell is stable, then start the workload
+   with `send-keys` and an `exec` prefix. Do not launch the workload in
+   `new-session` and configure retention afterward: a fast startup failure can
+   race with `set-option` and destroy the evidence.
 6. Apply a finite maximum runtime with `timeout` unless the user explicitly
    requests an unbounded job. Default to four hours for interactive
    development servers.
@@ -60,6 +69,18 @@ job.
 
 Pass the long-running command as the tmux pane's foreground command. Do not
 start another background process inside tmux.
+
+Use this race-free startup pattern:
+
+```bash
+tmux new-session -d -s "$job" -c "$root"
+tmux set-option -t "$job" remain-on-exit on
+tmux send-keys -t "$job" "exec timeout 4h <command>" Enter
+```
+
+If any setup command fails, inspect whether the session was partially created
+before retrying. Never infer from a failed compound command that no session
+exists.
 
 ### Status
 
@@ -81,24 +102,6 @@ Use `tmux list-panes -t "=$job" -F` with fields including
 and `#{pane_current_path}`. This distinguishes a running pane from an exited
 pane retained by `remain-on-exit` and verifies that a same-named session
 belongs to the expected worktree.
-
-### Recover
-
-Before starting or reusing a job, probe an existing session:
-
-- If its pane is dead, capture its output and exit status, then kill the stale
-  tmux session before starting a replacement.
-- If its pane is running but the command or working directory is unexpected,
-  do not adopt or kill it. Report the collision to the user.
-- If its pane is running with the expected command but its service readiness
-  check fails, inspect recent output. Restart it only when the output confirms
-  that it is failed or irrecoverably stuck; otherwise report the ambiguity.
-- If no session exists but the expected endpoint responds, do not kill the
-  unknown owner. Choose another dynamically allocated port or ask the user.
-
-This recovery handles stale tmux sessions and dead retained panes. It does not
-claim ownership of unrelated orphan processes that are no longer represented
-by the named tmux session.
 
 ### Logs
 
@@ -129,13 +132,3 @@ or worktrees may own matching processes.
   inspected.
 - Before cleaning unfamiliar `ho-bg-*` sessions, list them and confirm with
   the user. Another active agent or worktree may own them.
-
-## Interactive Servers
-
-For servers that can select an available port, request dynamic allocation
-rather than assuming a conventional port. Capture the actual URL from startup
-output, verify that exact endpoint, and keep reporting the same URL throughout
-the feedback loop.
-
-The caller remains responsible for application-specific details such as the
-start command, readiness endpoint, expected startup text, and final checks.
