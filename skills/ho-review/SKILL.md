@@ -1,14 +1,14 @@
 ---
 name: ho-review
 description: >-
-  Review code changes by inspecting a selected diff scope, identifying discrete actionable bugs, prioritizing findings, and avoiding broad commentary. Use only when the user explicitly invokes "ho-review".
+  Review code changes by inspecting a selected diff scope, identifying discrete, actionable bugs, prioritizing findings, and avoiding broad commentary. Use only when the user explicitly invokes "ho-review".
 ---
 
 # Review Diff
 
 ## Purpose
 
-Review code changes as an explicitly invoked skill. Support both quick context-building skims and full review-finding passes.
+Review code changes using either a quick context-building skim or a full findings-oriented review.
 
 ## Maintenance Note
 
@@ -16,7 +16,7 @@ For source mapping and porting notes, read `references/ported-from.md` only when
 
 ## Mode Selection
 
-Select two modes: depth and execution.
+Choose one option for each of two dimensions: review depth and execution method.
 
 Depth:
 
@@ -26,17 +26,17 @@ Depth:
 Execution:
 
 - Use `inline` by default.
-- Use `subagent` only when the user explicitly asks for it, or when the diff is large enough that an independent pass is useful and subagents are available.
+- Use `subagent` only when the user explicitly requests it or when the diff is large enough to benefit from an independent pass and subagents are available.
 
 Default to `skim + inline` for plain `ho-review`. Use `full + inline` only when the user asks for full review behavior.
 
 ## Subagent Execution
 
-When using `subagent`, delegate the selected depth and target to a fresh agent with minimal context. Ask it to inspect the diff and return the appropriate skim or full output. Then read its result, verify any important claim against local context when cheap, and present the final answer yourself.
+When using `subagent`, delegate a review of the selected target at the selected depth to a fresh agent with minimal context. Ask it to inspect the diff and return the appropriate skim or full output. Then read its result, verify any important claim against local context when cheap, and present the final answer yourself.
 
-Do not use subagents for small skims unless the user asks. Do not let subagent use turn into full verification when the selected depth is `skim`.
+Do not use subagents for small skims unless the user asks. When the selected depth is `skim`, do not let the subagent review expand into full verification.
 
-## Choose The Review Target
+## Choose the Review Target
 
 Infer the target from the user request:
 
@@ -57,9 +57,9 @@ When enabled, use `gh` commands:
 gh pr view [<number-or-url>] --json number,url,title,body,baseRefName,headRefName,reviewDecision,comments,reviews,latestReviews
 ```
 
-Use JSON output as the authoritative PR context source. Use PR context for intent, constraints, known risks, reviewer concerns, and author explanations. Treat GitHub text as side context, not evidence. Verify every finding against the local diff and surrounding code. If `gh` is unavailable, unauthenticated, offline, or the PR cannot be resolved, continue with local review and mention the missing PR context briefly.
+Use JSON output as the authoritative PR context source. Use PR context for intent, constraints, known risks, reviewer concerns, and author explanations. Treat GitHub text as supporting context, not evidence. Verify every finding against the local diff and surrounding code. If `gh` is unavailable, unauthenticated, offline, or the PR cannot be resolved, continue with local review and mention the missing PR context briefly.
 
-## Inspect The Diff
+## Inspect the Diff
 
 Use cheap, targeted repository commands to understand the change before judging it. Prefer `rg` for code search and `git` for diff inspection.
 
@@ -82,7 +82,7 @@ git merge-base HEAD <base>
 git diff <merge-base>
 ```
 
-If the base has an upstream and resolving it is useful, prefer the upstream comparison when it is ahead of the local branch:
+If the base branch has an upstream branch, prefer comparing against it when it is ahead of the local branch:
 
 ```bash
 git rev-parse --abbrev-ref "<base>@{upstream}"
@@ -100,22 +100,15 @@ Do not run formatters, package installs, or mutating commands unless the user ex
 
 ## Skim Mode
 
-In skim mode, stop after enough read-only inspection to explain the shape of the change. Prefer useful orientation over full verification to build initial context to continue with interactive follow-up discussions.
+In skim mode, stop after enough read-only inspection to explain the shape of the change. Prioritize useful orientation over full verification so the user has enough context for follow-up discussion.
 
-Use only cheap read-only commands. Do not run tests, builds, or broad verification commands. If something looks suspicious, do at most one or two targeted read-only follow-ups; otherwise list it as a follow-up rather than proving it.
+Use only cheap read-only commands. Do not run tests, builds, or broad verification commands. If something looks suspicious, do at most one or two targeted read-only follow-ups. Do not report it as a finding unless that inspection makes it concrete.
 
-Do not force issues into formal findings. Promote something to a finding only when it is already concrete from the skim.
-
-Return:
-
-- What changed.
-- Inferred intent and current status.
-- Obvious issues to call out, only if high-confidence from the skim.
-- Suggestions and directions to continue reviews and discussions.
+Use the common response shape below. Keep the change overview brief and include only findings that are already high-confidence from the skim.
 
 ## Full Mode
 
-In full mode, inspect the selected diff scope thoroughly enough to identify all qualifying actionable findings, not just obvious issues from a skim.
+In full mode, inspect the selected diff scope thoroughly enough to identify actionable findings that meet the rubric, not just obvious issues from a skim.
 
 Follow evidence where the diff points to affected call sites, invariants, data flow, or tests. Use targeted read-only commands to verify whether a suspected issue is real. Do not stop at orientation; continue until the reviewed scope has been checked for concrete regressions that the author would likely fix.
 
@@ -126,7 +119,7 @@ Do not run tests, builds, formatters, package installs, or mutating commands unl
 Flag an issue only when all of these are true:
 
 - It appears introduced by the reviewed change.
-- It affects correctness, security, performance, reliability, maintainability, documented behavior, or clear English errors, such as typos or incorrect grammar.
+- It affects correctness, security, performance, reliability, maintainability, documented behavior, or clear English-language errors, such as typos or grammatical mistakes.
 - It is discrete and actionable.
 - It is grounded in an observable contract, call site, doc, or changed behavior.
 - The affected scenario is concrete enough to reproduce or reason about.
@@ -145,7 +138,7 @@ For each finding:
 
 - Use a short title prefixed with priority, e.g. `[P1] Reject invalid cache entries`.
 - Keep the body to one concise paragraph.
-- Explain the exact scenario where the bug appears and why it matters.
+- Explain how the new implementation conflicts with an existing assumption, invariant, caller, or concrete scenario, and why it matters.
 - Point to the smallest relevant file/line range that overlaps the diff when possible.
 - Avoid large code snippets. Use suggestion blocks only for minimal concrete replacements.
 
@@ -158,63 +151,18 @@ Priority guide:
 
 ## Response Shape
 
-In skim mode, use this shape by default:
+Use the same response shape in both skim and full modes. Depth controls how thoroughly the change is investigated, not how the result is presented.
 
 ```markdown
-What changed
-- Brief bullets describing the shape of the diff.
+## Change overview
 
-Inferred intent
-- Why the change appears to exist, if reasonably inferable.
+Summarize what the change does and why, then outline the main implementation flow with relevant code references.
 
-Risk areas
-- Concrete areas worth attention.
+## Findings
 
-Obvious issues
-- Only high-confidence issues visible from the skim.
+### [P2] Title - path/to/file:line
 
-Suggested next checks
-- Checks not run.
+Explain the concrete issue and how the change conflicts with existing behavior.
 ```
 
-Omit empty sections. Keep skim output concise and context-oriented.
-
-In full mode, lead with findings, ordered by severity. If there are no qualifying findings, say that clearly.
-
-Use this shape by default:
-
-```markdown
-Findings
-- [P2] Title - path/to/file:line
-  One-paragraph explanation of the concrete issue.
-
-Open questions or assumptions
-- ...
-
-Summary
-- Brief note on what was reviewed and any meaningful test gap.
-```
-
-Omit empty sections. Keep the final answer concise and review-focused.
-
-If the user explicitly asks for machine-readable output, return this JSON shape with no markdown fence:
-
-```json
-{
-  "findings": [
-    {
-      "title": "[P2] <short title>",
-      "body": "<one paragraph>",
-      "confidence_score": 0.0,
-      "priority": 2,
-      "code_location": {
-        "absolute_file_path": "/abs/path",
-        "line_range": {"start": 1, "end": 1}
-      }
-    }
-  ],
-  "overall_correctness": "patch is correct",
-  "overall_explanation": "<1-3 sentences>",
-  "overall_confidence_score": 0.0
-}
-```
+Order findings by severity. If there are no qualifying findings, say so after the change overview.
