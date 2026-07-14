@@ -1,7 +1,7 @@
 ---
 name: ho-worktrees
 description: >-
-  Answer worktree-related questions and take worktree-related actions. Use only when the user explicitly invokes "ho-worktrees".
+  Answer worktree-related questions and take worktree-related actions. Use only when the user explicitly invokes "ho-wt" or "ho-worktrees".
 ---
 
 # Worktrees
