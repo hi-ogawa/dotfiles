@@ -33,7 +33,6 @@ Install GUI apps with [Homebrew Cask](https://docs.brew.sh/Cask-Cookbook) where 
 brew install --cask google-chrome
 brew install --cask visual-studio-code
 brew install --cask ghostty
-brew install --cask rectangle
 ```
 
 Install CLI basics:
@@ -91,17 +90,32 @@ Common shortcuts:
 
 ## Window Management
 
-macOS fullscreen is not the same as GNOME/Windows maximize. For fill-screen and move-to-display shortcuts, use Rectangle.
-
-Common Rectangle shortcuts:
-
-- `Ctrl+Option+Enter`: maximize/fill screen.
-- `Ctrl+Option+Left`: left half.
-- `Ctrl+Option+Right`: right half.
-- `Ctrl+Option+Cmd+Right`: move to next display.
-- `Ctrl+Option+Cmd+Left`: move to previous display.
-
-As a personal ergonomic choice, the shortcuts can be customized and distilled down to:
+macOS fullscreen is not the same as GNOME/Windows maximize. `macos/ho-desktop` provides the two window operations used by this setup:
 
 - `Ctrl+Option+Up`: maximize/fill screen.
 - `Ctrl+Option+Right`: move to next display.
+
+Install the executable and per-user LaunchAgent:
+
+```sh
+./macos/ho-desktop/install.sh
+```
+
+To compile and sign the executable without installing it:
+
+```sh
+./macos/ho-desktop/build.sh
+```
+
+The first run installs the executable and opens Accessibility settings. Grant access to `~/.local/bin/ho-desktop`, then run the installer again to start it. Check its state and diagnostics with:
+
+```sh
+~/.local/bin/ho-desktop --check
+launchctl print gui/$UID/io.github.hi-ogawa.ho-desktop
+```
+
+Logs are written under `~/Library/Logs/ho-desktop`. To uninstall:
+
+```sh
+./macos/ho-desktop/install.sh uninstall
+```
