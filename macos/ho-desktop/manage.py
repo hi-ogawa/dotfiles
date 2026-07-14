@@ -4,7 +4,6 @@ from pathlib import Path
 import plistlib
 import shutil
 import subprocess
-import tempfile
 
 
 ROOT = Path(__file__).resolve().parent
@@ -47,18 +46,6 @@ def build() -> None:
     print(f"Built {BUILD_PATH}")
 
 
-def atomic_copy(source: Path, destination: Path) -> None:
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(dir=destination.parent, delete=False) as temporary:
-        temporary_path = Path(temporary.name)
-    try:
-        shutil.copy2(source, temporary_path)
-        temporary_path.chmod(0o755)
-        temporary_path.replace(destination)
-    finally:
-        temporary_path.unlink(missing_ok=True)
-
-
 def write_launch_agent() -> None:
     PLIST_PATH.parent.mkdir(parents=True, exist_ok=True)
     LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -82,13 +69,15 @@ def write_launch_agent() -> None:
 def install() -> None:
     if not BUILD_PATH.is_file():
         raise SystemExit(f"Build artifact not found: run '{Path(__file__).name} build' first")
-    atomic_copy(BUILD_PATH, BIN_PATH)
+    BIN_PATH.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(BUILD_PATH, BIN_PATH)
+    BIN_PATH.chmod(0o755)
     write_launch_agent()
 
     if run([BIN_PATH, "--check"], check=False).returncode != 0:
         run([BIN_PATH, "--request-permission"], check=False)
-        # Deep-link to Privacy & Security > Accessibility, where the user grants access.
-        # https://support.apple.com/guide/mac-help/mh43185/mac
+        # Accessibility-pane deep link follows GitHub Copilot for Xcode (MIT):
+        # https://github.com/github/CopilotForXcode/blob/2ba57a272719ad72f2bb44667133d759812949c1/Tool/Sources/Status/Status.swift#L186-L204
         run(["open", "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"])
         print(f"\nGrant Accessibility access to {BIN_PATH}, then run install again.")
         raise SystemExit(1)
