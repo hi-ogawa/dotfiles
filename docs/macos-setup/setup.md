@@ -95,16 +95,11 @@ macOS fullscreen is not the same as GNOME/Windows maximize. `macos/ho-desktop` p
 - `Ctrl+Option+Up`: maximize/fill screen.
 - `Ctrl+Option+Right`: move to next display.
 
-Install the executable and per-user LaunchAgent:
+Build and sign the executable, then install it with a per-user LaunchAgent:
 
 ```sh
-./macos/ho-desktop/install.sh
-```
-
-To compile and sign the executable without installing it:
-
-```sh
-./macos/ho-desktop/build.sh
+python3 macos/ho-desktop/manage.py build
+python3 macos/ho-desktop/manage.py install
 ```
 
 The first run installs the executable and opens Accessibility settings. Grant access to `~/.local/bin/ho-desktop`, then run the installer again to start it. Check its state and diagnostics with:
@@ -117,5 +112,5 @@ launchctl print gui/$UID/io.github.hi-ogawa.ho-desktop
 Logs are written under `~/Library/Logs/ho-desktop`. To uninstall:
 
 ```sh
-./macos/ho-desktop/install.sh uninstall
+python3 macos/ho-desktop/manage.py uninstall
 ```
