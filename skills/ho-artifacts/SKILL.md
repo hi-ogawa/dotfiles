@@ -8,7 +8,7 @@ description: >-
 
 ## Reference Note
 
-`references/patterns.md` is an optional meta reference — a catalog of known artifact structures (phased plan, code understanding, feature explainer, option comparison) with reusable section pipelines and example anchors. Consult it for inspiration when picking a layout, and mine it when iterating on this skill. Not a required authoring step.
+`references/patterns.md` is an optional catalog of established local patterns and external structural anchors. Consult it for inspiration when picking a layout, and mine it when iterating on this skill.
 
 ## Purpose
 
@@ -20,7 +20,7 @@ HTML is worth the effort when it materially improves inspection over plain prose
 
 - **Visual encoding:** color/shape/size correlates or contrasts concepts.
 - **Embedded visual components:** rendered flows, connections, diagrams, callouts.
-- **Nonlinear reading:** columns, boxes, sidebars, anchors, or progressive disclosure reduce cognitive load.
+- **Nonlinear reading:** columns, boxes, anchors, or progressive disclosure reduce cognitive load.
 
 Aim for inspection value, not decoration: the page should change how the finding is read, not just style the prose.
 
@@ -33,17 +33,19 @@ Author the `.html` inside the relevant `ho-dev-notes` topic dir (per that skill'
 A page that reads at a glance and stays accurate to the code:
 
 - **Self-contained.** One `.html` file, all CSS and SVG inline. No external fonts, CDNs, or runtime JS — it must render offline as a static asset.
-- **Consistent visual language.** Define what each color/shape/token means up front (a legend), reuse the same token for the same concept everywhere so instances stay recognizable and countable, and never let one color mean two things.
-- **Provenance from the first draft.** Include high-level pointers — repo, PR, issue — as clickable links from the initial draft, not just at publish time. They are stable, never rot, and cost nothing (you already cite the numbers in prose). A self-contained artifact travels without its surrounding context, so it needs provenance even more than the note beside it.
-- **Anchor to code.** Reference the relevant `file.ts:line`, and verify every claim against the actual code before drawing it — don't invent structure. Prefer pinned GitHub permalinks (tied to a commit SHA so they don't rot); this is the more expensive tier, so it's fine to add or upgrade these at publish time or whenever cheap.
+- **Consistent visual language.** Reuse the same color, shape, or token for the same concept everywhere. When those encodings carry meaning that is not obvious, define them in a legend up front.
+- **Provenance from the first draft.** Include high-level pointers — repo, PR, issue — as clickable links from the initial draft, not just at publish time. They are durable and inexpensive because the prose usually cites them already. A self-contained artifact travels without its surrounding context, so it needs provenance even more than the note beside it.
+- **Anchor to code.** Reference the relevant `file.ts:line`, and verify every claim against the actual code before drawing it — don't invent structure. Prefer pinned GitHub permalinks tied to a commit SHA. Add or upgrade these at publish time.
 - **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace — so the content stays the focus. Pick the rest per artifact; don't decorate.
 - **Progressive disclosure.** Lead with the idea and observable behavior; move implementation detail later. Keep the artifact focused on its stated purpose.
 - **Semantic fidelity.** Visual simplification must preserve the causal units and boundaries that matter. Keep examples internally consistent and distinguish illustrative values from measurements.
-- **Navigability.** Give longer pages clear section structure and direct anchors without turning navigation into decoration. For vertically stacked multi-section pages, consider a sticky sidebar that collapses to compact mobile navigation.
+- **Navigation.** For vertically stacked artifacts with roughly four or more major sections, use a compact sticky dropdown table of contents that overlays the page without reducing the main content width. Link it to stable section IDs, make section headings self-linking so their URLs can be opened or shared directly, and keep fragment targets clear of the sticky control.
 
 ## Publishing
 
-Optional, only when the user wants it public. Target repo `~/code/personal/artifacts`, where `src/` is served at the site root via a Cloudflare worker at `https://artifacts.hiro18181.workers.dev`.
+Publish only when the user wants it public. Target repo `~/code/personal/artifacts`, where `src/` is served at the site root via a Cloudflare worker at `https://artifacts.hiro18181.workers.dev`.
+
+**Public repo.** Anyone with the URL can read it. Before copying, committing, or pushing, check for secrets, tokens, absolute home paths, private hostnames, and unreleased details. If the content might be sensitive, confirm before publishing.
 
 1. Copy to `src/<slug>.html` (slug usually `<project>-<topic>`).
 2. Link it from `src/index.html`.
@@ -51,9 +53,8 @@ Optional, only when the user wants it public. Target repo `~/code/personal/artif
 
 The page then lives at `https://artifacts.hiro18181.workers.dev/<slug>`.
 
-After a successful push, return the expected URL. Do not poll deployment availability unless the user explicitly requests verification.
+After a successful push, return the expected URL without polling deployment availability.
 
 ## Guardrails
 
-- Artifacts support lightweight review, so rendered-content verification is not required unless explicitly requested.
-- **Public repo.** Anyone with the URL can read it. No secrets, tokens, absolute home paths, private hostnames, or unreleased details. If the content might be sensitive, confirm before publishing.
+- Artifacts support lightweight review, so rendered-content verification is not required.
