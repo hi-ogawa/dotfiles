@@ -1,0 +1,19 @@
+skills/ho-artifacts/SKILL.md
+  s_df9d5ed03a7bf4::t_3e86969e569e97 11,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "cbf5ccc6e7903e55a471f8c6e9869e44231208b6",
+  "prompts": {},
+  "sessions": {
+    "s_df9d5ed03a7bf4": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_09658b8ddffeL2SWmx3Qt23ED5",
+        "model": "gpt-5.6"
+      },
+      "human_author": "Hiroshi Ogawa <4232207+hi-ogawa@users.noreply.github.com>"
+    }
+  }
+}
