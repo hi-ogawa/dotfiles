@@ -1,6 +1,6 @@
 # Pattern Anchors
 
-Optional meta reference for established local patterns and external structural inspiration. These are anchors rather than templates, so borrow the useful behavior or structure while allowing natural visual and implementation variation.
+Optional meta reference for established local patterns and external structural inspiration. These are anchors rather than templates: borrow their information architecture and interaction patterns, not their typography, palette, spacing, or decorative treatment.
 
 ## Established patterns
 
