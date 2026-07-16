@@ -10,13 +10,60 @@ These patterns come from our own artifact iterations.
 
 For vertically stacked artifacts with roughly four or more major sections. Short artifacts do not need navigation merely to satisfy a template.
 
-- Use a sticky `<details>` dropdown aligned above the content.
-- Let it overlay the page rather than occupy a layout column, preserving the full content width.
+- Use one self-contained, zero-height sticky `<details>` element before the main content so it overlays the page and sticks immediately without reducing content width.
+- Render the collapsed trigger with `<summary>` and position the expanded `<nav>` absolutely below it. Give both elements their own opaque background, border, and shadow.
 - Give every major section a stable, descriptive `id` and link every table-of-contents entry to it.
 - Make each section heading a link to its own fragment so the URL can be opened or shared directly.
 - Use an anchor offset such as `scroll-margin-top` so fragment targets remain clear of the sticky control.
 - Keep the implementation static and usable without JavaScript.
 - Pattern anchor: [adaptive browser sessions](https://artifacts.hiro18181.workers.dev/vitest-pr-10726-adaptive-sessions).
+
+Canonical structure:
+
+```html
+<main class="wrap">
+  <details class="toc">
+    <summary>Contents</summary>
+    <nav aria-label="Page sections">
+      <a href="#overview">Overview</a>
+      <a href="#details">Details</a>
+    </nav>
+  </details>
+  <!-- Main content follows. -->
+</main>
+```
+
+```css
+.toc {
+  position: sticky;
+  top: var(--toc-sticky-offset);
+  z-index: var(--toc-layer);
+  width: var(--toc-width);
+  height: 0;
+  margin-left: auto;
+}
+.toc summary {
+  padding: var(--toc-trigger-padding);
+  border: 1px solid var(--line);
+  border-radius: var(--toc-radius);
+  background: var(--toc-surface);
+  box-shadow: var(--toc-trigger-shadow);
+  cursor: pointer;
+  list-style: none;
+}
+.toc nav {
+  position: absolute;
+  top: calc(100% + var(--toc-menu-gap));
+  right: 0;
+  width: 100%;
+  padding: var(--toc-menu-padding);
+  border: 1px solid var(--line);
+  border-radius: var(--toc-radius);
+  background: var(--toc-surface);
+  box-shadow: var(--toc-menu-shadow);
+}
+section[id] { scroll-margin-top: var(--toc-anchor-offset); }
+```
 
 ## External structural anchors
 

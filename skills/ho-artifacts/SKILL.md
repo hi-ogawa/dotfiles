@@ -8,7 +8,7 @@ description: >-
 
 ## Reference Note
 
-`references/patterns.md` is an optional catalog of established local patterns and external structural anchors. Consult it for inspiration when picking a layout, and mine it when iterating on this skill.
+`references/patterns.md` catalogs established local patterns and external structural anchors. When an artifact needs navigation, read and follow its canonical navigation shell. Consult the other patterns for inspiration when picking a layout, and mine them when iterating on this skill.
 
 ## Purpose
 
@@ -39,7 +39,7 @@ A page that reads at a glance and stays accurate to the code:
 - **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace, one primary font with monospace reserved for code, and no full-uppercase emphasis — so the content stays the focus. Avoid decoration that does not encode information; pick the rest per artifact.
 - **Progressive disclosure.** Lead with the idea and observable behavior; move implementation detail later. Keep the artifact focused on its stated purpose.
 - **Semantic fidelity.** Visual simplification must preserve the causal units and boundaries that matter. Keep examples internally consistent and distinguish illustrative values from measurements.
-- **Navigation.** For vertically stacked artifacts with roughly four or more major sections, use a compact sticky dropdown table of contents that overlays the page without reducing the main content width. Link it to stable section IDs, make section headings self-linking so their URLs can be opened or shared directly, and keep fragment targets clear of the sticky control.
+- **Navigation.** For vertically stacked artifacts with roughly four or more major sections, use one zero-height sticky `<details>` before the main content. Give its `<summary>` and absolutely positioned `<nav>` separate opaque surfaces so the control overlays the page without reducing content width. Link stable section IDs, make headings self-linking, and offset fragment targets. Follow the canonical navigation shell in `references/patterns.md`.
 
 ## Publishing
 
