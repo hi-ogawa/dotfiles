@@ -3,7 +3,24 @@ import ApplicationServices
 import Carbon.HIToolbox
 import Foundation
 
-private let hotKeySignature: OSType = 0x484F4453 // HODS
+// MARK: - User configuration
+
+// Customize `modifiers` with any combination of `.command`, `.control`, and `.option`.
+// Change `key` to a case supported by `Key`, and keep each internal `id` unique.
+private let maximizeHotKey = HotKeyDefinition(
+    id: 1,
+    modifiers: [.control, .option],
+    key: .upArrow,
+    action: "maximize"
+)
+private let nextDisplayHotKey = HotKeyDefinition(
+    id: 2,
+    modifiers: [.control, .option],
+    key: .rightArrow,
+    action: "move to next display"
+)
+
+// MARK: - Implementation
 
 private struct HotKeyModifiers: OptionSet {
     let rawValue: UInt32
@@ -53,18 +70,7 @@ private struct HotKeyDefinition {
     }
 }
 
-private let maximizeHotKey = HotKeyDefinition(
-    id: 1,
-    modifiers: [.control, .option],
-    key: .upArrow,
-    action: "maximize"
-)
-private let nextDisplayHotKey = HotKeyDefinition(
-    id: 2,
-    modifiers: [.control, .option],
-    key: .rightArrow,
-    action: "move to next display"
-)
+private let hotKeySignature: OSType = 0x484F4453 // HODS
 
 private func copyAttribute(_ element: AXUIElement, _ attribute: CFString) -> CFTypeRef? {
     var value: CFTypeRef?
