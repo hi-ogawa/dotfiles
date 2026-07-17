@@ -4,8 +4,67 @@ import Carbon.HIToolbox
 import Foundation
 
 private let hotKeySignature: OSType = 0x484F4453 // HODS
-private let maximizeHotKeyID: UInt32 = 1
-private let nextDisplayHotKeyID: UInt32 = 2
+
+private struct HotKeyModifiers: OptionSet {
+    let rawValue: UInt32
+
+    // Carbon modifier constants are defined by HIToolbox/Events.h in the macOS SDK.
+    static let command = HotKeyModifiers(rawValue: UInt32(cmdKey))
+    static let control = HotKeyModifiers(rawValue: UInt32(controlKey))
+    static let option = HotKeyModifiers(rawValue: UInt32(optionKey))
+
+    var name: String {
+        [
+            contains(.command) ? "Cmd" : nil,
+            contains(.control) ? "Ctrl" : nil,
+            contains(.option) ? "Option" : nil,
+        ].compactMap { $0 }.joined(separator: "+")
+    }
+}
+
+private enum Key {
+    case upArrow
+    case rightArrow
+
+    // Carbon virtual-key constants are defined by HIToolbox/Events.h in the macOS SDK.
+    var code: UInt32 {
+        switch self {
+        case .upArrow: UInt32(kVK_UpArrow)
+        case .rightArrow: UInt32(kVK_RightArrow)
+        }
+    }
+
+    var name: String {
+        switch self {
+        case .upArrow: "Up"
+        case .rightArrow: "Right"
+        }
+    }
+}
+
+private struct HotKeyDefinition {
+    let id: UInt32
+    let modifiers: HotKeyModifiers
+    let key: Key
+    let action: String
+
+    var description: String {
+        "\([modifiers.name, key.name].filter { !$0.isEmpty }.joined(separator: "+")): \(action)"
+    }
+}
+
+private let maximizeHotKey = HotKeyDefinition(
+    id: 1,
+    modifiers: [.control, .option],
+    key: .upArrow,
+    action: "maximize"
+)
+private let nextDisplayHotKey = HotKeyDefinition(
+    id: 2,
+    modifiers: [.control, .option],
+    key: .rightArrow,
+    action: "move to next display"
+)
 
 private func copyAttribute(_ element: AXUIElement, _ attribute: CFString) -> CFTypeRef? {
     var value: CFTypeRef?
@@ -105,7 +164,7 @@ private extension CGRect {
 
 private final class DesktopController {
     private var eventHandler: EventHandlerRef?
-    private var hotKeys: [EventHotKeyRef?] = []
+    private var registeredHotKeys: [EventHotKeyRef?] = []
 
     func start() throws {
         var eventType = EventTypeSpec(
@@ -132,27 +191,27 @@ private final class DesktopController {
             throw RuntimeError("failed to install hotkey event handler (OSStatus \(handlerStatus))")
         }
 
-        try registerHotKey(keyCode: UInt32(kVK_UpArrow), id: maximizeHotKeyID)
-        try registerHotKey(keyCode: UInt32(kVK_RightArrow), id: nextDisplayHotKeyID)
+        try registerHotKey(maximizeHotKey)
+        try registerHotKey(nextDisplayHotKey)
         print("ho-desktop running")
-        print("  Ctrl+Option+Up: maximize")
-        print("  Ctrl+Option+Right: move to next display")
+        print("  \(maximizeHotKey.description)")
+        print("  \(nextDisplayHotKey.description)")
     }
 
-    private func registerHotKey(keyCode: UInt32, id: UInt32) throws {
+    private func registerHotKey(_ definition: HotKeyDefinition) throws {
         var hotKey: EventHotKeyRef?
         let status = RegisterEventHotKey(
-            keyCode,
-            UInt32(controlKey | optionKey),
-            EventHotKeyID(signature: hotKeySignature, id: id),
+            definition.key.code,
+            definition.modifiers.rawValue,
+            EventHotKeyID(signature: hotKeySignature, id: definition.id),
             GetApplicationEventTarget(),
             0,
             &hotKey
         )
         guard status == noErr else {
-            throw RuntimeError("failed to register hotkey \(id) (OSStatus \(status))")
+            throw RuntimeError("failed to register hotkey \(definition.id) (OSStatus \(status))")
         }
-        hotKeys.append(hotKey)
+        registeredHotKeys.append(hotKey)
     }
 
     private func handle(_ event: EventRef) -> OSStatus {
@@ -171,9 +230,9 @@ private final class DesktopController {
         guard status == noErr, hotKeyID.signature == hotKeySignature else { return status }
 
         switch hotKeyID.id {
-        case maximizeHotKeyID:
+        case maximizeHotKey.id:
             maximizeFocusedWindow()
-        case nextDisplayHotKeyID:
+        case nextDisplayHotKey.id:
             moveFocusedWindowToNextDisplay()
         default:
             return OSStatus(eventNotHandledErr)
