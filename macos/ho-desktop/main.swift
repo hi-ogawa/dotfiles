@@ -324,30 +324,34 @@ private func printCheck() -> Bool {
     return trusted
 }
 
-let arguments = Set(CommandLine.arguments.dropFirst())
-if arguments.contains("--help") {
-    print("Usage: ho-desktop [--check | --request-permission]")
-    exit(EXIT_SUCCESS)
-}
-if arguments.contains("--check") {
-    exit(printCheck() ? EXIT_SUCCESS : EXIT_FAILURE)
-}
-if arguments.contains("--request-permission") {
+private func main() {
+    let arguments = Array(CommandLine.arguments.dropFirst())
+    if arguments == ["--check"] {
+        exit(printCheck() ? EXIT_SUCCESS : EXIT_FAILURE)
+    }
+    let requestsAccessibilityOnly = arguments == ["--request-accessibility"]
+    guard arguments.isEmpty || requestsAccessibilityOnly else {
+        logError("Usage: ho-desktop [--check | --request-accessibility]")
+        exit(EXIT_FAILURE)
+    }
+
     let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
-    exit(AXIsProcessTrustedWithOptions(options) ? EXIT_SUCCESS : EXIT_FAILURE)
+    guard AXIsProcessTrustedWithOptions(options) else {
+        logError("Accessibility permission is required; grant it in System Settings and restart")
+        exit(EXIT_FAILURE)
+    }
+    if requestsAccessibilityOnly {
+        exit(EXIT_SUCCESS)
+    }
+
+    do {
+        let controller = DesktopController()
+        try controller.start()
+        RunLoop.main.run()
+    } catch {
+        logError(String(describing: error))
+        exit(EXIT_FAILURE)
+    }
 }
 
-let promptOptions = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
-guard AXIsProcessTrustedWithOptions(promptOptions) else {
-    logError("Accessibility permission is required; grant it in System Settings and restart")
-    exit(EXIT_FAILURE)
-}
-
-do {
-    let controller = DesktopController()
-    try controller.start()
-    RunLoop.main.run()
-} catch {
-    logError(String(describing: error))
-    exit(EXIT_FAILURE)
-}
+main()

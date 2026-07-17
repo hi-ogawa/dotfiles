@@ -102,15 +102,4 @@ python3 macos/ho-desktop/manage.py build
 python3 macos/ho-desktop/manage.py install
 ```
 
-The first run installs the executable and opens Accessibility settings. Grant access to `~/.local/bin/ho-desktop`, then run the installer again to start it. Check its state and diagnostics with:
-
-```sh
-~/.local/bin/ho-desktop --check
-launchctl print gui/$UID/io.github.hi-ogawa.ho-desktop
-```
-
-Logs are written under `~/Library/Logs/ho-desktop`. To uninstall:
-
-```sh
-python3 macos/ho-desktop/manage.py uninstall
-```
+See [`macos/ho-desktop/README.md`](../../macos/ho-desktop/README.md) for foreground testing, Accessibility setup, diagnostics, and uninstall instructions.

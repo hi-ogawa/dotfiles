@@ -75,10 +75,7 @@ def install() -> None:
     write_launch_agent()
 
     if run([BIN_PATH, "--check"], check=False).returncode != 0:
-        run([BIN_PATH, "--request-permission"], check=False)
-        # Accessibility-pane deep link follows GitHub Copilot for Xcode (MIT):
-        # https://github.com/github/CopilotForXcode/blob/2ba57a272719ad72f2bb44667133d759812949c1/Tool/Sources/Status/Status.swift#L186-L204
-        run(["open", "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"])
+        run([BIN_PATH, "--request-accessibility"], check=False)
         print(f"\nGrant Accessibility access to {BIN_PATH}, then run install again.")
         raise SystemExit(1)
 
