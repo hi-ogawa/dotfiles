@@ -12,7 +12,7 @@ description: >-
 
 ## Purpose
 
-Turn a dev process (PR review, architecture exploration, bug triage) into a single self-contained HTML page when visual encoding, rendered diagrams, or nonlinear layout makes the finding easier to inspect than Markdown — then optionally share it via a public URL.
+Turn a dev process (PR review, architecture exploration, bug triage) into a single self-contained HTML page when visual encoding, rendered diagrams, or nonlinear layout makes the finding easier to inspect than Markdown — then optionally share it via a public URL. Artifacts support lightweight review, so rendered-content verification is not required and iterating design with human reviews is preferred.
 
 ## Why HTML
 
@@ -55,6 +55,14 @@ The page then lives at `https://artifacts.hiro18181.workers.dev/<slug>`.
 
 After a successful push, return the expected URL without polling deployment availability.
 
-## Guardrails
+## Screenshot Review
 
-- Artifacts support lightweight review, so rendered-content verification is not required.
+When reviewing a rendered artifact as an image, capture a full-page screenshot with Playwright's one-shot command. Write the disposable PNG to a temporary location and use absolute paths:
+
+```bash
+npx -y playwright screenshot --full-page \
+  "file:///absolute/path/to/artifact.html" \
+  "/temporary/path/to/preview.png"
+```
+
+Omit `--full-page` when the viewport itself is the intended composition. Do not start a local server merely to render a compliant artifact.
