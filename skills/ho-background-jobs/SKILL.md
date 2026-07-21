@@ -38,17 +38,24 @@ an existing session, still verify that `pane_current_path` resolves to `root`.
 A mismatch means the session is foreign or corrupt; report it and do not
 modify it.
 
-Use exact tmux targets (`-t "=$job"`) when supported. If the installed tmux
-rejects exact-name syntax for an operation, resolve the session by comparing
-`#{session_name}` for exact string equality, then target its `#{session_id}`.
-Never fall back to an unverified prefix match.
+Never use a job name directly as a tmux target after creation because target
+parsing varies by command and tmux version. List sessions, compare
+`#{session_name}` with `job` using exact string equality, and resolve the match
+to `#{session_id}`. Resolve its single pane to `#{pane_id}`.
+
+Use `session_id` for session options and lifecycle operations. Use `pane_id`
+for pane inspection, output capture, and `send-keys`. Zero matches means the
+job is missing. Multiple matches or mismatched metadata mean the job is
+invalid; report it and do not modify it. Never use prefix matching.
 
 ## Inspect
 
 Inspection is the shared first step for status, logs, reuse, restart, and stop.
-Use `tmux list-panes -t "=$job" -F` and include:
+Resolve the exact session name to `session_id`, then resolve and inspect its
+pane by `pane_id`. Include:
 
 - `#{session_id}` and `#{session_name}`;
+- `#{pane_id}`;
 - `#{pane_current_path}` and `#{pane_current_command}`;
 - `#{pane_pid}`, `#{pane_dead}`, and `#{pane_dead_status}`.
 
@@ -57,9 +64,9 @@ the full canonical path and requested command because `pane_current_command`
 usually exposes only the wrapper or executable name. Missing metadata means a
 legacy or foreign session; report it rather than adopting it automatically.
 
-Capture recent output with `tmux capture-pane -p -t "=$job"`. Increase the
-history range when startup output has scrolled away. Do not attach or follow
-output indefinitely because that blocks the agent.
+Capture recent output by targeting `pane_id`. Increase the history range when
+startup output has scrolled away. Do not attach or follow output indefinitely
+because that blocks the agent.
 
 Classify the job as one of:
 
@@ -84,13 +91,14 @@ not establish readiness.
 4. If it is completed, failed, or expired, preserve its output in the report,
    remove the retained session, and create a new one only when the requested
    operation is start or restart.
-5. If it is missing, create a detached session running the default shell in
-   `root`.
+5. If it is missing, create a named detached session running the default shell
+   in `root`, then immediately resolve its exact name to `session_id` and its
+   pane to `pane_id`.
 6. Enable `remain-on-exit` before launching the workload. This preserves
    evidence from fast startup failures.
 7. Store `root` and the exact requested command in the session options
    `@ho-bg-root` and `@ho-bg-command`.
-8. Verify that the shell pane is live and still in `root`. Send one
+8. Verify that `pane_id` is live and still in `root`. Send one
    shell-escaped command line using literal input (`send-keys -l`), then send
    `Enter`. Prefix the line with `exec` so the wrapper becomes the pane's
    foreground process.
@@ -98,20 +106,10 @@ not establish readiness.
    available; otherwise require a live pane and inspect output for startup
    failure. Report a readiness timeout as `starting`, not `ready`.
 
-The retention-safe launch sequence is:
-
-```bash
-tmux new-session -d -s "$job" -c "$root"
-tmux set-option -t "$job" remain-on-exit on
-tmux set-option -t "$job" @ho-bg-root "$root"
-tmux set-option -t "$job" @ho-bg-command "$command"
-tmux send-keys -t "$job" -l -- "$escaped_exec_line"
-tmux send-keys -t "$job" Enter
-```
-
-Construct `escaped_exec_line` as one shell command; do not interpolate raw
-user text into it. If setup fails, inspect for a partially created session
-before retrying.
+Configure retention and metadata using the resolved IDs. Send one
+shell-escaped `exec ...` command to `pane_id`; do not interpolate raw user text
+into it. If any setup step fails, inspect and report the partially created
+session before removing or retrying it.
 
 ### Runtime Limit
 
@@ -140,8 +138,9 @@ setup state less explicit.
 
 ## Stop
 
-Inspect first, then run `tmux kill-session -t "=$job"`. Confirm that the exact
-session is gone. Killing a session normally terminates its foreground workload
+Inspect first, resolve the exact job name to `session_id`, verify its root and
+metadata, then kill that session ID. Confirm that no session with the exact job
+name remains. Killing a session normally terminates its foreground workload
 but cannot guarantee removal of descendants that deliberately daemonized or
 detached, so also verify the workload-specific endpoint or resource when one
 is known.
