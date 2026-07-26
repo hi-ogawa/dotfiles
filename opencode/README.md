@@ -36,6 +36,57 @@ The notification plugin sends desktop notifications for OpenCode events that nee
 
 OpenCode automatically discovers and loads global plugins from `~/.config/opencode/plugins/`; no additional configuration is needed.
 
+### Official TUI Attention
+
+OpenCode also has built-in TUI attention support, configured separately in `~/.config/opencode/tui.json`:
+
+```json
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "attention": {
+    "enabled": true,
+    "notifications": true,
+    "sound": true,
+    "volume": 0.4
+  }
+}
+```
+
+The built-in implementation:
+
+- notifies for questions, permissions, session errors, and active sessions becoming idle
+- deduplicates pending question and permission requests
+- suppresses the completion notification following a session error
+- uses distinct sounds for questions, permissions, errors, completed sessions, and completed subagents
+- plays sounds regardless of terminal focus
+- requests desktop notifications only when the terminal is blurred
+- suppresses desktop notifications for subagent sessions
+
+Built-in desktop notifications are terminal-mediated rather than direct OS calls. OpenCode calls OpenTUI's `renderer.triggerNotification()`, which emits the non-standard OSC 9 terminal notification sequence. The terminal emulator must translate that sequence into a native desktop notification.
+
+Verified terminal support:
+
+| Terminal                    | OSC 9 desktop notifications                                  |
+| --------------------------- | ------------------------------------------------------------ |
+| Ghostty                     | Supported and documented                                     |
+| iTerm2                      | Supported; OSC 9 originated as an iTerm extension            |
+| WezTerm                     | Supported; notification behavior is configurable             |
+| kitty                       | Supported; kitty also provides its richer OSC 99 protocol    |
+| Alacritty                   | Not supported                                                 |
+| Windows Terminal            | Do not rely on it; OSC 9 is used for ConEmu-style commands   |
+| VS Code integrated terminal | No documented OSC 9 desktop-notification support             |
+| tmux / screen               | May filter the sequence unless passthrough is configured      |
+
+The local plugin remains useful because it bypasses the terminal and invokes the platform notification service directly:
+
+- Linux: `notify-send`
+- macOS: `osascript`
+- Windows and WSL: BurntToast through PowerShell
+
+This direct path works independently of terminal OSC support, preserves separate title and body fields, supports the custom icon, and also works outside the interactive TUI. Unlike built-in attention, it always notifies and does not provide sounds, request deduplication, session-error handling, or subagent-specific behavior.
+
+Keep the local plugin for reliable notifications across terminals, WSL, and headless/server workflows. Prefer built-in TUI attention when using a supported terminal and blur-aware notifications plus sounds are more important. Enabling both can produce duplicate notifications when the terminal is blurred.
+
 ## Headless Server (systemd user service)
 
 This repo also includes `opencode/opencode.service` for running `opencode serve` as a user daemon.
