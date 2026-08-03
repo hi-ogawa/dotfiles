@@ -2,13 +2,16 @@
 
 set -euo pipefail
 
+# fzf invokes this internal mode whenever the highlighted session changes.
 preview_session() {
   local session_id="$1"
+  # The ID is interpolated into read-only SQL, so accept only OpenCode's ID shape.
   if [[ ! "$session_id" =~ ^ses_[[:alnum:]]+$ ]]; then
     printf 'Invalid session ID\n'
     return 1
   fi
 
+  # Keep the preview conversational by excluding tool calls and reasoning parts.
   opencode db --format json "
     SELECT
       message.time_created AS created,
@@ -28,11 +31,13 @@ preview_session() {
   '
 }
 
+# Preview mode prints content for fzf instead of opening the interactive picker.
 if [[ "${1:-}" == "--preview" ]]; then
   preview_session "${2:-}"
   exit
 fi
 
+# Fail with a specific dependency name instead of a later pipeline error.
 for command in opencode jq fzf; do
   if ! command -v "$command" >/dev/null 2>&1; then
     printf 'Missing required command: %s\n' "$command" >&2
@@ -40,6 +45,8 @@ for command in opencode jq fzf; do
   fi
 done
 
+# OpenCode scopes this list to the Git project associated with the current directory.
+# The first TSV field stays hidden in fzf but carries the session ID through selection.
 sessions="$({ opencode session list --format json -n 100; } | jq -r '
   .[]
   | [
@@ -56,6 +63,8 @@ if [[ -z "$sessions" ]]; then
   exit 1
 fi
 
+# fzf owns the list, filtering, and live right-hand preview. --expect reports which
+# accept key was used so the same selection can support both continue and fork.
 script_path="$(realpath "$0")"
 selection="$({ printf '%s\n' "$sessions" | fzf \
   --ansi \
@@ -72,10 +81,12 @@ if [[ -z "$selection" ]]; then
   exit
 fi
 
+# --expect emits the action on the first line and the selected TSV row on the second.
 action="${selection%%$'\n'*}"
 selected="${selection#*$'\n'}"
 session_id="${selected%%$'\t'*}"
 
+# Replace the wrapper process so the selected OpenCode TUI owns the terminal directly.
 if [[ "$action" == "ctrl-f" ]]; then
   exec opencode --session "$session_id" --fork
 fi
