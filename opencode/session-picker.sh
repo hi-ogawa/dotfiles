@@ -69,31 +69,37 @@ if [[ -z "$sessions" ]]; then
   exit 1
 fi
 
-# fzf owns the list, filtering, and live right-hand preview. --expect reports which
-# accept key was used so the same selection can support both continue and fork.
+# fzf owns the list, filtering, and live right-hand preview.
 script_path="$(realpath "$0")"
 selection="$({ printf '%s\n' "$sessions" | fzf \
   --ansi \
   --delimiter=$'\t' \
   --with-nth=2.. \
   --layout=reverse \
-  --header='enter: continue | ctrl-f: fork' \
+  --header='enter: select | esc: cancel' \
   --prompt='Sessions> ' \
   --preview="$(printf '%q' "$script_path") --preview {1}" \
-  --preview-window='right:60%:wrap' \
-  --expect=enter,ctrl-f; } || true)"
+  --preview-window='right:60%:wrap'; } || true)"
 
 if [[ -z "$selection" ]]; then
   exit
 fi
 
-# --expect emits the action on the first line and the selected TSV row on the second.
-action="${selection%%$'\n'*}"
-selected="${selection#*$'\n'}"
-session_id="${selected%%$'\t'*}"
+session_id="${selection%%$'\t'*}"
+
+while true; do
+  printf '\nenter: continue | f: fork | esc: cancel ' >/dev/tty
+  IFS= read -r -n 1 action </dev/tty || exit
+  printf '\n' >/dev/tty
+  case "$action" in
+    '') break ;;
+    f) action='fork'; break ;;
+    $'\e') exit ;;
+  esac
+done
 
 # Replace the wrapper process so the selected OpenCode TUI owns the terminal directly.
-if [[ "$action" == "ctrl-f" ]]; then
+if [[ "$action" == "fork" ]]; then
   exec opencode --session "$session_id" --fork
 fi
 

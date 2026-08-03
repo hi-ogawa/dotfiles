@@ -24,9 +24,8 @@ Run `./sync.sh apply opencode` to install:
 
 `opencode-session-picker` opens the current project's recent sessions in a two-pane browser. The list is ordered by latest activity, while the preview shows the selected session's recent user and assistant text.
 
-- `Enter` continues the selected session.
-- `Ctrl+F` forks the selected session.
-- `Esc` exits without starting OpenCode.
+- `Enter` selects a session, then `Enter` continues it or `f` forks it.
+- `Esc` cancels from either step without starting OpenCode.
 - `opencode-session-picker --yolo` grants all permissions to the selected session.
 
 The picker requires `opencode`, `jq`, `fzf`, and `sqlite3` on `PATH`.
