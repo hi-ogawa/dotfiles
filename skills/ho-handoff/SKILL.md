@@ -6,17 +6,19 @@ description: >-
 
 # Local Handoff
 
-Write a self-contained prompt that the user can pick up in a fresh OpenCode session.
+Write an initial prompt that the user can pick up in a fresh interactive OpenCode session.
 
 ## Workflow
 
 1. Use the current working directory as the target directory unless the user specifies another one.
 2. Choose a concise semantic slug based on the project and task, such as `dotfiles-session-picker`. Use a slug the user provides. Slugs must contain only lowercase letters, numbers, and single hyphens between words.
 3. Resolve the handoff path as `$XDG_DATA_HOME/ho-handoff/<slug>.md`, or `$HOME/.local/share/ho-handoff/<slug>.md` when `XDG_DATA_HOME` is unset. Create its parent directory if needed.
-4. Write the handoff directly to that path, replacing a previous handoff with the same slug. Other handoffs must remain unchanged.
-5. Tell the user the handoff is ready as `Handoff ready: ho-handoff -s=<slug>`. Do not launch the new session yourself.
+4. Author and write the handoff using the format and guidance below. Replace a previous handoff with the same slug; leave other handoffs unchanged.
+5. Tell the user `Handoff ready: ho-handoff -s=<slug>`. The user can run that command to select this handoff, or run `ho-handoff` to open the only pending handoff or choose among multiple handoffs. The command claims the selected handoff before launching OpenCode, deletes it after a successful exit, and restores it after a failed exit. Do not launch the new session yourself.
 
-Use this exact file structure:
+## File Format
+
+Use this exact structure:
 
 ```markdown
 cwd: /absolute/path/to/target
@@ -24,16 +26,6 @@ cwd: /absolute/path/to/target
 <handoff prompt>
 ```
 
-## Prompt Content
+## Authoring Guidance
 
-Write for a fresh agent with no access to the current conversation. Include only what it needs to begin useful work:
-
-- The concrete goal or question.
-- Relevant decisions and established context.
-- Important files, symbols, commands, links, or observed behavior.
-- Scope boundaries and actions that are not authorized.
-- The expected deliverable.
-
-Prefer a concise authored brief over a transcript or generic summary. Preserve meaningful uncertainty instead of inventing conclusions. Do not investigate or perform the handed-off task unless the user asks.
-
-The user picks up a specific handoff with `ho-handoff -s=<slug>`. Running `ho-handoff` without a slug automatically opens the only pending handoff or shows a picker when multiple handoffs exist. A selected handoff moves out of the pending queue before OpenCode starts; it is deleted after a successful exit or restored after a failed exit.
+Author `<handoff prompt>` as a concise, task-specific opening message for a fresh interactive agent rather than a transcript or generic summary. Carry forward the user's intent and any context from the current conversation that the new agent could not recover from the workspace, such as prior decisions, current work state, meaningful uncertainty, or important constraints. Give the agent enough context to start in the right place, while leaving recoverable details and follow-up questions to the new session. Use whatever structure best fits the task, and do not investigate or begin the handed-off task merely to make the prompt more complete unless the user asks.
