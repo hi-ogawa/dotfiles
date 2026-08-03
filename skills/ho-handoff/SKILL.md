@@ -35,4 +35,4 @@ Write for a fresh agent with no access to the current conversation. Include only
 
 Prefer a concise authored brief over a transcript or generic summary. Preserve meaningful uncertainty instead of inventing conclusions. Do not investigate or perform the handed-off task unless Hiroshi asks.
 
-Hiroshi picks up the handoff with `ho_handoff`.
+Hiroshi picks up the handoff with `ho-handoff`.
