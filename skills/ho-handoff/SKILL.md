@@ -36,4 +36,4 @@ Write for a fresh agent with no access to the current conversation. Include only
 
 Prefer a concise authored brief over a transcript or generic summary. Preserve meaningful uncertainty instead of inventing conclusions. Do not investigate or perform the handed-off task unless the user asks.
 
-The user picks up a specific handoff with `ho-handoff -s=<slug>`. Running `ho-handoff` without a slug automatically opens the only pending handoff or shows a picker when multiple handoffs exist. A handoff is removed after OpenCode exits successfully.
+The user picks up a specific handoff with `ho-handoff -s=<slug>`. Running `ho-handoff` without a slug automatically opens the only pending handoff or shows a picker when multiple handoffs exist. A selected handoff moves out of the pending queue before OpenCode starts; it is deleted after a successful exit or restored after a failed exit.

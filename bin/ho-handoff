@@ -1,6 +1,7 @@
 #!/bin/bash
 
 handoff_dir="${XDG_DATA_HOME:-$HOME/.local/share}/ho-handoff"
+claimed_dir="$handoff_dir/.claimed"
 
 if [ "$#" -gt 1 ]; then
   echo "usage: ho-handoff [-s=<slug>]" >&2
@@ -89,9 +90,22 @@ if [ -z "$prompt" ]; then
   exit 1
 fi
 
+mkdir -p -- "$claimed_dir"
+claimed="$claimed_dir/$slug.$$.md"
+if ! mv -- "$handoff" "$claimed"; then
+  echo "failed to claim handoff: $handoff" >&2
+  exit 1
+fi
+
 # TODO: Accept a command prefix and append the prompt so handoffs can launch other agents.
 if (cd "$cwd" && opencode --prompt "$prompt"); then
-  rm -- "$handoff"
+  rm -- "$claimed"
 else
-  exit $?
+  status=$?
+  if [ -e "$handoff" ]; then
+    echo "handoff launch failed; claimed handoff retained: $claimed" >&2
+  elif ! mv -- "$claimed" "$handoff"; then
+    echo "handoff launch failed; could not restore claimed handoff: $claimed" >&2
+  fi
+  exit "$status"
 fi
