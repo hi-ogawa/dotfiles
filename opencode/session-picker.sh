@@ -5,6 +5,7 @@ set -euo pipefail
 # fzf invokes this internal mode whenever the highlighted session changes.
 preview_session() {
   local session_id="$1"
+  local db_path="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/opencode.db"
   # The ID is interpolated into read-only SQL, so accept only OpenCode's ID shape.
   if [[ ! "$session_id" =~ ^ses_[[:alnum:]]+$ ]]; then
     printf 'Invalid session ID\n'
@@ -12,7 +13,7 @@ preview_session() {
   fi
 
   # Keep the preview conversational by excluding tool calls and reasoning parts.
-  opencode db --format json "
+  sqlite3 -readonly -json "$db_path" "
     SELECT
       message.time_created AS created,
       json_extract(message.data, '$.role') AS role,
@@ -38,7 +39,7 @@ if [[ "${1:-}" == "--preview" ]]; then
 fi
 
 # Fail with a specific dependency name instead of a later pipeline error.
-for command in opencode jq fzf; do
+for command in opencode jq fzf sqlite3; do
   if ! command -v "$command" >/dev/null 2>&1; then
     printf 'Missing required command: %s\n' "$command" >&2
     exit 1

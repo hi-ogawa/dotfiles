@@ -28,7 +28,7 @@ Run `./sync.sh apply opencode` to install:
 - `Ctrl+F` forks the selected session.
 - `Esc` exits without starting OpenCode.
 
-The picker requires `opencode`, `jq`, and `fzf` on `PATH`.
+The picker requires `opencode`, `jq`, `fzf`, and `sqlite3` on `PATH`.
 
 ## Global Rules
 
