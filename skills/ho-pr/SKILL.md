@@ -1,7 +1,7 @@
 ---
 name: ho-pr
 description: >-
-  Write a pull request description in Hiroshi's concise, narrative-first style. Use only when the user explicitly invokes "ho-pr".
+  Write a pull request description in the user's concise, narrative-first style. Use only when the user explicitly invokes "ho-pr".
 ---
 
 # Pull Request Description
