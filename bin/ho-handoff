@@ -1,6 +1,61 @@
 #!/bin/bash
 
-handoff="${XDG_DATA_HOME:-$HOME/.local/share}/ho-handoff.md"
+handoff_dir="${XDG_DATA_HOME:-$HOME/.local/share}/ho-handoff"
+
+if [ "$#" -gt 1 ]; then
+  echo "usage: ho-handoff [slug]" >&2
+  exit 1
+fi
+
+slug="${1:-}"
+if [ -n "$slug" ]; then
+  if [[ ! "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+    echo "invalid handoff slug: $slug" >&2
+    exit 1
+  fi
+  handoff="$handoff_dir/$slug.md"
+else
+  shopt -s nullglob
+  handoffs=("$handoff_dir"/*.md)
+  shopt -u nullglob
+
+  slugs=()
+  for handoff in "${handoffs[@]}"; do
+    candidate="${handoff##*/}"
+    candidate="${candidate%.md}"
+    if [[ "$candidate" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+      slugs+=("$candidate")
+    fi
+  done
+
+  case "${#slugs[@]}" in
+    0)
+      echo "no handoffs found: $handoff_dir" >&2
+      exit 1
+      ;;
+    1)
+      slug="${slugs[0]}"
+      ;;
+    *)
+      if ! command -v fzf >/dev/null 2>&1; then
+        echo "multiple handoffs found; install fzf or run ho-handoff <slug>" >&2
+        printf '  %s\n' "${slugs[@]}" >&2
+        exit 1
+      fi
+      preview_dir="$(printf '%q' "$handoff_dir")"
+      slug="$({ printf '%s\n' "${slugs[@]}" | fzf \
+        --layout=reverse \
+        --header='enter: open | esc: cancel' \
+        --prompt='Handoffs> ' \
+        --preview="cat -- $preview_dir/{}.md" \
+        --preview-window='right:60%:wrap'; } || true)"
+      [ -n "$slug" ] || exit
+      ;;
+  esac
+
+  handoff="$handoff_dir/$slug.md"
+fi
+
 if [ ! -f "$handoff" ]; then
   echo "handoff not found: $handoff" >&2
   exit 1
@@ -17,10 +72,20 @@ if [ ! -d "$cwd" ]; then
   exit 1
 fi
 
+separator="$(sed -n '2p' "$handoff")"
+if [ -n "$separator" ]; then
+  echo "invalid handoff separator: $handoff" >&2
+  exit 1
+fi
+
 prompt="$(sed '1,2d' "$handoff")"
 if [ -z "$prompt" ]; then
   echo "handoff prompt is empty: $handoff" >&2
   exit 1
 fi
 
-(cd "$cwd" && OPENCODE_PERMISSION='{"*":"allow"}' opencode --prompt "$prompt")
+if (cd "$cwd" && OPENCODE_PERMISSION='{"*":"allow"}' opencode --prompt "$prompt"); then
+  rm -- "$handoff"
+else
+  exit $?
+fi
