@@ -43,6 +43,7 @@ oc-yolo() {
   OPENCODE_PERMISSION='{"*":"allow"}' "$@"
 }
 
+# TODO: Remove after switching fully to `oc-yolo opencode`.
 opencode-yolo() {
   oc-yolo opencode "$@"
 }
