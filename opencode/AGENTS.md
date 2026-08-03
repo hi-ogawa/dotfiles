@@ -4,6 +4,8 @@ Never rebase, amend, force push, reset hard, delete commits, or otherwise rewrit
 
 For GitHub and git actions, prefer direct `git` and `gh` commands unless explicitly asked otherwise. This includes reading GitHub resources: to view or summarize an issue, PR, comments, checks, or releases, use `gh` (for example `gh issue view <n> --json` or `gh api`), never WebFetch on a github.com URL. WebFetch scrapes server-rendered HTML and silently drops dynamically loaded content such as comments, so it will make you report discussions as empty when they are not.
 
+Create pull requests as drafts by default.
+
 # Git commit attribution
 
 When you write or edit a git commit message, ensure the message ends with a `Co-authored-by: OpenCode <noreply@opencode.ai>` trailer. Keep existing trailers, append this trailer at the end if missing, do not duplicate it if it already exists, and keep one blank line between the commit body and trailer block.
@@ -18,10 +20,10 @@ Resolve relative references relative to the `AGENTS.md` file that contains them.
 
 Do not follow broad directory references or globs. If a referenced file is missing, mention it briefly and continue. Do not recurse beyond one additional referenced file unless the user asks.
 
-# Markdown style
+# Writing style
 
-Do not hard-wrap prose paragraphs in Markdown unless explicitly asked.
-
-# Prose style
+Do not hard-wrap prose paragraphs in Markdown.
 
 Prefer explicit connective words over symbol-based connectives (`—`, `;`, `:`) when expressing a logical relation between clauses, such as cause, contrast, consequence, or elaboration. Name the relation in words (for example `because`, `so`, `but`, `which means`, `for example`) so the sentence structure survives being read aloud. This targets logical connectives only, so keep punctuation for genuinely structural uses such as a colon before a list.
+
+When writing instructions, state defaults directly. Avoid redundant exception clauses such as `unless explicitly requested` when an instruction already establishes a default. Keep explicit exceptions when they define safety or permission boundaries.

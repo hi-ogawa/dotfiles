@@ -74,14 +74,25 @@ function notify(project, message) {
 
 export default async (input) => {
   const project = basename(input.directory);
+  const isSubagent = async (sessionID) => {
+    if (!sessionID) return false;
+
+    try {
+      const session = await input.client.session.get({ sessionID });
+      return session.data?.parentID !== undefined;
+    } catch {
+      return false;
+    }
+  };
 
   return {
     event: async ({ event }) => {
-      if (NOTIFY_EVENTS.includes(event.type)) {
-        notify(project, event.type);
-      }
+      if (!NOTIFY_EVENTS.includes(event.type)) return;
+      if (await isSubagent(event.properties.sessionID)) return;
+      notify(project, event.type);
     },
-    "permission.ask": async () => {
+    "permission.ask": async (permission) => {
+      if (await isSubagent(permission.sessionID)) return;
       notify(project, "permission.ask");
     },
   };

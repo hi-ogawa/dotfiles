@@ -35,7 +35,7 @@ The `<repo>` prefix is the main worktree's directory name. Avoid opaque names li
 
 Determine the type from context:
 
-- **PR**: Create the worktree with `git worktree add --detach ../<repo>-pr-<N>`. Then run `gh pr checkout <N>` as a separate command with its working directory set to `../<repo>-pr-<N>`. Never run `gh pr checkout` from the main worktree.
+- **PR**: First check whether the PR branch is already checked out in a local worktree. If so, reuse that worktree regardless of its directory name. Otherwise, create the worktree with `git worktree add --detach ../<repo>-pr-<N>`. Then run `gh pr checkout <N>` as a separate command with its working directory set to `../<repo>-pr-<N>`. Run `gh pr checkout` only from the target worktree so the main worktree remains on its current branch.
 - **Issue fix**: `git worktree add ../<repo>-issue-<N> -b fix/issue-<N>`.
 - **Experiment**: `git worktree add ../<repo>-<slug> -b <slug>`.
 
@@ -49,13 +49,15 @@ Gather what's needed to classify each non-main worktree:
 
 - **Type** — inferred from directory name (pr/issue/experiment).
 - **Git state** — dirty, commits ahead of main.
-- **PR state** — for PR-shaped worktrees, fetch via `gh`.
+- **PR state** — check every worktree branch for an associated PR via `gh`, regardless of whether the worktree path is PR-shaped. Use a PR number from a PR-shaped path as an additional lookup hint, not as the condition for checking PR state.
 - **Linked dev-note** — search `ho-dev-notes/<repo>/` for lines containing `Worktree:` to find notes with a worktree path. Always read the `ho-dev-notes` skill first to determine the base directory to search for.
+
+When matching worktree branches to PRs, include open, merged, and closed PRs. If multiple PRs use the same branch name, prefer an open PR or one whose head commit matches the worktree; otherwise report the ambiguity instead of guessing.
 
 Classification:
 
 - **active** — dirty, has unexplained local commits, or belongs to an open PR.
-- **stale** — clean and either has no commits ahead of `main`, or belongs to a merged or closed PR. Ahead commits do not prevent a merged or closed PR worktree from being stale because squash and rebase merges commonly leave commits unreachable from `main`.
+- **stale** — clean and either has no commits ahead of `main`, or belongs to a merged or closed PR. Both merged and closed PR worktrees are cleanup targets by default. Ahead commits do not prevent a merged or closed PR worktree from being stale because squash and rebase merges commonly leave commits unreachable from `main`.
 
 Do not distinguish **stale** from **cleanup candidate** in user-facing output. A stale worktree is one that is safe to propose for cleanup.
 
