@@ -84,7 +84,7 @@ if [ -z "$prompt" ]; then
   exit 1
 fi
 
-if (cd "$cwd" && OPENCODE_PERMISSION='{"*":"allow"}' opencode --prompt "$prompt"); then
+if (cd "$cwd" && opencode --prompt "$prompt"); then
   rm -- "$handoff"
 else
   exit $?
