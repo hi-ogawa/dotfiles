@@ -27,6 +27,7 @@ FILES_LINUX=(
   "opencode/opencode.service:$HOME/.config/systemd/user/opencode.service"
   "opencode/notify.js:$HOME/.config/opencode/plugins/notify.js"
   "opencode/notify-icon.png:$HOME/.config/opencode/plugins/notify-icon.png"
+  "opencode/session-picker.sh:$HOME/.local/bin/opencode-session-picker"
 )
 
 # Detect platform
