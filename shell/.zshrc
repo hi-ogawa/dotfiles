@@ -39,6 +39,35 @@ opencode-yolo() {
   OPENCODE_PERMISSION='{"*":"allow"}' opencode "$@"
 }
 
+ho_handoff() {
+  local handoff="${XDG_DATA_HOME:-$HOME/.local/share}/ho-handoff.md"
+  if [ ! -f "$handoff" ]; then
+    echo "handoff not found: $handoff" >&2
+    return 1
+  fi
+
+  local cwd
+  IFS= read -r cwd < "$handoff"
+  if [[ "$cwd" != "cwd: "* ]]; then
+    echo "invalid handoff cwd: $cwd" >&2
+    return 1
+  fi
+  cwd="${cwd#cwd: }"
+  if [ ! -d "$cwd" ]; then
+    echo "handoff cwd not found: $cwd" >&2
+    return 1
+  fi
+
+  local prompt
+  prompt="$(sed '1,2d' "$handoff")"
+  if [ -z "$prompt" ]; then
+    echo "handoff prompt is empty: $handoff" >&2
+    return 1
+  fi
+
+  (cd "$cwd" && opencode-yolo --prompt "$prompt")
+}
+
 ho_english() {
   if [ "$#" = "0" ]; then
     export LC_ALL=en_US.UTF-8
