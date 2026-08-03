@@ -1,0 +1,111 @@
+#!/bin/bash
+
+handoff_dir="${XDG_DATA_HOME:-$HOME/.local/share}/ho-handoff"
+claimed_dir="$handoff_dir/.claimed"
+
+if [ "$#" -gt 1 ]; then
+  echo "usage: ho-handoff [-s=<slug>]" >&2
+  exit 1
+fi
+
+slug=""
+if [ "$#" -eq 1 ]; then
+  if [[ "$1" != -s=* ]]; then
+    echo "usage: ho-handoff [-s=<slug>]" >&2
+    exit 1
+  fi
+  slug="${1#-s=}"
+  if [[ ! "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+    echo "invalid handoff slug: $slug" >&2
+    exit 1
+  fi
+  handoff="$handoff_dir/$slug.md"
+else
+  shopt -s nullglob
+  handoffs=("$handoff_dir"/*.md)
+  shopt -u nullglob
+
+  slugs=()
+  for handoff in "${handoffs[@]}"; do
+    candidate="${handoff##*/}"
+    candidate="${candidate%.md}"
+    if [[ "$candidate" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+      slugs+=("$candidate")
+    fi
+  done
+
+  case "${#slugs[@]}" in
+    0)
+      echo "no handoffs found: $handoff_dir" >&2
+      exit 1
+      ;;
+    1)
+      slug="${slugs[0]}"
+      ;;
+    *)
+      if ! command -v fzf >/dev/null 2>&1; then
+        echo "multiple handoffs found; install fzf or run ho-handoff -s=<slug>" >&2
+        printf '  %s\n' "${slugs[@]}" >&2
+        exit 1
+      fi
+      preview_dir="$(printf '%q' "$handoff_dir")"
+      slug="$({ printf '%s\n' "${slugs[@]}" | fzf \
+        --layout=reverse \
+        --header='enter: open | esc: cancel' \
+        --prompt='Handoffs> ' \
+        --preview="cat -- $preview_dir/{}.md" \
+        --preview-window='right:60%:wrap'; } || true)"
+      [ -n "$slug" ] || exit
+      ;;
+  esac
+
+  handoff="$handoff_dir/$slug.md"
+fi
+
+if [ ! -f "$handoff" ]; then
+  echo "handoff not found: $handoff" >&2
+  exit 1
+fi
+
+IFS= read -r cwd < "$handoff"
+if [[ "$cwd" != "cwd: "* ]]; then
+  echo "invalid handoff cwd: $cwd" >&2
+  exit 1
+fi
+cwd="${cwd#cwd: }"
+if [ ! -d "$cwd" ]; then
+  echo "handoff cwd not found: $cwd" >&2
+  exit 1
+fi
+
+separator="$(sed -n '2p' "$handoff")"
+if [ -n "$separator" ]; then
+  echo "invalid handoff separator: $handoff" >&2
+  exit 1
+fi
+
+prompt="$(sed '1,2d' "$handoff")"
+if [ -z "$prompt" ]; then
+  echo "handoff prompt is empty: $handoff" >&2
+  exit 1
+fi
+
+mkdir -p -- "$claimed_dir"
+claimed="$claimed_dir/$slug.$$.md"
+if ! mv -- "$handoff" "$claimed"; then
+  echo "failed to claim handoff: $handoff" >&2
+  exit 1
+fi
+
+# TODO: Accept a command prefix and append the prompt so handoffs can launch other agents.
+if (cd "$cwd" && opencode --prompt "$prompt"); then
+  rm -- "$claimed"
+else
+  status=$?
+  if [ -e "$handoff" ]; then
+    echo "handoff launch failed; claimed handoff retained: $claimed" >&2
+  elif ! mv -- "$claimed" "$handoff"; then
+    echo "handoff launch failed; could not restore claimed handoff: $claimed" >&2
+  fi
+  exit "$status"
+fi
