@@ -26,6 +26,8 @@ Run `./sync.sh apply opencode` to install:
 
 - `Enter` selects a session, then `Enter` continues it or `f` forks it.
 - `Esc` cancels from either step without starting OpenCode.
+- `opencode-session-picker --yolo` grants all permissions to the selected session.
+
 The picker requires `opencode`, `jq`, `fzf`, and `sqlite3` on `PATH`.
 
 ## Global Rules

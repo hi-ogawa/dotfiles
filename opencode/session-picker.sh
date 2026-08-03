@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+if [[ "${1:-}" == "--yolo" ]]; then
+  export OPENCODE_PERMISSION='{"*":"allow"}'
+  shift
+fi
+
 # fzf invokes this internal mode whenever the highlighted session changes.
 preview_session() {
   local session_id="$1"

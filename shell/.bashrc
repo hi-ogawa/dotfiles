@@ -51,17 +51,8 @@ esac
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
-oc-yolo() {
-  if [ "$#" = "0" ]; then
-    echo "usage: oc-yolo <command> [args...]" >&2
-    return 2
-  fi
-  OPENCODE_PERMISSION='{"*":"allow"}' "$@"
-}
-
-# TODO: Remove after switching fully to `oc-yolo opencode`.
 opencode-yolo() {
-  oc-yolo opencode "$@"
+  OPENCODE_PERMISSION='{"*":"allow"}' opencode "$@"
 }
 
 ho_english() {
