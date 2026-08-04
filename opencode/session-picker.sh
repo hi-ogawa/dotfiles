@@ -28,7 +28,11 @@ preview_session() {
     LIMIT 12
   " | jq -r '
     reverse[]
-    | "\n\u001b[1;36m" + (.role | ascii_upcase) + "\u001b[0m\n" + .text
+    | if .role == "user" then
+        "\n\u001b[1;33mUSER\u001b[0m\n\u001b[38;5;223m" + .text + "\u001b[0m"
+      else
+        "\n\u001b[1;36mASSISTANT\u001b[0m\n\u001b[38;5;153m" + .text + "\u001b[0m"
+      end
   '
 }
 
