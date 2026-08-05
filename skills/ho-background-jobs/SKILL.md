@@ -11,19 +11,10 @@ Use one tmux session named `ho-bj`, with one window per long-lived command. Give
 ## Start
 
 ```bash
-# Ensure the shared session exists with an unused shell window
-tmux has-session -t '=ho-bj' 2>/dev/null || tmux new-session -d -s ho-bj -n shell
-
-# Create the job window.
-tmux new-window -d -t '=ho-bj:' -n '<slug>' -c '<root>'
-
-# Keep the window after the job exits.
-tmux set-option -w -t '=ho-bj:=<slug>' remain-on-exit on
-
-# Start the job.
-tmux send-keys -t '=ho-bj:=<slug>' -l -- 'exec <command>'
-tmux send-keys -t '=ho-bj:=<slug>' Enter
+ho-bj start <slug> -C <root> -- <command> [args...]
 ```
+
+`-C` defaults to the current directory. Start waits briefly for initial output, then reports whether the job is still running or exited.
 
 ## Stop
 

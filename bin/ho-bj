@@ -1,0 +1,120 @@
+#!/bin/bash
+
+set -e
+
+usage() {
+  echo "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]" >&2
+  exit 2
+}
+
+if [ "${1:-}" != "start" ]; then
+  usage
+fi
+shift
+
+slug="${1:-}"
+if [[ ! "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+  echo "invalid job slug: $slug" >&2
+  exit 2
+fi
+shift
+
+root="$PWD"
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -C)
+      [ "$#" -ge 2 ] || usage
+      root="$2"
+      shift 2
+      ;;
+    --)
+      shift
+      break
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+[ "$#" -gt 0 ] || usage
+
+if ! command -v tmux >/dev/null 2>&1; then
+  echo "tmux not found" >&2
+  exit 1
+fi
+if ! root="$(cd -- "$root" 2>/dev/null && pwd -P)"; then
+  echo "job root not found: $root" >&2
+  exit 1
+fi
+
+session="=ho-bj"
+
+tmux has-session -t "$session" 2>/dev/null || tmux new-session -d -s ho-bj -n shell
+while IFS= read -r window_name; do
+  if [ "$window_name" = "$slug" ]; then
+    echo "job already exists: $slug" >&2
+    exit 1
+  fi
+done < <(tmux list-windows -t "$session" -F '#{window_name}')
+
+capture_file="$(mktemp "${TMPDIR:-/tmp}/ho-bj.XXXXXX")"
+pane_id=""
+started=0
+
+cleanup() {
+  if [ -n "$pane_id" ]; then
+    tmux pipe-pane -t "$pane_id" >/dev/null 2>&1 || true
+  fi
+  rm -f -- "$capture_file"
+  if [ -n "$pane_id" ] && [ "$started" -eq 0 ]; then
+    tmux kill-window -t "$pane_id" >/dev/null 2>&1 || true
+  fi
+}
+trap cleanup EXIT
+trap 'exit 130' INT TERM
+
+pane_id="$(tmux new-window -d -P -F '#{pane_id}' -t '=ho-bj:' -n "$slug" -c "$root")"
+tmux set-option -w -t "$pane_id" remain-on-exit on
+printf -v command_text 'exec %q' "$1"
+shift
+for arg in "$@"; do
+  printf -v command_text '%s %q' "$command_text" "$arg"
+done
+
+tmux pipe-pane -t "$pane_id" "cat >> $(printf '%q' "$capture_file")"
+tmux respawn-pane -k -t "$pane_id" -c "$root" "$command_text"
+started=1
+
+# Wait up to five seconds, returning once startup output has been quiet for 500ms.
+last_size=0
+idle_polls=0
+for ((poll = 0; poll < 50; poll++)); do
+  sleep 0.1
+  size="$(wc -c < "$capture_file")"
+  if [ "$size" -ne "$last_size" ]; then
+    last_size="$size"
+    idle_polls=0
+  elif [ "$size" -gt 0 ]; then
+    ((idle_polls++)) || true
+  fi
+
+  dead="$(tmux display-message -p -t "$pane_id" '#{pane_dead}')"
+  if [ "$dead" = "1" ] || [ "$idle_polls" -ge 5 ]; then
+    break
+  fi
+done
+
+tmux pipe-pane -t "$pane_id" 2>/dev/null || true
+if [ -s "$capture_file" ]; then
+  cat -- "$capture_file"
+fi
+
+dead="$(tmux display-message -p -t "$pane_id" '#{pane_dead}')"
+if [ "$dead" = "1" ]; then
+  status="$(tmux display-message -p -t "$pane_id" '#{pane_dead_status}')"
+  echo "ho-bj: $slug exited with status $status" >&2
+  exit "$status"
+fi
+
+echo "ho-bj: $slug is running; attach with: tmux attach -t ho-bj" >&2
