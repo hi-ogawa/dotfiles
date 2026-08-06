@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 
-const { spawnSync } = require("node:child_process");
-const {
+import { spawnSync } from "node:child_process";
+import {
   mkdtempSync,
   readFileSync,
   realpathSync,
   rmSync,
   statSync,
   writeFileSync,
-} = require("node:fs");
-const { tmpdir } = require("node:os");
-const { join } = require("node:path");
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
 
@@ -18,7 +18,9 @@ main().catch((error) => fail(`ho-bj: ${error.message}`));
 
 async function main() {
   const args = process.argv.slice(2);
-  if (args.shift() !== "start") fail(usage, 2);
+  if (args.shift() !== "start") {
+    fail(usage, 2);
+  }
 
   const slug = args.shift() ?? "";
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
@@ -27,14 +29,20 @@ async function main() {
 
   let root = process.cwd();
   while (args.length > 0 && args[0] !== "--") {
-    if (args.shift() !== "-C" || args.length === 0) fail(usage, 2);
+    if (args.shift() !== "-C" || args.length === 0) {
+      fail(usage, 2);
+    }
     root = args.shift();
   }
-  if (args.shift() !== "--" || args.length === 0) fail(usage, 2);
+  if (args.shift() !== "--" || args.length === 0) {
+    fail(usage, 2);
+  }
 
   try {
     root = realpathSync(root);
-    if (!statSync(root).isDirectory()) throw new Error();
+    if (!statSync(root).isDirectory()) {
+      throw new Error();
+    }
   } catch {
     fail(`job root not found: ${root}`);
   }
@@ -50,7 +58,9 @@ async function main() {
     "-F",
     "#{window_name}",
   ]).stdout.trimEnd().split("\n");
-  if (windows.includes(slug)) fail(`job already exists: ${slug}`);
+  if (windows.includes(slug)) {
+    fail(`job already exists: ${slug}`);
+  }
 
   const temporaryDirectory = mkdtempSync(join(tmpdir(), "ho-bj."));
   const capturePath = join(temporaryDirectory, "startup.log");
@@ -60,11 +70,15 @@ async function main() {
   let started = false;
   let cleanedUp = false;
   function cleanup() {
-    if (cleanedUp) return;
+    if (cleanedUp) {
+      return;
+    }
     cleanedUp = true;
     if (paneId) {
       runTmux(["pipe-pane", "-t", paneId], true);
-      if (!started) runTmux(["kill-window", "-t", paneId], true);
+      if (!started) {
+        runTmux(["kill-window", "-t", paneId], true);
+      }
     }
     rmSync(temporaryDirectory, { recursive: true, force: true });
   }
@@ -115,12 +129,16 @@ async function main() {
       paneId,
       "#{pane_dead}",
     ]).stdout.trim();
-    if (dead === "1" || idlePolls >= 5) break;
+    if (dead === "1" || idlePolls >= 5) {
+      break;
+    }
   }
 
   runTmux(["pipe-pane", "-t", paneId], true);
   const output = readFileSync(capturePath);
-  if (output.length > 0) process.stdout.write(output);
+  if (output.length > 0) {
+    process.stdout.write(output);
+  }
 
   const dead = runTmux([
     "display-message",
@@ -153,7 +171,9 @@ function fail(message, status = 1) {
 function runTmux(args, allowFailure = false) {
   const result = spawnSync("tmux", args, { encoding: "utf8" });
   if (result.error) {
-    if (result.error.code === "ENOENT") fail("tmux not found");
+    if (result.error.code === "ENOENT") {
+      fail("tmux not found");
+    }
     throw result.error;
   }
   if (result.status !== 0 && !allowFailure) {
