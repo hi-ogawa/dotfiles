@@ -43,11 +43,9 @@ async function main() {
   }
 
   // Keep all background jobs as named windows in one shared tmux session.
-  if (
-    (
-      await runTmux(["has-session", "-t", "=ho-bj"], { allowFailure: true })
-    ).status !== 0
-  ) {
+  try {
+    await runTmux(["has-session", "-t", "=ho-bj"]);
+  } catch {
     await runTmux(["new-session", "-d", "-s", "ho-bj", "-n", "shell"]);
   }
 
@@ -76,9 +74,13 @@ async function main() {
     cleanedUp = true;
     if (paneId) {
       // pipe-pane without a command closes tmux's pane-level output pipe.
-      await runTmux(["pipe-pane", "-t", paneId], { allowFailure: true });
+      try {
+        await runTmux(["pipe-pane", "-t", paneId]);
+      } catch {}
       if (!started) {
-        await runTmux(["kill-window", "-t", paneId], { allowFailure: true });
+        try {
+          await runTmux(["kill-window", "-t", paneId]);
+        } catch {}
       }
     }
     rmSync(temporaryDirectory, { recursive: true, force: true });
@@ -136,9 +138,7 @@ async function main() {
     }
 
     // Close the pipe before reading to avoid racing with writes to the capture file.
-    await runTmux(["pipe-pane", "-t", paneId], {
-      allowFailure: true,
-    });
+    await runTmux(["pipe-pane", "-t", paneId]);
     const output = readFileSync(capturePath);
     if (output.length > 0) {
       process.stdout.write(output);
@@ -170,20 +170,12 @@ function fail(message, { status = 1 } = {}) {
   process.exit(status);
 }
 
-async function runTmux(args, { allowFailure = false } = {}) {
+async function runTmux(args) {
   try {
-    const result = await execFileAsync("tmux", args, { encoding: "utf8" });
-    return { ...result, status: 0 };
+    return await execFileAsync("tmux", args, { encoding: "utf8" });
   } catch (error) {
     if (error.code === "ENOENT") {
       throw new Error("tmux not found");
-    }
-    if (allowFailure) {
-      return {
-        stdout: error.stdout ?? "",
-        stderr: error.stderr ?? "",
-        status: typeof error.code === "number" ? error.code : 1,
-      };
     }
     throw new Error((error.stderr ?? "").trim() || `tmux exited with status ${error.code}`);
   }
