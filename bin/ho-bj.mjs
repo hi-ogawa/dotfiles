@@ -96,14 +96,17 @@ async function main() {
     }
 
     // Wait until the job exits or its startup output has been quiet for 500 ms.
-    let lastSize = 0;
     await pollUntil(
       async () => {
-        const size = statSync(capturePath).size;
-        const idle = size > 0 && size === lastSize;
-        lastSize = size;
         const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
-        return { idle, done: dead === "1" };
+        if (dead === "1") {
+          return { state: "done" };
+        }
+        const size = statSync(capturePath).size;
+        if (size === 0) {
+          return { state: "pending" };
+        }
+        return { state: "value", value: size };
       },
       { intervalMs: 100, maxPolls: 50, idlePollLimit: 5 },
     );
@@ -134,13 +137,27 @@ async function main() {
   }
 }
 
-async function pollUntil(condition, { intervalMs, maxPolls, idlePollLimit }) {
+async function pollUntil(sample, { intervalMs, maxPolls, idlePollLimit }) {
+  let previousValue;
+  let hasValue = false;
   let idlePolls = 0;
   for (let poll = 0; poll < maxPolls; poll++) {
     await sleep(intervalMs);
-    const { idle, done } = await condition();
-    idlePolls = idle ? idlePolls + 1 : 0;
-    if (done || idlePolls >= idlePollLimit) {
+    const result = await sample();
+    if (result.state === "done") {
+      return;
+    }
+    if (result.state === "pending") {
+      continue;
+    }
+    if (hasValue && Object.is(result.value, previousValue)) {
+      idlePolls++;
+    } else {
+      previousValue = result.value;
+      hasValue = true;
+      idlePolls = 0;
+    }
+    if (idlePolls >= idlePollLimit) {
       return;
     }
   }
