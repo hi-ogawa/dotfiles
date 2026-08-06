@@ -1,22 +1,13 @@
 #!/usr/bin/env node
 
-import { execFile as execFileCallback } from "node:child_process";
-import {
-  mkdtempSync,
-  readFileSync,
-  realpathSync,
-  rmSync,
-  statSync,
-  writeFileSync,
-} from "node:fs";
+import { execFile } from "node:child_process";
+import { mkdtempSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
-const execFile = promisify(execFileCallback);
-
-main().catch((error) => fail({ message: `ho-bj: ${error.message}` }));
+const execFileAsync = promisify(execFile);
 
 async function main() {
   const args = process.argv.slice(2);
@@ -49,16 +40,24 @@ async function main() {
     fail({ message: `job root not found: ${root}` });
   }
 
-  if ((await runTmux({
-    args: ["has-session", "-t", "=ho-bj"],
-    allowFailure: true,
-  })).status !== 0) {
+  if (
+    (
+      await runTmux({
+        args: ["has-session", "-t", "=ho-bj"],
+        allowFailure: true,
+      })
+    ).status !== 0
+  ) {
     await runTmux({ args: ["new-session", "-d", "-s", "ho-bj", "-n", "shell"] });
   }
 
-  const windows = (await runTmux({
-    args: ["list-windows", "-t", "=ho-bj", "-F", "#{window_name}"],
-  })).stdout.trimEnd().split("\n");
+  const windows = (
+    await runTmux({
+      args: ["list-windows", "-t", "=ho-bj", "-F", "#{window_name}"],
+    })
+  ).stdout
+    .trimEnd()
+    .split("\n");
   if (windows.includes(slug)) {
     fail({ message: `job already exists: ${slug}` });
   }
@@ -91,21 +90,23 @@ async function main() {
   }
 
   try {
-    paneId = (await runTmux({
-      args: [
-        "new-window",
-        "-d",
-        "-P",
-        "-F",
-        "#{pane_id}",
-        "-t",
-        "=ho-bj:",
-        "-n",
-        slug,
-        "-c",
-        root,
-      ],
-    })).stdout.trim();
+    paneId = (
+      await runTmux({
+        args: [
+          "new-window",
+          "-d",
+          "-P",
+          "-F",
+          "#{pane_id}",
+          "-t",
+          "=ho-bj:",
+          "-n",
+          slug,
+          "-c",
+          root,
+        ],
+      })
+    ).stdout.trim();
     await runTmux({
       args: ["set-option", "-w", "-t", paneId, "remain-on-exit", "on"],
     });
@@ -131,9 +132,11 @@ async function main() {
         idlePolls++;
       }
 
-      const dead = (await runTmux({
-        args: ["display-message", "-p", "-t", paneId, "#{pane_dead}"],
-      })).stdout.trim();
+      const dead = (
+        await runTmux({
+          args: ["display-message", "-p", "-t", paneId, "#{pane_dead}"],
+        })
+      ).stdout.trim();
       if (dead === "1" || idlePolls >= 5) {
         break;
       }
@@ -148,13 +151,19 @@ async function main() {
       process.stdout.write(output);
     }
 
-    const dead = (await runTmux({
-      args: ["display-message", "-p", "-t", paneId, "#{pane_dead}"],
-    })).stdout.trim();
+    const dead = (
+      await runTmux({
+        args: ["display-message", "-p", "-t", paneId, "#{pane_dead}"],
+      })
+    ).stdout.trim();
     if (dead === "1") {
-      const status = Number((await runTmux({
-        args: ["display-message", "-p", "-t", paneId, "#{pane_dead_status}"],
-      })).stdout.trim());
+      const status = Number(
+        (
+          await runTmux({
+            args: ["display-message", "-p", "-t", paneId, "#{pane_dead_status}"],
+          })
+        ).stdout.trim(),
+      );
       console.error(`ho-bj: ${slug} exited with status ${status}`);
       process.exitCode = status;
       return;
@@ -173,7 +182,7 @@ function fail({ message, status = 1 }) {
 
 async function runTmux({ args, allowFailure = false }) {
   try {
-    const result = await execFile("tmux", args, { encoding: "utf8" });
+    const result = await execFileAsync("tmux", args, { encoding: "utf8" });
     return { ...result, status: 0 };
   } catch (error) {
     if (error.code === "ENOENT") {
@@ -197,3 +206,7 @@ function shellQuote(value) {
 function sleep(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
+
+main().catch((error) => {
+  fail({ message: `ho-bj: ${error.message}` });
+});
