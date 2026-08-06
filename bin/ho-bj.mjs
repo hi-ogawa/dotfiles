@@ -51,9 +51,7 @@ async function main() {
 
   const windows = (
     await runTmux(["list-windows", "-t", "=ho-bj", "-F", "#{window_name}"])
-  ).stdout
-    .trimEnd()
-    .split("\n");
+  ).split("\n");
   if (windows.includes(slug)) {
     fail(`job already exists: ${slug}`);
   }
@@ -94,21 +92,19 @@ async function main() {
 
   try {
     // Create the window with a placeholder shell so capture is ready before the job starts.
-    paneId = (
-      await runTmux([
-        "new-window",
-        "-d",
-        "-P",
-        "-F",
-        "#{pane_id}",
-        "-t",
-        "=ho-bj:",
-        "-n",
-        slug,
-        "-c",
-        root,
-      ])
-    ).stdout.trim();
+    paneId = await runTmux([
+      "new-window",
+      "-d",
+      "-P",
+      "-F",
+      "#{pane_id}",
+      "-t",
+      "=ho-bj:",
+      "-n",
+      slug,
+      "-c",
+      root,
+    ]);
     await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
     await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
 
@@ -129,9 +125,13 @@ async function main() {
         idlePolls++;
       }
 
-      const dead = (
-        await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"])
-      ).stdout.trim();
+      const dead = await runTmux([
+        "display-message",
+        "-p",
+        "-t",
+        paneId,
+        "#{pane_dead}",
+      ]);
       if (dead === "1" || idlePolls >= 5) {
         break;
       }
@@ -145,14 +145,16 @@ async function main() {
     }
 
     // A dead pane represents a startup failure; a live pane is left for later attachment.
-    const dead = (
-      await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"])
-    ).stdout.trim();
+    const dead = await runTmux([
+      "display-message",
+      "-p",
+      "-t",
+      paneId,
+      "#{pane_dead}",
+    ]);
     if (dead === "1") {
       const status = Number(
-        (
-          await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead_status}"])
-        ).stdout.trim(),
+        await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead_status}"]),
       );
       console.error(`ho-bj: ${slug} exited with status ${status}`);
       process.exitCode = status;
@@ -172,7 +174,8 @@ function fail(message, { status = 1 } = {}) {
 
 async function runTmux(args) {
   try {
-    return await execFileAsync("tmux", args, { encoding: "utf8" });
+    const { stdout } = await execFileAsync("tmux", args, { encoding: "utf8" });
+    return stdout.trim();
   } catch (error) {
     throw new Error((error.stderr ?? "").trim() || error.message);
   }
