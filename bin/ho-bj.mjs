@@ -115,7 +115,12 @@ async function main() {
     await runTmux(["pipe-pane", "-t", paneId]);
     const output = readFileSync(capturePath);
     if (output.length > 0) {
+      process.stdout.write("--- ho-bj: startup output ---\n");
       process.stdout.write(output);
+      if (output.at(-1) !== 0x0a) {
+        process.stdout.write("\n");
+      }
+      process.stdout.write("--- ho-bj: end startup output ---\n");
     }
 
     // A dead pane represents a startup failure; a live pane is left for later attachment.
