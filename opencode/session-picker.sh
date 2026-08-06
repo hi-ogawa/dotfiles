@@ -70,32 +70,25 @@ fi
 
 # fzf owns the list, filtering, and live right-hand preview.
 script_path="$(realpath "$0")"
-selection="$({ printf '%s\n' "$sessions" | fzf \
+result="$({ printf '%s\n' "$sessions" | fzf \
   --ansi \
   --delimiter=$'\t' \
   --with-nth=2.. \
   --layout=reverse \
-  --header='enter: select | esc: cancel' \
+  --header='enter: continue | alt-enter: fork | esc: cancel' \
   --prompt='Sessions> ' \
+  --bind='enter:print(continue)+accept' \
+  --bind='alt-enter:print(fork)+accept' \
   --preview="$(printf '%q' "$script_path") --preview {1}" \
   --preview-window='right:60%:wrap'; } || true)"
 
-if [[ -z "$selection" ]]; then
+if [[ -z "$result" ]]; then
   exit
 fi
 
+action="${result%%$'\n'*}"
+selection="${result#*$'\n'}"
 session_id="${selection%%$'\t'*}"
-
-while true; do
-  printf '\nenter: continue | f: fork | esc: cancel ' >/dev/tty
-  IFS= read -r -n 1 action </dev/tty || exit
-  printf '\n' >/dev/tty
-  case "$action" in
-    '') break ;;
-    f) action='fork'; break ;;
-    $'\e') exit ;;
-  esac
-done
 
 # Replace the wrapper process so the selected OpenCode TUI owns the terminal directly.
 if [[ "$action" == "fork" ]]; then
