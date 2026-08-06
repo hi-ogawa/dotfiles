@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import json
 import os
 import shlex
 import shutil
@@ -12,13 +11,15 @@ from pathlib import Path
 from urllib.parse import quote
 
 
-def preview_session(session_id: str) -> None:
+def database_uri() -> str:
     data_home = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share"))
     db_path = data_home / "opencode" / "opencode.db"
-    db_uri = f"file:{quote(str(db_path), safe='/')}?mode=ro"
+    return f"file:{quote(str(db_path), safe='/')}?mode=ro"
 
+
+def preview_session(session_id: str) -> None:
     # Keep the preview conversational by excluding tool calls and reasoning parts.
-    with sqlite3.connect(db_uri, uri=True) as connection:
+    with sqlite3.connect(database_uri(), uri=True) as connection:
         rows = connection.execute(
             """
             SELECT
@@ -44,24 +45,60 @@ def preview_session(session_id: str) -> None:
 
 
 def list_sessions() -> list[str]:
-    # OpenCode scopes this list to the Git project associated with the current directory.
-    result = subprocess.run(
-        ["opencode", "session", "list", "--format", "json", "-n", "100"],
-        check=True,
-        stdout=subprocess.PIPE,
-        text=True,
-    )
-    sessions = json.loads(result.stdout)
+    cwd = Path.cwd().resolve()
+    try:
+        result = subprocess.run(
+            [
+                "git",
+                "rev-parse",
+                "--path-format=absolute",
+                "--git-common-dir",
+                "--show-toplevel",
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+        )
+    except FileNotFoundError:
+        result = None
+
+    if result is not None and result.returncode == 0:
+        common_directory, checkout = result.stdout.splitlines()
+        # A linked worktree's common Git directory lives under the primary worktree.
+        worktree = Path(common_directory).parent
+    else:
+        worktree = checkout = cwd
+
+    with sqlite3.connect(database_uri(), uri=True) as connection:
+        sessions = connection.execute(
+            """
+            SELECT session.id, session.time_updated, session.title, session.directory
+            FROM session
+            JOIN project ON project.id = session.project_id
+            WHERE session.parent_id IS NULL
+              AND session.time_archived IS NULL
+              AND (
+                project.worktree = ?
+                OR EXISTS (
+                  SELECT 1 FROM json_each(project.sandboxes) WHERE value = ?
+                )
+              )
+            ORDER BY session.time_updated DESC
+            LIMIT 100
+            """,
+            (str(worktree), str(checkout)),
+        ).fetchall()
+
     rows = []
 
-    for session in sessions:
-        updated = datetime.fromtimestamp(session["updated"] / 1000)
-        title = session["title"].translate(
+    for session_id, time_updated, session_title, session_directory in sessions:
+        updated = datetime.fromtimestamp(time_updated / 1000)
+        title = session_title.translate(
             str.maketrans({"\t": " ", "\r": " ", "\n": " "})
         )
-        directory = Path(session["directory"]).name
+        directory = Path(session_directory).name
         # The hidden first TSV field carries the session ID through selection.
-        rows.append(f"{session['id']}\t{updated:%Y-%m-%d %H:%M}\t{title}\t{directory}")
+        rows.append(f"{session_id}\t{updated:%Y-%m-%d %H:%M}\t{title}\t{directory}")
 
     return rows
 
@@ -130,6 +167,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except (json.JSONDecodeError, OSError, sqlite3.Error, subprocess.CalledProcessError) as error:
+    except (OSError, sqlite3.Error) as error:
         print(f"opencode-session-picker: {error}", file=sys.stderr)
         sys.exit(1)
