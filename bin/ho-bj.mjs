@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { spawnSync } from "node:child_process";
+import { execFile as execFileCallback } from "node:child_process";
 import {
   mkdtempSync,
   readFileSync,
@@ -11,8 +11,10 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { promisify } from "node:util";
 
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
+const execFile = promisify(execFileCallback);
 
 main().catch((error) => fail(`ho-bj: ${error.message}`));
 
@@ -47,17 +49,17 @@ async function main() {
     fail(`job root not found: ${root}`);
   }
 
-  if (runTmux(["has-session", "-t", "=ho-bj"], true).status !== 0) {
-    runTmux(["new-session", "-d", "-s", "ho-bj", "-n", "shell"]);
+  if ((await runTmux(["has-session", "-t", "=ho-bj"], true)).status !== 0) {
+    await runTmux(["new-session", "-d", "-s", "ho-bj", "-n", "shell"]);
   }
 
-  const windows = runTmux([
+  const windows = (await runTmux([
     "list-windows",
     "-t",
     "=ho-bj",
     "-F",
     "#{window_name}",
-  ]).stdout.trimEnd().split("\n");
+  ])).stdout.trimEnd().split("\n");
   if (windows.includes(slug)) {
     fail(`job already exists: ${slug}`);
   }
@@ -69,98 +71,101 @@ async function main() {
   let paneId;
   let started = false;
   let cleanedUp = false;
-  function cleanup() {
+  async function cleanup() {
     if (cleanedUp) {
       return;
     }
     cleanedUp = true;
     if (paneId) {
-      runTmux(["pipe-pane", "-t", paneId], true);
+      await runTmux(["pipe-pane", "-t", paneId], true);
       if (!started) {
-        runTmux(["kill-window", "-t", paneId], true);
+        await runTmux(["kill-window", "-t", paneId], true);
       }
     }
     rmSync(temporaryDirectory, { recursive: true, force: true });
   }
-  process.once("exit", cleanup);
   for (const signal of ["SIGINT", "SIGTERM"]) {
-    process.once(signal, () => {
-      cleanup();
+    process.once(signal, async () => {
+      await cleanup();
       process.exit(130);
     });
   }
 
-  paneId = runTmux([
-    "new-window",
-    "-d",
-    "-P",
-    "-F",
-    "#{pane_id}",
-    "-t",
-    "=ho-bj:",
-    "-n",
-    slug,
-    "-c",
-    root,
-  ]).stdout.trim();
-  runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
-  runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
+  try {
+    paneId = (await runTmux([
+      "new-window",
+      "-d",
+      "-P",
+      "-F",
+      "#{pane_id}",
+      "-t",
+      "=ho-bj:",
+      "-n",
+      slug,
+      "-c",
+      root,
+    ])).stdout.trim();
+    await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
+    await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
 
-  const command = `exec ${args.map(shellQuote).join(" ")}`;
-  runTmux(["respawn-pane", "-k", "-t", paneId, "-c", root, command]);
-  started = true;
+    const command = `exec ${args.map(shellQuote).join(" ")}`;
+    await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", root, command]);
+    started = true;
 
-  let lastSize = 0;
-  let idlePolls = 0;
-  for (let poll = 0; poll < 50; poll++) {
-    await sleep(100);
-    const size = statSync(capturePath).size;
-    if (size !== lastSize) {
-      lastSize = size;
-      idlePolls = 0;
-    } else if (size > 0) {
-      idlePolls++;
+    let lastSize = 0;
+    let idlePolls = 0;
+    for (let poll = 0; poll < 50; poll++) {
+      await sleep(100);
+      const size = statSync(capturePath).size;
+      if (size !== lastSize) {
+        lastSize = size;
+        idlePolls = 0;
+      } else if (size > 0) {
+        idlePolls++;
+      }
+
+      const dead = (await runTmux([
+        "display-message",
+        "-p",
+        "-t",
+        paneId,
+        "#{pane_dead}",
+      ])).stdout.trim();
+      if (dead === "1" || idlePolls >= 5) {
+        break;
+      }
     }
 
-    const dead = runTmux([
+    await runTmux(["pipe-pane", "-t", paneId], true);
+    const output = readFileSync(capturePath);
+    if (output.length > 0) {
+      process.stdout.write(output);
+    }
+
+    const dead = (await runTmux([
       "display-message",
       "-p",
       "-t",
       paneId,
       "#{pane_dead}",
-    ]).stdout.trim();
-    if (dead === "1" || idlePolls >= 5) {
-      break;
+    ])).stdout.trim();
+    if (dead === "1") {
+      const status = Number((await runTmux([
+        "display-message",
+        "-p",
+        "-t",
+        paneId,
+        "#{pane_dead_status}",
+      ])).stdout.trim());
+      console.error(`ho-bj: ${slug} exited with status ${status}`);
+      process.exitCode = status;
+      return;
     }
-  }
 
-  runTmux(["pipe-pane", "-t", paneId], true);
-  const output = readFileSync(capturePath);
-  if (output.length > 0) {
-    process.stdout.write(output);
+    console.error(`ho-bj: ${slug} is running; attach with: tmux attach -t ho-bj`);
+  } finally {
+    await cleanup();
   }
-
-  const dead = runTmux([
-    "display-message",
-    "-p",
-    "-t",
-    paneId,
-    "#{pane_dead}",
-  ]).stdout.trim();
-  if (dead === "1") {
-    const status = Number(runTmux([
-      "display-message",
-      "-p",
-      "-t",
-      paneId,
-      "#{pane_dead_status}",
-    ]).stdout.trim());
-    console.error(`ho-bj: ${slug} exited with status ${status}`);
-    process.exitCode = status;
-    return;
-  }
-
-  console.error(`ho-bj: ${slug} is running; attach with: tmux attach -t ho-bj`);
 }
 
 function fail(message, status = 1) {
@@ -168,18 +173,23 @@ function fail(message, status = 1) {
   process.exit(status);
 }
 
-function runTmux(args, allowFailure = false) {
-  const result = spawnSync("tmux", args, { encoding: "utf8" });
-  if (result.error) {
-    if (result.error.code === "ENOENT") {
-      fail("tmux not found");
+async function runTmux(args, allowFailure = false) {
+  try {
+    const result = await execFile("tmux", args, { encoding: "utf8" });
+    return { ...result, status: 0 };
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error("tmux not found");
     }
-    throw result.error;
+    if (allowFailure) {
+      return {
+        stdout: error.stdout ?? "",
+        stderr: error.stderr ?? "",
+        status: typeof error.code === "number" ? error.code : 1,
+      };
+    }
+    throw new Error((error.stderr ?? "").trim() || `tmux exited with status ${error.code}`);
   }
-  if (result.status !== 0 && !allowFailure) {
-    throw new Error(result.stderr.trim() || `tmux exited with status ${result.status}`);
-  }
-  return result;
 }
 
 function shellQuote(value) {
