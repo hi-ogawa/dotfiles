@@ -122,11 +122,11 @@ async function main() {
       "#{pane_dead}",
     ]);
     if (dead === "1") {
-      const status = Number(
-        await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead_status}"]),
+      const status = (
+        await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead_status}"])
       );
       console.error(`ho-bj: ${slug} exited with status ${status}`);
-      process.exitCode = status;
+      process.exitCode = Number(status)
       return;
     }
 
