@@ -137,31 +137,6 @@ async function main() {
   }
 }
 
-async function pollUntil(sample, { intervalMs, maxPolls, idlePollLimit }) {
-  let previousValue;
-  let hasValue = false;
-  let idlePolls = 0;
-  for (let poll = 0; poll < maxPolls; poll++) {
-    await sleep(intervalMs);
-    const result = await sample();
-    if (result.state === "done") {
-      return;
-    }
-    if (result.state === "pending") {
-      continue;
-    }
-    if (hasValue && Object.is(result.value, previousValue)) {
-      if (++idlePolls >= idlePollLimit) {
-        return;
-      }
-    } else {
-      previousValue = result.value;
-      hasValue = true;
-      idlePolls = 0;
-    }
-  }
-}
-
 function parseArguments() {
   // Leave everything after "--" untouched for the job.
   const argv = process.argv.slice(2);
@@ -200,17 +175,38 @@ function parseArguments() {
   return { slug, root, commandArgs, noWait: parsed.values["no-wait"] ?? false };
 }
 
-function fail(message, { status = 1 } = {}) {
-  console.error(message);
-  process.exit(status);
-}
-
 async function runTmux(args) {
   try {
     const { stdout } = await execFileAsync("tmux", args, { encoding: "utf8" });
     return stdout.trim();
   } catch (error) {
     throw new Error((error.stderr ?? "").trim() || error.message);
+  }
+}
+
+
+async function pollUntil(sample, { intervalMs, maxPolls, idlePollLimit }) {
+  let previousValue;
+  let hasValue = false;
+  let idlePolls = 0;
+  for (let poll = 0; poll < maxPolls; poll++) {
+    await sleep(intervalMs);
+    const result = await sample();
+    if (result.state === "done") {
+      return;
+    }
+    if (result.state === "pending") {
+      continue;
+    }
+    if (hasValue && Object.is(result.value, previousValue)) {
+      if (++idlePolls >= idlePollLimit) {
+        return;
+      }
+    } else {
+      previousValue = result.value;
+      hasValue = true;
+      idlePolls = 0;
+    }
   }
 }
 
@@ -221,6 +217,12 @@ function shellQuote(value) {
 function sleep(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
+
+function fail(message, { status = 1 } = {}) {
+  console.error(message);
+  process.exit(status);
+}
+
 
 main().catch((error) => {
   fail(`ho-bj: ${error.message}`);
