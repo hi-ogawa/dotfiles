@@ -1,28 +1,20 @@
 ---
 name: ho-local-repos
 description: >-
-  Use ~/code/ as a local repository library. Trigger only when the user explicitly writes "ho-local-repos".
+  Use ~/code/ as a local repository library. Use only when the user explicitly writes "ho-local-repos".
 ---
 
-This skill is for using `~/code/` as a local library of repositories.
+# Local Repositories
 
-The two main directories:
+Use repositories under `~/code/` as local context for the task.
 
-- **`~/code/others/`** — cloned external / open-source repos (200+). The primary reference source — check here first.
-- **`~/code/personal/`** — the user's own projects. Use only when the user asks for prior personal patterns or the task clearly depends on another named personal repo.
+## Scope
 
-## Finding the right repo
+- `~/code/others/` contains cloned external and open-source repositories. Check here first for external projects.
+- `~/code/personal/` contains the user's projects. Use it when the request concerns prior personal work or a personal repository.
 
-With hundreds of repos, efficient discovery matters:
+Infer from the request whether a repository is reference material or the work target. Inspect it without changes when using it as a reference, and follow the normal editing workflow when the user wants work done there.
 
-1. **Guess the name first** — most repos use their canonical name (e.g., `vitest`, `rolldown`, `react-router`). Try `ls ~/code/others/<name>` directly.
-2. **Glob for partial matches** — `ls ~/code/others/*vite*` or `ls ~/code/others/*rsc*`.
-3. **Grep across repos** — when looking for a specific API or pattern, grep across repo directories rather than reading each one.
-4. **Check `personal/`** for the user's own prior patterns — rare but valuable for "how did I do X before?" questions.
+## Cloning
 
-## Usage
-
-- **Browse existing repos first** — check what's already cloned before fetching anything new
-- **Never clone without asking** — if a repo isn't there, ask the user before cloning. Confirm the exact repo URL — don't guess or construct URLs from memory, as they may not exist.
-- **Shallow clone** — when cloning is approved, use `git clone --depth=1` unless full history is needed
-- **Read-only** — never commit or modify files in any `~/code/` repo from another project's context
+Prefer an existing clone. If the repository is unavailable, ask before cloning. Use `git clone --depth=1` by default, and clone full history when the task requires it.
