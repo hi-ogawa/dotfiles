@@ -94,13 +94,7 @@ async function main() {
         idlePolls++;
       }
 
-      const dead = await runTmux([
-        "display-message",
-        "-p",
-        "-t",
-        paneId,
-        "#{pane_dead}",
-      ]);
+      const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
       if (dead === "1" || idlePolls >= 5) {
         break;
       }
@@ -114,19 +108,11 @@ async function main() {
     }
 
     // A dead pane represents a startup failure; a live pane is left for later attachment.
-    const dead = await runTmux([
-      "display-message",
-      "-p",
-      "-t",
-      paneId,
-      "#{pane_dead}",
-    ]);
+    const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
     if (dead === "1") {
-      const status = (
-        await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead_status}"])
-      );
+      const status = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead_status}"]);
       console.error(`ho-bj: ${slug} exited with status ${status}`);
-      process.exitCode = Number(status)
+      process.exitCode = Number(status);
       return;
     }
 
