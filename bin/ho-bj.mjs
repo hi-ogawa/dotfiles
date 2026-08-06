@@ -72,13 +72,9 @@ async function main() {
     cleanedUp = true;
     if (paneId) {
       // pipe-pane without a command closes tmux's pane-level output pipe.
-      try {
-        await runTmux(["pipe-pane", "-t", paneId]);
-      } catch {}
+      await runTmux(["pipe-pane", "-t", paneId]).catch(() => {});
       if (!started) {
-        try {
-          await runTmux(["kill-window", "-t", paneId]);
-        } catch {}
+        await runTmux(["kill-window", "-t", paneId]).catch(() => {});
       }
     }
     rmSync(temporaryDirectory, { recursive: true, force: true });
