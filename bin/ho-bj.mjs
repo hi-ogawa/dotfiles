@@ -6,12 +6,13 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
-const usage = "usage: ho-bj start <slug> [-C <root>] [--no-wait] -- <command> [args...]";
+const usage =
+  "usage: ho-bj start <slug> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]";
 const sessionName = "ho-bj";
 const execFileAsync = promisify(execFile);
 
 async function main() {
-  const { slug, root, commandArgs, noWait } = parseArguments();
+  const { slug, root, commandArgs, noWait, waitTimeoutMs } = parseArguments();
 
   // Keep all background jobs as named windows in one shared tmux session.
   try {
@@ -108,7 +109,7 @@ async function main() {
         }
         return { state: "ready", value: size };
       },
-      { intervalMs: 100, maxPolls: 50, idlePollLimit: 5 },
+      { intervalMs: 100, timeoutMs: waitTimeoutMs, idlePollLimit: 5 },
     );
 
     // Close the pipe before reading to avoid racing with writes to the capture file.
@@ -157,6 +158,7 @@ function parseArguments() {
       options: {
         root: { type: "string", short: "C" },
         "no-wait": { type: "boolean" },
+        "wait-timeout": { type: "string" },
       },
       allowPositionals: true,
     });
@@ -171,13 +173,23 @@ function parseArguments() {
     fail(`invalid job slug: ${slug}`, { status: 2 });
   }
 
+  const noWait = parsed.values["no-wait"] ?? false;
+  const waitTimeout = parsed.values["wait-timeout"];
+  if (noWait && waitTimeout !== undefined) {
+    fail(usage, { status: 2 });
+  }
+  const waitTimeoutSeconds = Number(waitTimeout ?? 5);
+  if (!Number.isFinite(waitTimeoutSeconds) || waitTimeoutSeconds <= 0) {
+    fail(`invalid wait timeout: ${waitTimeout}`, { status: 2 });
+  }
+
   // Make the root absolute before passing it to tmux.
   const requestedRoot = parsed.values.root ?? process.cwd();
   const root = resolve(requestedRoot);
   if (!statSync(root, { throwIfNoEntry: false })?.isDirectory()) {
     fail(`job root not found: ${requestedRoot}`);
   }
-  return { slug, root, commandArgs, noWait: parsed.values["no-wait"] ?? false };
+  return { slug, root, commandArgs, noWait, waitTimeoutMs: waitTimeoutSeconds * 1000 };
 }
 
 async function runTmux(args) {
@@ -189,12 +201,17 @@ async function runTmux(args) {
   }
 }
 
-async function pollUntil(sample, { intervalMs, maxPolls, idlePollLimit }) {
+async function pollUntil(sample, { intervalMs, timeoutMs, idlePollLimit }) {
+  const deadline = Date.now() + timeoutMs;
   let previousValue;
   let hasValue = false;
   let idlePolls = 0;
-  for (let poll = 0; poll < maxPolls; poll++) {
-    await sleep(intervalMs);
+  while (true) {
+    const remainingMs = deadline - Date.now();
+    if (remainingMs <= 0) {
+      return;
+    }
+    await sleep(Math.min(intervalMs, remainingMs));
     const result = await sample();
     if (result.state === "done") {
       return;
