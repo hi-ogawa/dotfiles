@@ -17,6 +17,7 @@ def preview_session(session_id: str) -> None:
     db_path = data_home / "opencode" / "opencode.db"
     db_uri = f"file:{quote(str(db_path), safe='/')}?mode=ro"
 
+    # Keep the preview conversational by excluding tool calls and reasoning parts.
     with sqlite3.connect(db_uri, uri=True) as connection:
         rows = connection.execute(
             """
@@ -43,6 +44,7 @@ def preview_session(session_id: str) -> None:
 
 
 def list_sessions() -> list[str]:
+    # OpenCode scopes this list to the Git project associated with the current directory.
     result = subprocess.run(
         ["opencode", "session", "list", "--format", "json", "-n", "100"],
         check=True,
@@ -58,12 +60,14 @@ def list_sessions() -> list[str]:
             str.maketrans({"\t": " ", "\r": " ", "\n": " "})
         )
         directory = Path(session["directory"]).name
+        # The hidden first TSV field carries the session ID through selection.
         rows.append(f"{session['id']}\t{updated:%Y-%m-%d %H:%M}\t{title}\t{directory}")
 
     return rows
 
 
 def choose_session(rows: list[str]) -> str | None:
+    # fzf owns the list, filtering, and live right-hand preview.
     script_path = Path(__file__).resolve()
     result = subprocess.run(
         [
@@ -128,6 +132,7 @@ def main() -> int:
     arguments = ["opencode", "--session", session_id]
     if fork:
         arguments.append("--fork")
+    # Replace the wrapper process so the selected OpenCode TUI owns the terminal directly.
     os.execvp(arguments[0], arguments)
 
 
