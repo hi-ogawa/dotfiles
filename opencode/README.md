@@ -9,7 +9,7 @@ User-level OpenCode config, global instructions, desktop notifications, and opti
 - `notify.js` - desktop notification plugin
 - `notify-icon.png` - notification icon
 - `opencode.service` - optional systemd user service for `opencode serve`
-- `session-picker.sh` - recent-session browser with continue and fork actions
+- `session-picker.js` - recent-session browser with continue and fork actions
 
 ## Setup
 
@@ -26,7 +26,7 @@ Run `./sync.sh apply opencode` to install:
 
 - `Enter` selects a session, then `Enter` continues it or `f` forks it.
 - `Esc` cancels from either step without starting OpenCode.
-The picker requires `opencode`, `jq`, `fzf`, and `sqlite3` on `PATH`.
+The picker requires Node.js 22.15 or newer, `opencode`, and `fzf` on `PATH`.
 
 ## Global Rules
 
