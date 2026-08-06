@@ -151,14 +151,13 @@ async function pollUntil(sample, { intervalMs, maxPolls, idlePollLimit }) {
       continue;
     }
     if (hasValue && Object.is(result.value, previousValue)) {
-      idlePolls++;
+      if (++idlePolls >= idlePollLimit) {
+        return;
+      }
     } else {
       previousValue = result.value;
       hasValue = true;
       idlePolls = 0;
-    }
-    if (idlePolls >= idlePollLimit) {
-      return;
     }
   }
 }
