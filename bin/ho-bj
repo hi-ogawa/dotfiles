@@ -14,30 +14,7 @@ const { join } = require("node:path");
 
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
 
-function fail(message, status = 1) {
-  console.error(message);
-  process.exit(status);
-}
-
-function runTmux(args, allowFailure = false) {
-  const result = spawnSync("tmux", args, { encoding: "utf8" });
-  if (result.error) {
-    if (result.error.code === "ENOENT") fail("tmux not found");
-    throw result.error;
-  }
-  if (result.status !== 0 && !allowFailure) {
-    throw new Error(result.stderr.trim() || `tmux exited with status ${result.status}`);
-  }
-  return result;
-}
-
-function shellQuote(value) {
-  return `'${value.replaceAll("'", "'\\''")}'`;
-}
-
-function sleep(milliseconds) {
-  return new Promise((resolve) => setTimeout(resolve, milliseconds));
-}
+main().catch((error) => fail(`ho-bj: ${error.message}`));
 
 async function main() {
   const args = process.argv.slice(2);
@@ -168,4 +145,27 @@ async function main() {
   console.error(`ho-bj: ${slug} is running; attach with: tmux attach -t ho-bj`);
 }
 
-main().catch((error) => fail(`ho-bj: ${error.message}`));
+function fail(message, status = 1) {
+  console.error(message);
+  process.exit(status);
+}
+
+function runTmux(args, allowFailure = false) {
+  const result = spawnSync("tmux", args, { encoding: "utf8" });
+  if (result.error) {
+    if (result.error.code === "ENOENT") fail("tmux not found");
+    throw result.error;
+  }
+  if (result.status !== 0 && !allowFailure) {
+    throw new Error(result.stderr.trim() || `tmux exited with status ${result.status}`);
+  }
+  return result;
+}
+
+function shellQuote(value) {
+  return `'${value.replaceAll("'", "'\\''")}'`;
+}
+
+function sleep(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
