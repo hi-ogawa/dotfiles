@@ -57,7 +57,7 @@ async function main() {
     });
   }
 
-  try {
+  async function start() {
     // Create the window with a placeholder shell so capture is ready before the job starts.
     paneId = await runTmux([
       "new-window",
@@ -129,6 +129,10 @@ async function main() {
     }
 
     console.error(`ho-bj: ${slug} is running`);
+  }
+
+  try {
+    await start();
   } finally {
     await cleanup();
   }
