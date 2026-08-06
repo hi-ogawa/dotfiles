@@ -7,6 +7,7 @@ import { join } from "node:path";
 import { promisify } from "node:util";
 
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
+const sessionName = "ho-bj";
 const execFileAsync = promisify(execFile);
 
 async function main() {
@@ -44,13 +45,13 @@ async function main() {
 
   // Keep all background jobs as named windows in one shared tmux session.
   try {
-    await runTmux(["has-session", "-t", "=ho-bj"]);
+    await runTmux(["has-session", "-t", `=${sessionName}`]);
   } catch {
-    await runTmux(["new-session", "-d", "-s", "ho-bj", "-n", "shell"]);
+    await runTmux(["new-session", "-d", "-s", sessionName, "-n", "shell"]);
   }
 
   const windows = (
-    await runTmux(["list-windows", "-t", "=ho-bj", "-F", "#{window_name}"])
+    await runTmux(["list-windows", "-t", `=${sessionName}`, "-F", "#{window_name}"])
   ).split("\n");
   if (windows.includes(slug)) {
     fail(`job already exists: ${slug}`);
@@ -95,7 +96,7 @@ async function main() {
       "-F",
       "#{pane_id}",
       "-t",
-      "=ho-bj:",
+      `=${sessionName}:`,
       "-n",
       slug,
       "-c",
@@ -157,7 +158,7 @@ async function main() {
       return;
     }
 
-    console.error(`ho-bj: ${slug} is running; attach with: tmux attach -t ho-bj`);
+    console.error(`ho-bj: ${slug} is running; attach with: tmux attach -t ${sessionName}`);
   } finally {
     await cleanup();
   }
