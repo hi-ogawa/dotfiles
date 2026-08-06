@@ -75,6 +75,7 @@ async function main() {
     }
     cleanedUp = true;
     if (paneId) {
+      // pipe-pane without a command closes tmux's pane-level output pipe.
       await runTmux(["pipe-pane", "-t", paneId], { allowFailure: true });
       if (!started) {
         await runTmux(["kill-window", "-t", paneId], { allowFailure: true });
