@@ -96,7 +96,7 @@ async function main() {
       return;
     }
 
-    // Wait until the job exits or its startup output has been quiet for 500 ms.
+    // Wait until the job exits or its startup output has been quiet for one second.
     await pollUntil(
       async () => {
         const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
@@ -109,7 +109,7 @@ async function main() {
         }
         return { state: "ready", value: size };
       },
-      { intervalMs: 100, timeoutMs: waitTimeoutMs, idlePollLimit: 5 },
+      { intervalMs: 100, timeoutMs: waitTimeoutMs, idlePollLimit: 10 },
     );
 
     // Close the pipe before reading to avoid racing with writes to the capture file.
