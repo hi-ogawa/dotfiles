@@ -162,15 +162,16 @@ function parseArguments() {
 
   // Resolve the root before passing it to tmux so the job has a stable working directory.
   const requestedRoot = parsed.values.root ?? process.cwd();
+  let root;
   try {
-    const root = realpathSync(requestedRoot);
-    if (!statSync(root).isDirectory()) {
-      throw new Error();
-    }
-    return { slug, root, commandArgs };
+    root = realpathSync(requestedRoot);
   } catch {
     fail(`job root not found: ${requestedRoot}`);
   }
+  if (!statSync(root).isDirectory()) {
+    fail(`job root not found: ${requestedRoot}`);
+  }
+  return { slug, root, commandArgs };
 }
 
 function fail(message, { status = 1 } = {}) {
