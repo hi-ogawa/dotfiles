@@ -8,7 +8,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 # Platform file mappings
 FILES_LINUX=(
-  "bin/ho-bj.py:$HOME/.local/bin/ho-bj"
+  "bin/ho-bj.mjs:$HOME/.local/bin/ho-bj"
   "bin/ho-handoff:$HOME/.local/bin/ho-handoff"
   "shell/.bashrc:$HOME/.bashrc"
   "shell/.zshrc:$HOME/.zshrc"
