@@ -9,7 +9,7 @@ User-level OpenCode config, global instructions, desktop notifications, and opti
 - `notify.js` - desktop notification plugin
 - `notify-icon.png` - notification icon
 - `opencode.service` - optional systemd user service for `opencode serve`
-- `session-picker.sh` - recent-session browser with continue and fork actions
+- `session-picker.py` - recent-session browser with continue and fork actions
 
 ## Setup
 
@@ -25,8 +25,8 @@ Run `./sync.sh apply opencode` to install:
 `opencode-session-picker` opens the current project's recent sessions in a two-pane browser. The list is ordered by latest activity, while the preview shows the selected session's recent user and assistant text.
 
 - `Enter` selects a session, then `Enter` continues it or `f` forks it.
-- `Esc` cancels from either step without starting OpenCode.
-The picker requires `opencode`, `jq`, `fzf`, and `sqlite3` on `PATH`.
+- `Esc` cancels the session browser; `q` cancels the action prompt.
+The picker requires Python 3, `opencode`, and `fzf` on `PATH`.
 
 ## Global Rules
 
