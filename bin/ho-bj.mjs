@@ -106,7 +106,7 @@ async function main() {
         if (size === 0) {
           return { state: "pending" };
         }
-        return { state: "value", value: size };
+        return { state: "ready", value: size };
       },
       { intervalMs: 100, maxPolls: 50, idlePollLimit: 5 },
     );
