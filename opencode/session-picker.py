@@ -49,8 +49,6 @@ def list_sessions() -> list[str]:
     # This path-based shortcut does not reproduce OpenCode's origin-based project identity:
     # - A separate clone with the same origin shares sessions in OpenCode, but its path
     #   will not match until OpenCode registers that checkout as a sandbox.
-    # - If a linked worktree was the first checkout OpenCode saw, it can be the recorded
-    #   primary path while the repository's main checkout is absent from the project row.
     # - Outside Git, OpenCode lists root sessions from its global project, while this
     #   lookup uses the current directory and normally returns no sessions.
     try:
@@ -85,15 +83,15 @@ def list_sessions() -> list[str]:
             WHERE session.parent_id IS NULL
               AND session.time_archived IS NULL
               AND (
-                project.worktree = ?
+                project.worktree IN (?, ?)
                 OR EXISTS (
-                  SELECT 1 FROM json_each(project.sandboxes) WHERE value = ?
+                  SELECT 1 FROM json_each(project.sandboxes) WHERE value IN (?, ?)
                 )
               )
             ORDER BY session.time_updated DESC
             LIMIT 100
             """,
-            (str(worktree), str(checkout)),
+            (str(worktree), str(checkout), str(worktree), str(checkout)),
         ).fetchall()
 
     rows = []
