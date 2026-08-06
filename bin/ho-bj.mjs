@@ -11,18 +11,7 @@ const sessionName = "ho-bj";
 const execFileAsync = promisify(execFile);
 
 async function main() {
-  const { slug, root: requestedRoot, commandArgs } = parseArguments();
-  let root = requestedRoot;
-
-  // Resolve the root before passing it to tmux so the job has a stable working directory.
-  try {
-    root = realpathSync(root);
-    if (!statSync(root).isDirectory()) {
-      throw new Error();
-    }
-  } catch {
-    fail(`job root not found: ${root}`);
-  }
+  const { slug, root, commandArgs } = parseArguments();
 
   // Keep all background jobs as named windows in one shared tmux session.
   try {
@@ -170,7 +159,18 @@ function parseArguments() {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     fail(`invalid job slug: ${slug}`, { status: 2 });
   }
-  return { slug, root: parsed.values.root ?? process.cwd(), commandArgs };
+
+  // Resolve the root before passing it to tmux so the job has a stable working directory.
+  const requestedRoot = parsed.values.root ?? process.cwd();
+  try {
+    const root = realpathSync(requestedRoot);
+    if (!statSync(root).isDirectory()) {
+      throw new Error();
+    }
+    return { slug, root, commandArgs };
+  } catch {
+    fail(`job root not found: ${requestedRoot}`);
+  }
 }
 
 function fail(message, { status = 1 } = {}) {
