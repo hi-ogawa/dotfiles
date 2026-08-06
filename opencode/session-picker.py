@@ -66,7 +66,7 @@ def list_sessions() -> list[str]:
     return rows
 
 
-def choose_session(rows: list[str]) -> str | None:
+def choose_session(rows: list[str]) -> tuple[str, str] | None:
     # fzf owns the list, filtering, and live right-hand preview.
     script_path = Path(__file__).resolve()
     result = subprocess.run(
@@ -76,8 +76,10 @@ def choose_session(rows: list[str]) -> str | None:
             "--delimiter=\t",
             "--with-nth=2..",
             "--layout=reverse",
-            "--header=enter: select | esc: cancel",
+            "--header=enter: continue | alt-enter: fork | esc: cancel",
             "--prompt=Sessions> ",
+            "--bind=enter:print(continue)+accept",
+            "--bind=alt-enter:print(fork)+accept",
             f"--preview={shlex.quote(str(script_path))} --preview {{1}}",
             "--preview-window=right:60%:wrap",
         ],
@@ -87,23 +89,8 @@ def choose_session(rows: list[str]) -> str | None:
     )
     if result.returncode != 0 or not result.stdout:
         return None
-    return result.stdout.partition("\t")[0]
-
-
-def choose_action() -> bool | None:
-    while True:
-        try:
-            action = input("\nenter: continue | f: fork | q: cancel ").strip().lower()
-        except (EOFError, KeyboardInterrupt):
-            print()
-            return None
-
-        if not action:
-            return False
-        if action == "f":
-            return True
-        if action == "q":
-            return None
+    action, _, selection = result.stdout.partition("\n")
+    return action, selection.partition("\t")[0]
 
 
 def main() -> int:
@@ -121,16 +108,13 @@ def main() -> int:
         print("No OpenCode sessions found for this project.", file=sys.stderr)
         return 1
 
-    session_id = choose_session(sessions)
-    if session_id is None:
+    selection = choose_session(sessions)
+    if selection is None:
         return 0
-
-    fork = choose_action()
-    if fork is None:
-        return 0
+    action, session_id = selection
 
     arguments = ["opencode", "--session", session_id]
-    if fork:
+    if action == "fork":
         arguments.append("--fork")
     # Replace the wrapper process so the selected OpenCode TUI owns the terminal directly.
     os.execvp(arguments[0], arguments)
