@@ -11,33 +11,8 @@ const sessionName = "ho-bj";
 const execFileAsync = promisify(execFile);
 
 async function main() {
-  // Parse the wrapper arguments while leaving everything after "--" for the job.
-  const argv = process.argv.slice(2);
-  const separator = argv.indexOf("--");
-  if (separator === -1) {
-    fail(usage, { status: 2 });
-  }
-  const commandArgs = argv.slice(separator + 1);
-  let parsed;
-  try {
-    parsed = parseArgs({
-      args: argv.slice(0, separator),
-      options: { root: { type: "string", short: "C" } },
-      allowPositionals: true,
-    });
-  } catch {
-    fail(usage, { status: 2 });
-  }
-  const [action, slug = "", ...extra] = parsed.positionals;
-  if (action !== "start" || extra.length > 0 || commandArgs.length === 0) {
-    fail(usage, { status: 2 });
-  }
-
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-    fail(`invalid job slug: ${slug}`, { status: 2 });
-  }
-
-  let root = parsed.values.root ?? process.cwd();
+  const { slug, root: requestedRoot, commandArgs } = parseArguments();
+  let root = requestedRoot;
 
   // Resolve the root before passing it to tmux so the job has a stable working directory.
   try {
@@ -168,6 +143,34 @@ async function main() {
   } finally {
     await cleanup();
   }
+}
+
+function parseArguments() {
+  // Leave everything after "--" untouched for the job.
+  const argv = process.argv.slice(2);
+  const separator = argv.indexOf("--");
+  if (separator === -1) {
+    fail(usage, { status: 2 });
+  }
+  const commandArgs = argv.slice(separator + 1);
+  let parsed;
+  try {
+    parsed = parseArgs({
+      args: argv.slice(0, separator),
+      options: { root: { type: "string", short: "C" } },
+      allowPositionals: true,
+    });
+  } catch {
+    fail(usage, { status: 2 });
+  }
+  const [action, slug = "", ...extra] = parsed.positionals;
+  if (action !== "start" || extra.length > 0 || commandArgs.length === 0) {
+    fail(usage, { status: 2 });
+  }
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    fail(`invalid job slug: ${slug}`, { status: 2 });
+  }
+  return { slug, root: parsed.values.root ?? process.cwd(), commandArgs };
 }
 
 function fail(message, { status = 1 } = {}) {
