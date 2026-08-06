@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import json
 import os
 import shlex
@@ -118,15 +119,15 @@ def choose_session(rows: list[str]) -> tuple[str, str] | None:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("-q", "--query", default="", metavar="TEXT")
+    mode.add_argument("--internal-preview", metavar="SESSION_ID", help=argparse.SUPPRESS)
+    arguments = parser.parse_args()
+
     # fzf reinvokes this script in an internal mode as the highlighted session changes.
-    if sys.argv[1:2] == ["--internal-preview"]:
-        if len(sys.argv) != 3:
-            print(
-                "usage: opencode-session-picker --internal-preview SESSION_ID",
-                file=sys.stderr,
-            )
-            return 2
-        preview_session(sys.argv[2])
+    if arguments.internal_preview is not None:
+        preview_session(arguments.internal_preview)
         return 0
 
     for command in ("opencode", "fzf"):
@@ -134,11 +135,10 @@ def main() -> int:
             print(f"Missing required command: {command}", file=sys.stderr)
             return 1
 
-    query = " ".join(sys.argv[1:])
-    sessions = list_sessions(query)
+    sessions = list_sessions(arguments.query)
     if not sessions:
-        if query:
-            print(f"No OpenCode sessions matching: {query}", file=sys.stderr)
+        if arguments.query:
+            print(f"No OpenCode sessions matching: {arguments.query}", file=sys.stderr)
         else:
             print("No OpenCode sessions found for this project.", file=sys.stderr)
         return 1
