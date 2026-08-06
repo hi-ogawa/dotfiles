@@ -128,7 +128,7 @@ async function main() {
       return;
     }
 
-    console.error(`ho-bj: ${slug} is running; attach with: tmux attach -t ${sessionName}`);
+    console.error(`ho-bj: ${slug} is running`);
   } finally {
     await cleanup();
   }
