@@ -35,6 +35,7 @@ async function main() {
   let paneId;
   let started = false;
   let cleanedUp = false;
+
   // Stop capturing output and remove a partially initialized window on failure.
   async function cleanup() {
     if (cleanedUp) {
@@ -50,6 +51,7 @@ async function main() {
     }
     rmSync(temporaryDirectory, { recursive: true, force: true });
   }
+
   for (const signal of ["SIGINT", "SIGTERM"]) {
     process.once(signal, async () => {
       await cleanup();
