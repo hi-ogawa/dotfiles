@@ -11,10 +11,11 @@ Use one tmux session named `ho-bj`, with one window per long-lived command. Give
 ## Start
 
 ```bash
-ho-bj start <slug> -C <root> -- <command> [args...]
+ho-bj start <slug> [-C <root>] [--no-wait] -- <command> [args...]
 ```
 
 `-C` defaults to the current directory. Start waits briefly for initial output, then reports whether the job is still running or exited.
+Use `--no-wait` to return immediately without capturing startup output.
 
 ## Stop
 

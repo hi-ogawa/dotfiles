@@ -6,12 +6,12 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
-const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
+const usage = "usage: ho-bj start <slug> [-C <root>] [--no-wait] -- <command> [args...]";
 const sessionName = "ho-bj";
 const execFileAsync = promisify(execFile);
 
 async function main() {
-  const { slug, root, commandArgs } = parseArguments();
+  const { slug, root, commandArgs, noWait } = parseArguments();
 
   // Keep all background jobs as named windows in one shared tmux session.
   try {
@@ -27,10 +27,14 @@ async function main() {
     fail(`job already exists: ${slug}`);
   }
 
-  // Capture early output so the caller can see whether the job started successfully.
-  const temporaryDirectory = mkdtempSync(join(tmpdir(), "ho-bj."));
-  const capturePath = join(temporaryDirectory, "startup.log");
-  writeFileSync(capturePath, "");
+  let temporaryDirectory;
+  let capturePath;
+  if (!noWait) {
+    // Capture early output so the caller can see whether the job started successfully.
+    temporaryDirectory = mkdtempSync(join(tmpdir(), "ho-bj."));
+    capturePath = join(temporaryDirectory, "startup.log");
+    writeFileSync(capturePath, "");
+  }
 
   let paneId;
   let started = false;
@@ -44,12 +48,16 @@ async function main() {
     cleanedUp = true;
     if (paneId) {
       // pipe-pane without a command closes tmux's pane-level output pipe.
-      await runTmux(["pipe-pane", "-t", paneId]).catch(() => {});
+      if (capturePath) {
+        await runTmux(["pipe-pane", "-t", paneId]).catch(() => {});
+      }
       if (!started) {
         await runTmux(["kill-window", "-t", paneId]).catch(() => {});
       }
     }
-    rmSync(temporaryDirectory, { recursive: true, force: true });
+    if (temporaryDirectory) {
+      rmSync(temporaryDirectory, { recursive: true, force: true });
+    }
   }
 
   for (const signal of ["SIGINT", "SIGTERM"]) {
@@ -75,11 +83,17 @@ async function main() {
       root,
     ]);
     await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
-    await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
+    if (capturePath) {
+      await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
+    }
 
     const command = `exec ${commandArgs.map(shellQuote).join(" ")}`;
     await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", root, command]);
     started = true;
+    if (noWait) {
+      console.error(`ho-bj: ${slug} started`);
+      return;
+    }
 
     // Wait until the job exits or its startup output has been quiet for 500 ms.
     let lastSize = 0;
@@ -138,7 +152,10 @@ function parseArguments() {
   try {
     parsed = parseArgs({
       args: argv.slice(0, separator),
-      options: { root: { type: "string", short: "C" } },
+      options: {
+        root: { type: "string", short: "C" },
+        "no-wait": { type: "boolean" },
+      },
       allowPositionals: true,
     });
   } catch {
@@ -158,7 +175,7 @@ function parseArguments() {
   if (!statSync(root, { throwIfNoEntry: false })?.isDirectory()) {
     fail(`job root not found: ${requestedRoot}`);
   }
-  return { slug, root, commandArgs };
+  return { slug, root, commandArgs, noWait: parsed.values["no-wait"] ?? false };
 }
 
 function fail(message, { status = 1 } = {}) {
