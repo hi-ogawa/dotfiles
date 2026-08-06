@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import os
 import shlex
 import shutil
@@ -44,7 +45,7 @@ def preview_session(session_id: str) -> None:
             print(f"\n\033[1;36mASSISTANT\033[0m\n\033[38;5;153m{text}\033[0m")
 
 
-def list_sessions() -> list[str]:
+def list_sessions(query: str) -> list[str]:
     # A separate clone with the same origin shares sessions in OpenCode, but this
     # path-based lookup will not match until OpenCode registers it as a sandbox.
     try:
@@ -78,6 +79,19 @@ def list_sessions() -> list[str]:
         scope = "project.id = ?"
         parameters = ("global",)
 
+    query_filter = ""
+    limit = "LIMIT 100"
+    if query:
+        query_filter = """
+          AND EXISTS (
+            SELECT 1 FROM part
+            WHERE part.session_id = session.id
+              AND instr(lower(part.data), lower(?)) > 0
+          )
+        """
+        parameters += (query,)
+        limit = ""
+
     with sqlite3.connect(database_uri(), uri=True) as connection:
         sessions = connection.execute(
             f"""
@@ -87,8 +101,9 @@ def list_sessions() -> list[str]:
             WHERE session.parent_id IS NULL
               AND session.time_archived IS NULL
               AND ({scope})
+              {query_filter}
             ORDER BY session.time_updated DESC
-            LIMIT 100
+            {limit}
             """,
             parameters,
         ).fetchall()
@@ -135,15 +150,15 @@ def choose_session(rows: list[str]) -> tuple[str, str] | None:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("-q", "--query", default="", metavar="TEXT")
+    mode.add_argument("--internal-preview", metavar="SESSION_ID", help=argparse.SUPPRESS)
+    arguments = parser.parse_args()
+
     # fzf reinvokes this script in an internal mode as the highlighted session changes.
-    if sys.argv[1:2] == ["--internal-preview"]:
-        if len(sys.argv) != 3:
-            print(
-                "usage: opencode-session-picker --internal-preview SESSION_ID",
-                file=sys.stderr,
-            )
-            return 2
-        preview_session(sys.argv[2])
+    if arguments.internal_preview is not None:
+        preview_session(arguments.internal_preview)
         return 0
 
     for command in ("opencode", "fzf"):
@@ -151,9 +166,12 @@ def main() -> int:
             print(f"Missing required command: {command}", file=sys.stderr)
             return 1
 
-    sessions = list_sessions()
+    sessions = list_sessions(arguments.query)
     if not sessions:
-        print("No OpenCode sessions found for this project.", file=sys.stderr)
+        if arguments.query:
+            print(f"No OpenCode sessions matching: {arguments.query}", file=sys.stderr)
+        else:
+            print("No OpenCode sessions found for this project.", file=sys.stderr)
         return 1
 
     selection = choose_session(sessions)
