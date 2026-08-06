@@ -1,120 +1,171 @@
-#!/bin/bash
+#!/usr/bin/env node
 
-set -e
+const { spawnSync } = require("node:child_process");
+const {
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  statSync,
+  writeFileSync,
+} = require("node:fs");
+const { tmpdir } = require("node:os");
+const { join } = require("node:path");
 
-usage() {
-  echo "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]" >&2
-  exit 2
+const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
+
+function fail(message, status = 1) {
+  console.error(message);
+  process.exit(status);
 }
 
-if [ "${1:-}" != "start" ]; then
-  usage
-fi
-shift
-
-slug="${1:-}"
-if [[ ! "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
-  echo "invalid job slug: $slug" >&2
-  exit 2
-fi
-shift
-
-root="$PWD"
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    -C)
-      [ "$#" -ge 2 ] || usage
-      root="$2"
-      shift 2
-      ;;
-    --)
-      shift
-      break
-      ;;
-    *)
-      usage
-      ;;
-  esac
-done
-
-[ "$#" -gt 0 ] || usage
-
-if ! command -v tmux >/dev/null 2>&1; then
-  echo "tmux not found" >&2
-  exit 1
-fi
-if ! root="$(cd -- "$root" 2>/dev/null && pwd -P)"; then
-  echo "job root not found: $root" >&2
-  exit 1
-fi
-
-session="=ho-bj"
-
-tmux has-session -t "$session" 2>/dev/null || tmux new-session -d -s ho-bj -n shell
-while IFS= read -r window_name; do
-  if [ "$window_name" = "$slug" ]; then
-    echo "job already exists: $slug" >&2
-    exit 1
-  fi
-done < <(tmux list-windows -t "$session" -F '#{window_name}')
-
-capture_file="$(mktemp "${TMPDIR:-/tmp}/ho-bj.XXXXXX")"
-pane_id=""
-started=0
-
-cleanup() {
-  if [ -n "$pane_id" ]; then
-    tmux pipe-pane -t "$pane_id" >/dev/null 2>&1 || true
-  fi
-  rm -f -- "$capture_file"
-  if [ -n "$pane_id" ] && [ "$started" -eq 0 ]; then
-    tmux kill-window -t "$pane_id" >/dev/null 2>&1 || true
-  fi
+function runTmux(args, allowFailure = false) {
+  const result = spawnSync("tmux", args, { encoding: "utf8" });
+  if (result.error) {
+    if (result.error.code === "ENOENT") fail("tmux not found");
+    throw result.error;
+  }
+  if (result.status !== 0 && !allowFailure) {
+    throw new Error(result.stderr.trim() || `tmux exited with status ${result.status}`);
+  }
+  return result;
 }
-trap cleanup EXIT
-trap 'exit 130' INT TERM
 
-pane_id="$(tmux new-window -d -P -F '#{pane_id}' -t '=ho-bj:' -n "$slug" -c "$root")"
-tmux set-option -w -t "$pane_id" remain-on-exit on
-printf -v command_text 'exec %q' "$1"
-shift
-for arg in "$@"; do
-  printf -v command_text '%s %q' "$command_text" "$arg"
-done
+function shellQuote(value) {
+  return `'${value.replaceAll("'", "'\\''")}'`;
+}
 
-tmux pipe-pane -t "$pane_id" "cat >> $(printf '%q' "$capture_file")"
-tmux respawn-pane -k -t "$pane_id" -c "$root" "$command_text"
-started=1
+function sleep(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
 
-# Wait up to five seconds, returning once startup output has been quiet for 500ms.
-last_size=0
-idle_polls=0
-for ((poll = 0; poll < 50; poll++)); do
-  sleep 0.1
-  size="$(wc -c < "$capture_file")"
-  if [ "$size" -ne "$last_size" ]; then
-    last_size="$size"
-    idle_polls=0
-  elif [ "$size" -gt 0 ]; then
-    ((idle_polls++)) || true
-  fi
+async function main() {
+  const args = process.argv.slice(2);
+  if (args.shift() !== "start") fail(usage, 2);
 
-  dead="$(tmux display-message -p -t "$pane_id" '#{pane_dead}')"
-  if [ "$dead" = "1" ] || [ "$idle_polls" -ge 5 ]; then
-    break
-  fi
-done
+  const slug = args.shift() ?? "";
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    fail(`invalid job slug: ${slug}`, 2);
+  }
 
-tmux pipe-pane -t "$pane_id" 2>/dev/null || true
-if [ -s "$capture_file" ]; then
-  cat -- "$capture_file"
-fi
+  let root = process.cwd();
+  while (args.length > 0 && args[0] !== "--") {
+    if (args.shift() !== "-C" || args.length === 0) fail(usage, 2);
+    root = args.shift();
+  }
+  if (args.shift() !== "--" || args.length === 0) fail(usage, 2);
 
-dead="$(tmux display-message -p -t "$pane_id" '#{pane_dead}')"
-if [ "$dead" = "1" ]; then
-  status="$(tmux display-message -p -t "$pane_id" '#{pane_dead_status}')"
-  echo "ho-bj: $slug exited with status $status" >&2
-  exit "$status"
-fi
+  try {
+    root = realpathSync(root);
+    if (!statSync(root).isDirectory()) throw new Error();
+  } catch {
+    fail(`job root not found: ${root}`);
+  }
 
-echo "ho-bj: $slug is running; attach with: tmux attach -t ho-bj" >&2
+  if (runTmux(["has-session", "-t", "=ho-bj"], true).status !== 0) {
+    runTmux(["new-session", "-d", "-s", "ho-bj", "-n", "shell"]);
+  }
+
+  const windows = runTmux([
+    "list-windows",
+    "-t",
+    "=ho-bj",
+    "-F",
+    "#{window_name}",
+  ]).stdout.trimEnd().split("\n");
+  if (windows.includes(slug)) fail(`job already exists: ${slug}`);
+
+  const temporaryDirectory = mkdtempSync(join(tmpdir(), "ho-bj."));
+  const capturePath = join(temporaryDirectory, "startup.log");
+  writeFileSync(capturePath, "");
+
+  let paneId;
+  let started = false;
+  let cleanedUp = false;
+  function cleanup() {
+    if (cleanedUp) return;
+    cleanedUp = true;
+    if (paneId) {
+      runTmux(["pipe-pane", "-t", paneId], true);
+      if (!started) runTmux(["kill-window", "-t", paneId], true);
+    }
+    rmSync(temporaryDirectory, { recursive: true, force: true });
+  }
+  process.once("exit", cleanup);
+  for (const signal of ["SIGINT", "SIGTERM"]) {
+    process.once(signal, () => {
+      cleanup();
+      process.exit(130);
+    });
+  }
+
+  paneId = runTmux([
+    "new-window",
+    "-d",
+    "-P",
+    "-F",
+    "#{pane_id}",
+    "-t",
+    "=ho-bj:",
+    "-n",
+    slug,
+    "-c",
+    root,
+  ]).stdout.trim();
+  runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
+  runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
+
+  const command = `exec ${args.map(shellQuote).join(" ")}`;
+  runTmux(["respawn-pane", "-k", "-t", paneId, "-c", root, command]);
+  started = true;
+
+  let lastSize = 0;
+  let idlePolls = 0;
+  for (let poll = 0; poll < 50; poll++) {
+    await sleep(100);
+    const size = statSync(capturePath).size;
+    if (size !== lastSize) {
+      lastSize = size;
+      idlePolls = 0;
+    } else if (size > 0) {
+      idlePolls++;
+    }
+
+    const dead = runTmux([
+      "display-message",
+      "-p",
+      "-t",
+      paneId,
+      "#{pane_dead}",
+    ]).stdout.trim();
+    if (dead === "1" || idlePolls >= 5) break;
+  }
+
+  runTmux(["pipe-pane", "-t", paneId], true);
+  const output = readFileSync(capturePath);
+  if (output.length > 0) process.stdout.write(output);
+
+  const dead = runTmux([
+    "display-message",
+    "-p",
+    "-t",
+    paneId,
+    "#{pane_dead}",
+  ]).stdout.trim();
+  if (dead === "1") {
+    const status = Number(runTmux([
+      "display-message",
+      "-p",
+      "-t",
+      paneId,
+      "#{pane_dead_status}",
+    ]).stdout.trim());
+    console.error(`ho-bj: ${slug} exited with status ${status}`);
+    process.exitCode = status;
+    return;
+  }
+
+  console.error(`ho-bj: ${slug} is running; attach with: tmux attach -t ho-bj`);
+}
+
+main().catch((error) => fail(`ho-bj: ${error.message}`));
