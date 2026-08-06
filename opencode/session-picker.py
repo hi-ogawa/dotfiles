@@ -80,7 +80,7 @@ def choose_session(rows: list[str]) -> tuple[str, str] | None:
             "--prompt=Sessions> ",
             "--bind=enter:print(continue)+accept",
             "--bind=alt-enter:print(fork)+accept",
-            f"--preview={shlex.quote(str(script_path))} --preview {{1}}",
+            f"--preview={shlex.quote(str(script_path))} --internal-preview {{1}}",
             "--preview-window=right:60%:wrap",
         ],
         input="\n".join(rows) + "\n",
@@ -94,9 +94,13 @@ def choose_session(rows: list[str]) -> tuple[str, str] | None:
 
 
 def main() -> int:
-    if sys.argv[1:2] == ["--preview"]:
+    # fzf reinvokes this script in an internal mode as the highlighted session changes.
+    if sys.argv[1:2] == ["--internal-preview"]:
         if len(sys.argv) != 3:
-            print("usage: opencode-session-picker --preview SESSION_ID", file=sys.stderr)
+            print(
+                "usage: opencode-session-picker --internal-preview SESSION_ID",
+                file=sys.stderr,
+            )
             return 2
         preview_session(sys.argv[2])
         return 0
