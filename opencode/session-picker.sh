@@ -2,10 +2,11 @@
 
 set -euo pipefail
 
+db_path="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/opencode.db"
+
 # fzf invokes this internal mode whenever the highlighted session changes.
 preview_session() {
   local session_id="$1"
-  local db_path="${XDG_DATA_HOME:-$HOME/.local/share}/opencode/opencode.db"
   # The ID is interpolated into read-only SQL, so accept only OpenCode's ID shape.
   if [[ ! "$session_id" =~ ^ses_[[:alnum:]]+$ ]]; then
     printf 'Invalid session ID\n'
@@ -50,9 +51,38 @@ for command in opencode jq fzf sqlite3; do
   fi
 done
 
+query="$*"
+session_list_args=(session list --format json)
+if [[ -z "$query" ]]; then
+  session_list_args+=(-n 100)
+fi
+
 # OpenCode scopes this list to the Git project associated with the current directory.
 # The first TSV field stays hidden in fzf but carries the session ID through selection.
-sessions="$({ opencode session list --format json -n 100; } | jq -r '
+sessions_json="$(opencode "${session_list_args[@]}")"
+
+if [[ -n "$query" ]]; then
+  # Session IDs come from OpenCode and are validated before interpolation into read-only SQL.
+  session_ids_sql="$(jq -r '
+    [.[].id | select(test("^ses_[A-Za-z0-9]+$")) | @sh]
+    | join(",")
+  ' <<<"$sessions_json")"
+  query_hex="$(printf '%s' "$query" | LC_ALL=C od -An -tx1 | tr -d ' \n')"
+  matching_ids="$(sqlite3 -readonly "$db_path" "
+    SELECT json_group_array(session_id)
+    FROM (
+      SELECT DISTINCT session_id
+      FROM part
+      WHERE session_id IN ($session_ids_sql)
+        AND instr(lower(data), lower(CAST(X'$query_hex' AS TEXT))) > 0
+    )
+  ")"
+  sessions_json="$(jq --argjson matching_ids "$matching_ids" '
+    [.[] | select(.id as $id | $matching_ids | index($id))]
+  ' <<<"$sessions_json")"
+fi
+
+sessions="$(jq -r '
   .[]
   | [
       .id,
@@ -61,10 +91,14 @@ sessions="$({ opencode session list --format json -n 100; } | jq -r '
       (.directory | split("/") | last)
     ]
   | @tsv
-')"
+' <<<"$sessions_json")"
 
 if [[ -z "$sessions" ]]; then
-  printf 'No OpenCode sessions found for this project.\n' >&2
+  if [[ -n "$query" ]]; then
+    printf 'No OpenCode sessions matching: %s\n' "$query" >&2
+  else
+    printf 'No OpenCode sessions found for this project.\n' >&2
+  fi
   exit 1
 fi
 
