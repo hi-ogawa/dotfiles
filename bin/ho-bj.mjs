@@ -4,7 +4,7 @@ import { execFile } from "node:child_process";
 import { mkdtempSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { promisify } from "node:util";
+import { parseArgs, promisify } from "node:util";
 
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
 const sessionName = "ho-bj";
@@ -12,26 +12,32 @@ const execFileAsync = promisify(execFile);
 
 async function main() {
   // Parse the wrapper arguments while leaving everything after "--" for the job.
-  const args = process.argv.slice(2);
-  if (args.shift() !== "start") {
+  const argv = process.argv.slice(2);
+  const separator = argv.indexOf("--");
+  if (separator === -1) {
+    fail(usage, { status: 2 });
+  }
+  const commandArgs = argv.slice(separator + 1);
+  let parsed;
+  try {
+    parsed = parseArgs({
+      args: argv.slice(0, separator),
+      options: { root: { type: "string", short: "C" } },
+      allowPositionals: true,
+    });
+  } catch {
+    fail(usage, { status: 2 });
+  }
+  const [action, slug = "", ...extra] = parsed.positionals;
+  if (action !== "start" || extra.length > 0 || commandArgs.length === 0) {
     fail(usage, { status: 2 });
   }
 
-  const slug = args.shift() ?? "";
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     fail(`invalid job slug: ${slug}`, { status: 2 });
   }
 
-  let root = process.cwd();
-  while (args.length > 0 && args[0] !== "--") {
-    if (args.shift() !== "-C" || args.length === 0) {
-      fail(usage, { status: 2 });
-    }
-    root = args.shift();
-  }
-  if (args.shift() !== "--" || args.length === 0) {
-    fail(usage, { status: 2 });
-  }
+  let root = parsed.values.root ?? process.cwd();
 
   // Resolve the root before passing it to tmux so the job has a stable working directory.
   try {
@@ -105,7 +111,7 @@ async function main() {
     await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
     await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
 
-    const command = `exec ${args.map(shellQuote).join(" ")}`;
+    const command = `exec ${commandArgs.map(shellQuote).join(" ")}`;
     await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", root, command]);
     started = true;
 
