@@ -46,6 +46,13 @@ def preview_session(session_id: str) -> None:
 
 def list_sessions() -> list[str]:
     cwd = Path.cwd().resolve()
+    # This path-based shortcut does not reproduce OpenCode's origin-based project identity:
+    # - A separate clone with the same origin shares sessions in OpenCode, but its path
+    #   will not match until OpenCode registers that checkout as a sandbox.
+    # - If a linked worktree was the first checkout OpenCode saw, it can be the recorded
+    #   primary path while the repository's main checkout is absent from the project row.
+    # - Outside Git, OpenCode lists root sessions from its global project, while this
+    #   lookup uses the current directory and normally returns no sessions.
     try:
         result = subprocess.run(
             [
