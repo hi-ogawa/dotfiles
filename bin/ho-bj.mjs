@@ -97,22 +97,16 @@ async function main() {
 
     // Wait until the job exits or its startup output has been quiet for 500 ms.
     let lastSize = 0;
-    let idlePolls = 0;
-    for (let poll = 0; poll < 50; poll++) {
-      await sleep(100);
-      const size = statSync(capturePath).size;
-      if (size !== lastSize) {
+    await pollUntil(
+      async () => {
+        const size = statSync(capturePath).size;
+        const idle = size > 0 && size === lastSize;
         lastSize = size;
-        idlePolls = 0;
-      } else if (size > 0) {
-        idlePolls++;
-      }
-
-      const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
-      if (dead === "1" || idlePolls >= 5) {
-        break;
-      }
-    }
+        const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
+        return { idle, done: dead === "1" };
+      },
+      { intervalMs: 100, maxPolls: 50, idlePollLimit: 5 },
+    );
 
     // Close the pipe before reading to avoid racing with writes to the capture file.
     await runTmux(["pipe-pane", "-t", paneId]);
@@ -137,6 +131,18 @@ async function main() {
     await start();
   } finally {
     await cleanup();
+  }
+}
+
+async function pollUntil(condition, { intervalMs, maxPolls, idlePollLimit }) {
+  let idlePolls = 0;
+  for (let poll = 0; poll < maxPolls; poll++) {
+    await sleep(intervalMs);
+    const { idle, done } = await condition();
+    idlePolls = idle ? idlePolls + 1 : 0;
+    if (done || idlePolls >= idlePollLimit) {
+      return;
+    }
   }
 }
 
