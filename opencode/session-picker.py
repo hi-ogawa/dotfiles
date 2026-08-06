@@ -45,12 +45,8 @@ def preview_session(session_id: str) -> None:
 
 
 def list_sessions() -> list[str]:
-    cwd = Path.cwd().resolve()
-    # This path-based shortcut does not reproduce OpenCode's origin-based project identity:
-    # - A separate clone with the same origin shares sessions in OpenCode, but its path
-    #   will not match until OpenCode registers that checkout as a sandbox.
-    # - Outside Git, OpenCode lists root sessions from its global project, while this
-    #   lookup uses the current directory and normally returns no sessions.
+    # A separate clone with the same origin shares sessions in OpenCode, but this
+    # path-based lookup will not match until OpenCode registers it as a sandbox.
     try:
         result = subprocess.run(
             [
@@ -71,27 +67,30 @@ def list_sessions() -> list[str]:
         common_directory, checkout = result.stdout.splitlines()
         # A linked worktree's common Git directory lives under the primary worktree.
         worktree = Path(common_directory).parent
+        scope = """
+          project.worktree IN (?, ?)
+          OR EXISTS (
+            SELECT 1 FROM json_each(project.sandboxes) WHERE value IN (?, ?)
+          )
+        """
+        parameters = (str(worktree), str(checkout), str(worktree), str(checkout))
     else:
-        worktree = checkout = cwd
+        scope = "project.id = ?"
+        parameters = ("global",)
 
     with sqlite3.connect(database_uri(), uri=True) as connection:
         sessions = connection.execute(
-            """
+            f"""
             SELECT session.id, session.time_updated, session.title, session.directory
             FROM session
             JOIN project ON project.id = session.project_id
             WHERE session.parent_id IS NULL
               AND session.time_archived IS NULL
-              AND (
-                project.worktree IN (?, ?)
-                OR EXISTS (
-                  SELECT 1 FROM json_each(project.sandboxes) WHERE value IN (?, ?)
-                )
-              )
+              AND ({scope})
             ORDER BY session.time_updated DESC
             LIMIT 100
             """,
-            (str(worktree), str(checkout), str(worktree), str(checkout)),
+            parameters,
         ).fetchall()
 
     rows = []
