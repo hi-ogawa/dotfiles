@@ -94,8 +94,11 @@ def choose_session(rows: list[str]) -> tuple[str, str] | None:
 
 
 def main() -> int:
-    if len(sys.argv) >= 2 and sys.argv[1] == "--preview":
-        preview_session(sys.argv[2] if len(sys.argv) >= 3 else "")
+    if sys.argv[1:2] == ["--preview"]:
+        if len(sys.argv) != 3:
+            print("usage: opencode-session-picker --preview SESSION_ID", file=sys.stderr)
+            return 2
+        preview_session(sys.argv[2])
         return 0
 
     for command in ("opencode", "fzf"):
