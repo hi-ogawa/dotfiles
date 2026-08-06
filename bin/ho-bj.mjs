@@ -174,10 +174,7 @@ async function runTmux(args) {
   try {
     return await execFileAsync("tmux", args, { encoding: "utf8" });
   } catch (error) {
-    if (error.code === "ENOENT") {
-      throw new Error("tmux not found");
-    }
-    throw new Error((error.stderr ?? "").trim() || `tmux exited with status ${error.code}`);
+    throw new Error((error.stderr ?? "").trim() || error.message);
   }
 }
 
