@@ -14,15 +14,14 @@ Use one tmux session named `ho-bj`, with one window per long-lived command. Give
 # Ensure the shared session exists with an unused shell window
 tmux has-session -t '=ho-bj' 2>/dev/null || tmux new-session -d -s ho-bj -n shell
 
-# Create the job window.
+# Create the job window with a placeholder shell.
 tmux new-window -d -t '=ho-bj:' -n '<slug>' -c '<root>'
 
 # Keep the window after the job exits.
 tmux set-option -w -t '=ho-bj:=<slug>' remain-on-exit on
 
-# Start the job.
-tmux send-keys -t '=ho-bj:=<slug>' -l -- 'exec <command>'
-tmux send-keys -t '=ho-bj:=<slug>' Enter
+# Replace the placeholder shell with the job.
+tmux respawn-pane -k -t '=ho-bj:=<slug>' -c '<root>' 'exec <command>'
 ```
 
 ## Stop
