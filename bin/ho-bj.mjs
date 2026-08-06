@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 import { execFile } from "node:child_process";
-import { mkdtempSync, readFileSync, realpathSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
@@ -160,15 +160,10 @@ function parseArguments() {
     fail(`invalid job slug: ${slug}`, { status: 2 });
   }
 
-  // Resolve the root before passing it to tmux so the job has a stable working directory.
+  // Make the root absolute before passing it to tmux.
   const requestedRoot = parsed.values.root ?? process.cwd();
-  let root;
-  try {
-    root = realpathSync(requestedRoot);
-  } catch {
-    fail(`job root not found: ${requestedRoot}`);
-  }
-  if (!statSync(root).isDirectory()) {
+  const root = resolve(requestedRoot);
+  if (!statSync(root, { throwIfNoEntry: false })?.isDirectory()) {
     fail(`job root not found: ${requestedRoot}`);
   }
   return { slug, root, commandArgs };
