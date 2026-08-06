@@ -24,6 +24,7 @@ Run `./sync.sh apply opencode` to install:
 
 `opencode-session-picker` opens the current project's recent sessions in a two-pane browser. The list is ordered by latest activity, while the preview shows the selected session's recent user and assistant text.
 
+- `opencode-session-picker "query"` searches the full stored content of every session in the current project before opening the picker. This includes conversation text, reasoning, and tool data.
 - `Enter` continues the highlighted session; `Alt-Enter` forks it.
 - `Esc` cancels without starting OpenCode.
 The picker requires Python 3, `opencode`, and `fzf` on `PATH`.

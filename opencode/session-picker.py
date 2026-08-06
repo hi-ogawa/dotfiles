@@ -12,13 +12,16 @@ from pathlib import Path
 from urllib.parse import quote
 
 
-def preview_session(session_id: str) -> None:
+def connect_database() -> sqlite3.Connection:
     data_home = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share"))
     db_path = data_home / "opencode" / "opencode.db"
     db_uri = f"file:{quote(str(db_path), safe='/')}?mode=ro"
+    return sqlite3.connect(db_uri, uri=True)
 
+
+def preview_session(session_id: str) -> None:
     # Keep the preview conversational by excluding tool calls and reasoning parts.
-    with sqlite3.connect(db_uri, uri=True) as connection:
+    with connect_database() as connection:
         rows = connection.execute(
             """
             SELECT
@@ -43,15 +46,36 @@ def preview_session(session_id: str) -> None:
             print(f"\n\033[1;36mASSISTANT\033[0m\n\033[38;5;153m{text}\033[0m")
 
 
-def list_sessions() -> list[str]:
+def list_sessions(query: str) -> list[str]:
     # OpenCode scopes this list to the Git project associated with the current directory.
+    arguments = ["opencode", "session", "list", "--format", "json"]
+    if not query:
+        arguments.extend(["-n", "100"])
     result = subprocess.run(
-        ["opencode", "session", "list", "--format", "json", "-n", "100"],
+        arguments,
         check=True,
         stdout=subprocess.PIPE,
         text=True,
     )
     sessions = json.loads(result.stdout)
+
+    if query and sessions:
+        session_ids = json.dumps([session["id"] for session in sessions])
+        with connect_database() as connection:
+            matching_ids = {
+                row[0]
+                for row in connection.execute(
+                    """
+                    SELECT DISTINCT session_id
+                    FROM part
+                    WHERE session_id IN (SELECT value FROM json_each(?))
+                      AND instr(lower(data), lower(?)) > 0
+                    """,
+                    (session_ids, query),
+                )
+            }
+        sessions = [session for session in sessions if session["id"] in matching_ids]
+
     rows = []
 
     for session in sessions:
@@ -110,9 +134,13 @@ def main() -> int:
             print(f"Missing required command: {command}", file=sys.stderr)
             return 1
 
-    sessions = list_sessions()
+    query = " ".join(sys.argv[1:])
+    sessions = list_sessions(query)
     if not sessions:
-        print("No OpenCode sessions found for this project.", file=sys.stderr)
+        if query:
+            print(f"No OpenCode sessions matching: {query}", file=sys.stderr)
+        else:
+            print("No OpenCode sessions found for this project.", file=sys.stderr)
         return 1
 
     selection = choose_session(sessions)
