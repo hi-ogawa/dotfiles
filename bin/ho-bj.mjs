@@ -16,28 +16,28 @@ import { promisify } from "node:util";
 const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
 const execFile = promisify(execFileCallback);
 
-main().catch((error) => fail(`ho-bj: ${error.message}`));
+main().catch((error) => fail({ message: `ho-bj: ${error.message}` }));
 
 async function main() {
   const args = process.argv.slice(2);
   if (args.shift() !== "start") {
-    fail(usage, 2);
+    fail({ message: usage, status: 2 });
   }
 
   const slug = args.shift() ?? "";
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-    fail(`invalid job slug: ${slug}`, 2);
+    fail({ message: `invalid job slug: ${slug}`, status: 2 });
   }
 
   let root = process.cwd();
   while (args.length > 0 && args[0] !== "--") {
     if (args.shift() !== "-C" || args.length === 0) {
-      fail(usage, 2);
+      fail({ message: usage, status: 2 });
     }
     root = args.shift();
   }
   if (args.shift() !== "--" || args.length === 0) {
-    fail(usage, 2);
+    fail({ message: usage, status: 2 });
   }
 
   try {
@@ -46,22 +46,21 @@ async function main() {
       throw new Error();
     }
   } catch {
-    fail(`job root not found: ${root}`);
+    fail({ message: `job root not found: ${root}` });
   }
 
-  if ((await runTmux(["has-session", "-t", "=ho-bj"], true)).status !== 0) {
-    await runTmux(["new-session", "-d", "-s", "ho-bj", "-n", "shell"]);
+  if ((await runTmux({
+    args: ["has-session", "-t", "=ho-bj"],
+    allowFailure: true,
+  })).status !== 0) {
+    await runTmux({ args: ["new-session", "-d", "-s", "ho-bj", "-n", "shell"] });
   }
 
-  const windows = (await runTmux([
-    "list-windows",
-    "-t",
-    "=ho-bj",
-    "-F",
-    "#{window_name}",
-  ])).stdout.trimEnd().split("\n");
+  const windows = (await runTmux({
+    args: ["list-windows", "-t", "=ho-bj", "-F", "#{window_name}"],
+  })).stdout.trimEnd().split("\n");
   if (windows.includes(slug)) {
-    fail(`job already exists: ${slug}`);
+    fail({ message: `job already exists: ${slug}` });
   }
 
   const temporaryDirectory = mkdtempSync(join(tmpdir(), "ho-bj."));
@@ -77,9 +76,9 @@ async function main() {
     }
     cleanedUp = true;
     if (paneId) {
-      await runTmux(["pipe-pane", "-t", paneId], true);
+      await runTmux({ args: ["pipe-pane", "-t", paneId], allowFailure: true });
       if (!started) {
-        await runTmux(["kill-window", "-t", paneId], true);
+        await runTmux({ args: ["kill-window", "-t", paneId], allowFailure: true });
       }
     }
     rmSync(temporaryDirectory, { recursive: true, force: true });
@@ -92,24 +91,32 @@ async function main() {
   }
 
   try {
-    paneId = (await runTmux([
-      "new-window",
-      "-d",
-      "-P",
-      "-F",
-      "#{pane_id}",
-      "-t",
-      "=ho-bj:",
-      "-n",
-      slug,
-      "-c",
-      root,
-    ])).stdout.trim();
-    await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
-    await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
+    paneId = (await runTmux({
+      args: [
+        "new-window",
+        "-d",
+        "-P",
+        "-F",
+        "#{pane_id}",
+        "-t",
+        "=ho-bj:",
+        "-n",
+        slug,
+        "-c",
+        root,
+      ],
+    })).stdout.trim();
+    await runTmux({
+      args: ["set-option", "-w", "-t", paneId, "remain-on-exit", "on"],
+    });
+    await runTmux({
+      args: ["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`],
+    });
 
     const command = `exec ${args.map(shellQuote).join(" ")}`;
-    await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", root, command]);
+    await runTmux({
+      args: ["respawn-pane", "-k", "-t", paneId, "-c", root, command],
+    });
     started = true;
 
     let lastSize = 0;
@@ -124,39 +131,30 @@ async function main() {
         idlePolls++;
       }
 
-      const dead = (await runTmux([
-        "display-message",
-        "-p",
-        "-t",
-        paneId,
-        "#{pane_dead}",
-      ])).stdout.trim();
+      const dead = (await runTmux({
+        args: ["display-message", "-p", "-t", paneId, "#{pane_dead}"],
+      })).stdout.trim();
       if (dead === "1" || idlePolls >= 5) {
         break;
       }
     }
 
-    await runTmux(["pipe-pane", "-t", paneId], true);
+    await runTmux({
+      args: ["pipe-pane", "-t", paneId],
+      allowFailure: true,
+    });
     const output = readFileSync(capturePath);
     if (output.length > 0) {
       process.stdout.write(output);
     }
 
-    const dead = (await runTmux([
-      "display-message",
-      "-p",
-      "-t",
-      paneId,
-      "#{pane_dead}",
-    ])).stdout.trim();
+    const dead = (await runTmux({
+      args: ["display-message", "-p", "-t", paneId, "#{pane_dead}"],
+    })).stdout.trim();
     if (dead === "1") {
-      const status = Number((await runTmux([
-        "display-message",
-        "-p",
-        "-t",
-        paneId,
-        "#{pane_dead_status}",
-      ])).stdout.trim());
+      const status = Number((await runTmux({
+        args: ["display-message", "-p", "-t", paneId, "#{pane_dead_status}"],
+      })).stdout.trim());
       console.error(`ho-bj: ${slug} exited with status ${status}`);
       process.exitCode = status;
       return;
@@ -168,12 +166,12 @@ async function main() {
   }
 }
 
-function fail(message, status = 1) {
+function fail({ message, status = 1 }) {
   console.error(message);
   process.exit(status);
 }
 
-async function runTmux(args, allowFailure = false) {
+async function runTmux({ args, allowFailure = false }) {
   try {
     const result = await execFile("tmux", args, { encoding: "utf8" });
     return { ...result, status: 0 };
