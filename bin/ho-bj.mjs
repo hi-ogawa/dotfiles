@@ -10,6 +10,7 @@ const usage = "usage: ho-bj start <slug> [-C <root>] -- <command> [args...]";
 const execFileAsync = promisify(execFile);
 
 async function main() {
+  // Parse the wrapper arguments while leaving everything after "--" for the job.
   const args = process.argv.slice(2);
   if (args.shift() !== "start") {
     fail(usage, { status: 2 });
@@ -31,6 +32,7 @@ async function main() {
     fail(usage, { status: 2 });
   }
 
+  // Resolve the root before passing it to tmux so the job has a stable working directory.
   try {
     root = realpathSync(root);
     if (!statSync(root).isDirectory()) {
@@ -40,6 +42,7 @@ async function main() {
     fail(`job root not found: ${root}`);
   }
 
+  // Keep all background jobs as named windows in one shared tmux session.
   if (
     (
       await runTmux(["has-session", "-t", "=ho-bj"], { allowFailure: true })
@@ -57,6 +60,7 @@ async function main() {
     fail(`job already exists: ${slug}`);
   }
 
+  // Capture early output so the caller can see whether the job started successfully.
   const temporaryDirectory = mkdtempSync(join(tmpdir(), "ho-bj."));
   const capturePath = join(temporaryDirectory, "startup.log");
   writeFileSync(capturePath, "");
@@ -64,6 +68,7 @@ async function main() {
   let paneId;
   let started = false;
   let cleanedUp = false;
+  // Stop capturing output and remove a partially initialized window on failure.
   async function cleanup() {
     if (cleanedUp) {
       return;
@@ -85,6 +90,7 @@ async function main() {
   }
 
   try {
+    // Create the window with a placeholder shell so capture is ready before the job starts.
     paneId = (
       await runTmux([
         "new-window",
@@ -107,6 +113,7 @@ async function main() {
     await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", root, command]);
     started = true;
 
+    // Wait until the job exits or its startup output has been quiet for 500 ms.
     let lastSize = 0;
     let idlePolls = 0;
     for (let poll = 0; poll < 50; poll++) {
@@ -127,6 +134,7 @@ async function main() {
       }
     }
 
+    // Close the pipe before reading to avoid racing with writes to the capture file.
     await runTmux(["pipe-pane", "-t", paneId], {
       allowFailure: true,
     });
@@ -135,6 +143,7 @@ async function main() {
       process.stdout.write(output);
     }
 
+    // A dead pane represents a startup failure; a live pane is left for later attachment.
     const dead = (
       await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"])
     ).stdout.trim();
