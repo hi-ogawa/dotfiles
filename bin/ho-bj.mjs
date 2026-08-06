@@ -184,7 +184,6 @@ async function runTmux(args) {
   }
 }
 
-
 async function pollUntil(sample, { intervalMs, maxPolls, idlePollLimit }) {
   let previousValue;
   let hasValue = false;
@@ -222,7 +221,6 @@ function fail(message, { status = 1 } = {}) {
   console.error(message);
   process.exit(status);
 }
-
 
 main().catch((error) => {
   fail(`ho-bj: ${error.message}`);
