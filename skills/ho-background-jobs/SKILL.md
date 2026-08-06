@@ -11,18 +11,11 @@ Use one tmux session named `ho-bj`, with one window per long-lived command. Give
 ## Start
 
 ```bash
-# Ensure the shared session exists with an unused shell window
-tmux has-session -t '=ho-bj' 2>/dev/null || tmux new-session -d -s ho-bj -n shell
-
-# Create the job window with a placeholder shell.
-tmux new-window -d -t '=ho-bj:' -n '<slug>' -c '<root>'
-
-# Keep the window after the job exits.
-tmux set-option -w -t '=ho-bj:=<slug>' remain-on-exit on
-
-# Replace the placeholder shell with the job.
-tmux respawn-pane -k -t '=ho-bj:=<slug>' -c '<root>' 'exec <command>'
+ho-bj start <slug> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
 ```
+
+`-C` defaults to the current directory. Start waits up to five seconds for initial output, then reports whether the job is still running or exited. Use `--wait-timeout` to change this limit.
+Use `--no-wait` to return immediately without capturing startup output.
 
 ## Stop
 
