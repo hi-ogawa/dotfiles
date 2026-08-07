@@ -231,17 +231,17 @@ function parseArguments() {
   }
 }
 
-function parseStartArguments(args) {
+function parseStartArguments(argv) {
   // Leave everything after "--" untouched for the job.
-  const separator = args.indexOf("--");
+  const separator = argv.indexOf("--");
   if (separator === -1) {
     fail(usage, { status: 2 });
   }
-  const commandArgs = args.slice(separator + 1);
+  const commandArgs = argv.slice(separator + 1);
   let parsed;
   try {
     parsed = parseArgs({
-      args: args.slice(0, separator),
+      args: argv.slice(0, separator),
       options: {
         root: { type: "string", short: "C" },
         "no-wait": { type: "boolean" },
