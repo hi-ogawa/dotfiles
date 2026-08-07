@@ -208,34 +208,40 @@ async function startJob({ slug, root, commandArgs, noWait, waitTimeoutMs }) {
 
 function parseArguments() {
   const argv = process.argv.slice(2);
-  const [action, ...rest] = argv;
-  if (action === "list" && rest.length === 0) {
-    return { action };
+  const [action, ...args] = argv;
+  switch (action) {
+    case "list":
+      if (args.length !== 0) {
+        fail(USAGE, { status: 2 });
+      }
+      return { action };
+    case "stop":
+      if (args.length !== 1) {
+        fail(USAGE, { status: 2 });
+      }
+      if (args[0] === "--all") {
+        return { action, all: true };
+      }
+      validateSlug(args[0]);
+      return { action, all: false, slug: args[0] };
+    case "start":
+      return parseStartArguments(args);
+    default:
+      fail(USAGE, { status: 2 });
   }
-  if (action === "stop") {
-    if (rest.length === 1 && rest[0] === "--all") {
-      return { action, all: true };
-    }
-    if (rest.length === 1) {
-      validateSlug(rest[0]);
-      return { action, all: false, slug: rest[0] };
-    }
-    fail(USAGE, { status: 2 });
-  }
-  if (action !== "start") {
-    fail(USAGE, { status: 2 });
-  }
+}
 
+function parseStartArguments(args) {
   // Leave everything after "--" untouched for the job.
-  const separator = argv.indexOf("--");
+  const separator = args.indexOf("--");
   if (separator === -1) {
     fail(USAGE, { status: 2 });
   }
-  const commandArgs = argv.slice(separator + 1);
+  const commandArgs = args.slice(separator + 1);
   let parsed;
   try {
     parsed = parseArgs({
-      args: argv.slice(0, separator),
+      args: args.slice(0, separator),
       options: {
         root: { type: "string", short: "C" },
         "no-wait": { type: "boolean" },
@@ -246,8 +252,8 @@ function parseArguments() {
   } catch {
     fail(USAGE, { status: 2 });
   }
-  const [parsedAction, slug = "", ...extra] = parsed.positionals;
-  if (parsedAction !== "start" || extra.length > 0 || commandArgs.length === 0) {
+  const [slug = "", ...extra] = parsed.positionals;
+  if (extra.length > 0 || commandArgs.length === 0) {
     fail(USAGE, { status: 2 });
   }
   validateSlug(slug);
@@ -268,7 +274,7 @@ function parseArguments() {
   if (!statSync(root, { throwIfNoEntry: false })?.isDirectory()) {
     fail(`job root not found: ${requestedRoot}`);
   }
-  return { action, slug, root, commandArgs, noWait, waitTimeoutMs: waitTimeoutSeconds * 1000 };
+  return { action: "start", slug, root, commandArgs, noWait, waitTimeoutMs: waitTimeoutSeconds * 1000 };
 }
 
 function validateSlug(slug) {
