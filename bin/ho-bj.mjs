@@ -6,24 +6,41 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
-const usage =
-  "usage: ho-bj start <slug> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]";
+const usage = `\
+usage:
+  ho-bj start <slug> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
+  ho-bj list
+  ho-bj logs <slug> [--lines <count>]
+  ho-bj stop <slug>
+  ho-bj stop --all`;
+
 const sessionName = "ho-bj";
+// Keep the shared session alive without exposing its reserved window as a user job.
+const shellWindowName = "__ho_bj_shell";
+
 const execFileAsync = promisify(execFile);
 
 async function main() {
-  const { slug, root, commandArgs, noWait, waitTimeoutMs } = parseArguments();
+  const parsed = parseArguments();
+  switch (parsed.action) {
+    case "start":
+      return startJob(parsed);
+    case "stop":
+      return stopJobs(parsed);
+    case "list":
+      return listJobs();
+    case "logs":
+      return showLogs(parsed);
+  }
+}
 
+async function startJob({ slug, root, commandArgs, noWait, waitTimeoutMs }) {
   // Keep all background jobs as named windows in one shared tmux session.
-  try {
-    await runTmux(["has-session", "-t", `=${sessionName}`]);
-  } catch {
-    await runTmux(["new-session", "-d", "-s", sessionName, "-n", "shell"]);
+  if (!(await hasSession())) {
+    await runTmux(["new-session", "-d", "-s", sessionName, "-n", shellWindowName]);
   }
 
-  const windows = (
-    await runTmux(["list-windows", "-t", `=${sessionName}`, "-F", "#{window_name}"])
-  ).split("\n");
+  const windows = await listWindowNames();
   if (windows.includes(slug)) {
     fail(`job already exists: ${slug}`);
   }
@@ -84,6 +101,15 @@ async function main() {
       root,
     ]);
     await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
+    await runTmux(["set-option", "-w", "-t", paneId, "@ho-bj-root", root]);
+    await runTmux([
+      "set-option",
+      "-w",
+      "-t",
+      paneId,
+      "@ho-bj-command",
+      commandArgs.map(shellQuote).join(" "),
+    ]);
     if (capturePath) {
       await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
     }
@@ -143,9 +169,131 @@ async function main() {
   }
 }
 
+async function stopJobs({ slug, all }) {
+  if (!(await hasSession())) {
+    console.error(all ? "ho-bj: no jobs to stop" : `ho-bj: ${slug} is not running`);
+    return;
+  }
+
+  if (all) {
+    await runTmux(["kill-session", "-t", `=${sessionName}`]);
+    console.error("ho-bj: all jobs stopped");
+    return;
+  }
+
+  const windows = await listWindowNames();
+  if (!windows.includes(slug)) {
+    console.error(`ho-bj: ${slug} is not running`);
+    return;
+  }
+  await runTmux(["kill-window", "-t", `=${sessionName}:=${slug}`]);
+  console.error(`ho-bj: ${slug} stopped`);
+}
+
+async function listJobs() {
+  if (!(await hasSession())) {
+    console.error("ho-bj: no jobs");
+    return;
+  }
+
+  const output = await runTmux([
+    "list-windows",
+    "-t",
+    `=${sessionName}`,
+    "-F",
+    "#{window_name}\t#{?pane_dead,exited,running}\t#{pane_dead_status}\t#{@ho-bj-root}\t#{@ho-bj-command}",
+  ]);
+  const jobs = output.split("\n").filter((line) => line && !line.startsWith(`${shellWindowName}\t`));
+  if (jobs.length > 0) {
+    console.log(jobs.join("\n"));
+  } else {
+    console.error("ho-bj: no jobs");
+  }
+}
+
+async function showLogs({ slug, lines }) {
+  if (!(await hasSession())) {
+    console.error(`ho-bj: ${slug} is not running`);
+    return;
+  }
+
+  const windows = await listWindowNames();
+  if (!windows.includes(slug)) {
+    console.error(`ho-bj: ${slug} is not running`);
+    return;
+  }
+
+  const output = await runTmux([
+    "capture-pane",
+    "-p",
+    "-S",
+    `-${lines}`,
+    "-t",
+    `=${sessionName}:=${slug}`,
+  ]);
+  if (output) {
+    console.log(output);
+  } else {
+    console.error(`ho-bj: ${slug} has no output`);
+  }
+}
+
 function parseArguments() {
-  // Leave everything after "--" untouched for the job.
   const argv = process.argv.slice(2);
+  const [action, ...args] = argv;
+  switch (action) {
+    case "list":
+      if (args.length !== 0) {
+        fail(usage, { status: 2 });
+      }
+      return { action };
+    case "logs":
+      return parseLogsArguments(args);
+    case "stop":
+      if (args.length !== 1) {
+        fail(usage, { status: 2 });
+      }
+      if (args[0] === "--all") {
+        return { action, all: true };
+      }
+      validateSlug(args[0]);
+      return { action, all: false, slug: args[0] };
+    case "start":
+      return parseStartArguments(args);
+    default:
+      fail(usage, { status: 2 });
+  }
+}
+
+function parseLogsArguments(args) {
+  let parsed;
+  try {
+    parsed = parseArgs({
+      args,
+      options: {
+        lines: { type: "string" },
+      },
+      allowPositionals: true,
+    });
+  } catch {
+    fail(usage, { status: 2 });
+  }
+
+  const [slug = "", ...extra] = parsed.positionals;
+  if (extra.length > 0) {
+    fail(usage, { status: 2 });
+  }
+  validateSlug(slug);
+
+  const lines = Number(parsed.values.lines ?? 200);
+  if (!Number.isSafeInteger(lines) || lines <= 0) {
+    fail(`invalid line count: ${parsed.values.lines}`, { status: 2 });
+  }
+  return { action: "logs", slug, lines };
+}
+
+function parseStartArguments(argv) {
+  // Leave everything after "--" untouched for the job.
   const separator = argv.indexOf("--");
   if (separator === -1) {
     fail(usage, { status: 2 });
@@ -165,13 +313,11 @@ function parseArguments() {
   } catch {
     fail(usage, { status: 2 });
   }
-  const [action, slug = "", ...extra] = parsed.positionals;
-  if (action !== "start" || extra.length > 0 || commandArgs.length === 0) {
+  const [slug = "", ...extra] = parsed.positionals;
+  if (extra.length > 0 || commandArgs.length === 0) {
     fail(usage, { status: 2 });
   }
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
-    fail(`invalid job slug: ${slug}`, { status: 2 });
-  }
+  validateSlug(slug);
 
   const noWait = parsed.values["no-wait"] ?? false;
   const waitTimeout = parsed.values["wait-timeout"];
@@ -189,7 +335,37 @@ function parseArguments() {
   if (!statSync(root, { throwIfNoEntry: false })?.isDirectory()) {
     fail(`job root not found: ${requestedRoot}`);
   }
-  return { slug, root, commandArgs, noWait, waitTimeoutMs: waitTimeoutSeconds * 1000 };
+  return {
+    action: "start",
+    slug,
+    root,
+    commandArgs,
+    noWait,
+    waitTimeoutMs: waitTimeoutSeconds * 1000,
+  };
+}
+
+function validateSlug(slug) {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    fail(`invalid job slug: ${slug}`, { status: 2 });
+  }
+}
+
+async function hasSession() {
+  try {
+    await runTmux(["has-session", "-t", `=${sessionName}`]);
+    return true;
+  } catch (error) {
+    if (error.cause?.code === 1) {
+      return false;
+    }
+    throw error;
+  }
+}
+
+async function listWindowNames() {
+  const output = await runTmux(["list-windows", "-t", `=${sessionName}`, "-F", "#{window_name}"]);
+  return output ? output.split("\n") : [];
 }
 
 async function runTmux(args) {
@@ -197,7 +373,7 @@ async function runTmux(args) {
     const { stdout } = await execFileAsync("tmux", args, { encoding: "utf8" });
     return stdout.trim();
   } catch (error) {
-    throw new Error((error.stderr ?? "").trim() || error.message);
+    throw new Error((error.stderr ?? "").trim() || error.message, { cause: error });
   }
 }
 
