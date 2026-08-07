@@ -61,7 +61,7 @@ Use JSON output as the authoritative PR context source. Use PR context for inten
 
 ## Inspect the Diff
 
-Use cheap, targeted repository commands to understand the change before judging it. Prefer `rg` for code search and `git` for diff inspection.
+Use cheap, targeted inspection to understand the change before judging it.
 
 For current changes:
 
