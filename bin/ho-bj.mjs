@@ -18,12 +18,12 @@ const sessionName = "ho-bj";
 const execFileAsync = promisify(execFile);
 
 async function main() {
-  const parsedArgs = parseArguments();
-  switch (parsedArgs.action) {
+  const parsed = parseArguments();
+  switch (parsed.action) {
     case "start":
-      return startJob(parsedArgs);
+      return startJob(parsed);
     case "stop":
-      return stopJobs(parsedArgs);
+      return stopJobs(parsed);
     case "list":
       return listJobs();
   }
