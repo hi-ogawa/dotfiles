@@ -14,6 +14,8 @@ usage:
   ho-bj stop --all`;
 
 const sessionName = "ho-bj";
+// Keep the shared session alive without exposing its reserved window as a user job.
+const shellWindowName = "__ho_bj_shell";
 
 const execFileAsync = promisify(execFile);
 
@@ -32,7 +34,7 @@ async function main() {
 async function startJob({ slug, root, commandArgs, noWait, waitTimeoutMs }) {
   // Keep all background jobs as named windows in one shared tmux session.
   if (!(await hasSession())) {
-    await runTmux(["new-session", "-d", "-s", sessionName, "-n", "shell"]);
+    await runTmux(["new-session", "-d", "-s", sessionName, "-n", shellWindowName]);
   }
 
   const windows = await listWindowNames();
@@ -198,7 +200,7 @@ async function listJobs() {
     "-F",
     "#{window_name}\t#{?pane_dead,exited,running}\t#{pane_dead_status}\t#{@ho-bj-root}\t#{@ho-bj-command}",
   ]);
-  const jobs = output.split("\n").filter((line) => line && !line.startsWith("shell\t"));
+  const jobs = output.split("\n").filter((line) => line && !line.startsWith(`${shellWindowName}\t`));
   if (jobs.length > 0) {
     console.log(jobs.join("\n"));
   } else {
@@ -285,7 +287,7 @@ function parseStartArguments(argv) {
 }
 
 function validateSlug(slug) {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug === "shell") {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     fail(`invalid job slug: ${slug}`, { status: 2 });
   }
 }
