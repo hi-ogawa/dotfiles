@@ -166,10 +166,8 @@ async function startJob({ slug, root, commandArgs, noWait, waitTimeoutMs }) {
 
 async function stopJobs({ slug, all }) {
   if (!(await hasSession())) {
-    if (all) {
-      return;
-    }
-    fail(`job not found: ${slug}`);
+    console.error(all ? "ho-bj: no jobs to stop" : `ho-bj: ${slug} is not running`);
+    return;
   }
 
   if (all) {
@@ -180,7 +178,8 @@ async function stopJobs({ slug, all }) {
 
   const windows = await listWindowNames();
   if (!windows.includes(slug)) {
-    fail(`job not found: ${slug}`);
+    console.error(`ho-bj: ${slug} is not running`);
+    return;
   }
   await runTmux(["kill-window", "-t", `=${sessionName}:=${slug}`]);
   console.error(`ho-bj: ${slug} stopped`);
