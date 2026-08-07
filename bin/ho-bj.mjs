@@ -19,16 +19,14 @@ const execFileAsync = promisify(execFile);
 
 async function main() {
   const parsedArgs = parseArguments();
-  if (parsedArgs.action === "list") {
-    await listJobs();
-    return;
+  switch (parsedArgs.action) {
+    case "list":
+      return listJobs();
+    case "stop":
+      return stopJobs(parsedArgs);
+    case "start":
+      return startJob(parsedArgs);
   }
-  if (parsedArgs.action === "stop") {
-    await stopJobs(parsedArgs);
-    return;
-  }
-
-  await startJob(parsedArgs);
 }
 
 async function listJobs() {
