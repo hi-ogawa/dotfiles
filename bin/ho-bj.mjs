@@ -200,7 +200,7 @@ async function listJobs() {
   ]);
   const jobs = output.split("\n").filter((line) => line && !line.startsWith("shell\t"));
   if (jobs.length > 0) {
-    process.stdout.write(`${jobs.join("\n")}\n`);
+    console.log(jobs.join("\n"));
   }
 }
 
