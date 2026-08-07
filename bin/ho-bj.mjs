@@ -6,26 +6,29 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
-const usage = `usage:
+const USAGE = `\
+usage:
   ho-bj start <slug> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
   ho-bj list
   ho-bj stop <slug>
   ho-bj stop --all`;
+
 const sessionName = "ho-bj";
+
 const execFileAsync = promisify(execFile);
 
 async function main() {
-  const arguments_ = parseArguments();
-  if (arguments_.action === "list") {
+  const parsedArgs = parseArguments();
+  if (parsedArgs.action === "list") {
     await listJobs();
     return;
   }
-  if (arguments_.action === "stop") {
-    await stopJobs(arguments_);
+  if (parsedArgs.action === "stop") {
+    await stopJobs(parsedArgs);
     return;
   }
 
-  await startJob(arguments_);
+  await startJob(parsedArgs);
 }
 
 async function listJobs() {
@@ -217,16 +220,16 @@ function parseArguments() {
       validateSlug(rest[0]);
       return { action, all: false, slug: rest[0] };
     }
-    fail(usage, { status: 2 });
+    fail(USAGE, { status: 2 });
   }
   if (action !== "start") {
-    fail(usage, { status: 2 });
+    fail(USAGE, { status: 2 });
   }
 
   // Leave everything after "--" untouched for the job.
   const separator = argv.indexOf("--");
   if (separator === -1) {
-    fail(usage, { status: 2 });
+    fail(USAGE, { status: 2 });
   }
   const commandArgs = argv.slice(separator + 1);
   let parsed;
@@ -241,18 +244,18 @@ function parseArguments() {
       allowPositionals: true,
     });
   } catch {
-    fail(usage, { status: 2 });
+    fail(USAGE, { status: 2 });
   }
   const [parsedAction, slug = "", ...extra] = parsed.positionals;
   if (parsedAction !== "start" || extra.length > 0 || commandArgs.length === 0) {
-    fail(usage, { status: 2 });
+    fail(USAGE, { status: 2 });
   }
   validateSlug(slug);
 
   const noWait = parsed.values["no-wait"] ?? false;
   const waitTimeout = parsed.values["wait-timeout"];
   if (noWait && waitTimeout !== undefined) {
-    fail(usage, { status: 2 });
+    fail(USAGE, { status: 2 });
   }
   const waitTimeoutSeconds = Number(waitTimeout ?? 5);
   if (!Number.isFinite(waitTimeoutSeconds) || waitTimeoutSeconds <= 0) {
