@@ -20,53 +20,13 @@ const execFileAsync = promisify(execFile);
 async function main() {
   const parsedArgs = parseArguments();
   switch (parsedArgs.action) {
-    case "list":
-      return listJobs();
-    case "stop":
-      return stopJobs(parsedArgs);
     case "start":
       return startJob(parsedArgs);
+    case "stop":
+      return stopJobs(parsedArgs);
+    case "list":
+      return listJobs();
   }
-}
-
-async function listJobs() {
-  if (!(await hasSession())) {
-    return;
-  }
-
-  const output = await runTmux([
-    "list-windows",
-    "-t",
-    `=${sessionName}`,
-    "-F",
-    "#{window_name}\t#{?pane_dead,exited,running}\t#{pane_dead_status}\t#{@ho-bj-root}\t#{@ho-bj-command}",
-  ]);
-  const jobs = output.split("\n").filter((line) => line && !line.startsWith("shell\t"));
-  if (jobs.length > 0) {
-    process.stdout.write(`${jobs.join("\n")}\n`);
-  }
-}
-
-async function stopJobs({ slug, all }) {
-  if (!(await hasSession())) {
-    if (all) {
-      return;
-    }
-    fail(`job not found: ${slug}`);
-  }
-
-  if (all) {
-    await runTmux(["kill-session", "-t", `=${sessionName}`]);
-    console.error("ho-bj: all jobs stopped");
-    return;
-  }
-
-  const windows = await listWindowNames();
-  if (!windows.includes(slug)) {
-    fail(`job not found: ${slug}`);
-  }
-  await runTmux(["kill-window", "-t", `=${sessionName}:=${slug}`]);
-  console.error(`ho-bj: ${slug} stopped`);
 }
 
 async function startJob({ slug, root, commandArgs, noWait, waitTimeoutMs }) {
@@ -204,6 +164,46 @@ async function startJob({ slug, root, commandArgs, noWait, waitTimeoutMs }) {
   }
 }
 
+async function stopJobs({ slug, all }) {
+  if (!(await hasSession())) {
+    if (all) {
+      return;
+    }
+    fail(`job not found: ${slug}`);
+  }
+
+  if (all) {
+    await runTmux(["kill-session", "-t", `=${sessionName}`]);
+    console.error("ho-bj: all jobs stopped");
+    return;
+  }
+
+  const windows = await listWindowNames();
+  if (!windows.includes(slug)) {
+    fail(`job not found: ${slug}`);
+  }
+  await runTmux(["kill-window", "-t", `=${sessionName}:=${slug}`]);
+  console.error(`ho-bj: ${slug} stopped`);
+}
+
+async function listJobs() {
+  if (!(await hasSession())) {
+    return;
+  }
+
+  const output = await runTmux([
+    "list-windows",
+    "-t",
+    `=${sessionName}`,
+    "-F",
+    "#{window_name}\t#{?pane_dead,exited,running}\t#{pane_dead_status}\t#{@ho-bj-root}\t#{@ho-bj-command}",
+  ]);
+  const jobs = output.split("\n").filter((line) => line && !line.startsWith("shell\t"));
+  if (jobs.length > 0) {
+    process.stdout.write(`${jobs.join("\n")}\n`);
+  }
+}
+
 function parseArguments() {
   const argv = process.argv.slice(2);
   const [action, ...args] = argv;
@@ -272,7 +272,14 @@ function parseStartArguments(argv) {
   if (!statSync(root, { throwIfNoEntry: false })?.isDirectory()) {
     fail(`job root not found: ${requestedRoot}`);
   }
-  return { action: "start", slug, root, commandArgs, noWait, waitTimeoutMs: waitTimeoutSeconds * 1000 };
+  return {
+    action: "start",
+    slug,
+    root,
+    commandArgs,
+    noWait,
+    waitTimeoutMs: waitTimeoutSeconds * 1000,
+  };
 }
 
 function validateSlug(slug) {
@@ -294,13 +301,7 @@ async function hasSession() {
 }
 
 async function listWindowNames() {
-  const output = await runTmux([
-    "list-windows",
-    "-t",
-    `=${sessionName}`,
-    "-F",
-    "#{window_name}",
-  ]);
+  const output = await runTmux(["list-windows", "-t", `=${sessionName}`, "-F", "#{window_name}"]);
   return output ? output.split("\n") : [];
 }
 
