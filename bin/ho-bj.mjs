@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
-const USAGE = `\
+const usage = `\
 usage:
   ho-bj start <slug> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
   ho-bj list
@@ -212,12 +212,12 @@ function parseArguments() {
   switch (action) {
     case "list":
       if (args.length !== 0) {
-        fail(USAGE, { status: 2 });
+        fail(usage, { status: 2 });
       }
       return { action };
     case "stop":
       if (args.length !== 1) {
-        fail(USAGE, { status: 2 });
+        fail(usage, { status: 2 });
       }
       if (args[0] === "--all") {
         return { action, all: true };
@@ -227,7 +227,7 @@ function parseArguments() {
     case "start":
       return parseStartArguments(args);
     default:
-      fail(USAGE, { status: 2 });
+      fail(usage, { status: 2 });
   }
 }
 
@@ -235,7 +235,7 @@ function parseStartArguments(args) {
   // Leave everything after "--" untouched for the job.
   const separator = args.indexOf("--");
   if (separator === -1) {
-    fail(USAGE, { status: 2 });
+    fail(usage, { status: 2 });
   }
   const commandArgs = args.slice(separator + 1);
   let parsed;
@@ -250,18 +250,18 @@ function parseStartArguments(args) {
       allowPositionals: true,
     });
   } catch {
-    fail(USAGE, { status: 2 });
+    fail(usage, { status: 2 });
   }
   const [slug = "", ...extra] = parsed.positionals;
   if (extra.length > 0 || commandArgs.length === 0) {
-    fail(USAGE, { status: 2 });
+    fail(usage, { status: 2 });
   }
   validateSlug(slug);
 
   const noWait = parsed.values["no-wait"] ?? false;
   const waitTimeout = parsed.values["wait-timeout"];
   if (noWait && waitTimeout !== undefined) {
-    fail(USAGE, { status: 2 });
+    fail(usage, { status: 2 });
   }
   const waitTimeoutSeconds = Number(waitTimeout ?? 5);
   if (!Number.isFinite(waitTimeoutSeconds) || waitTimeoutSeconds <= 0) {
