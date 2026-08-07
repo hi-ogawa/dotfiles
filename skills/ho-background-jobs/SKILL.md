@@ -20,8 +20,11 @@ Use `--no-wait` to return immediately without capturing startup output.
 ## Stop
 
 ```bash
-tmux kill-window -t '=ho-bj:=<slug>'
+ho-bj stop <slug>
+ho-bj stop --all
 ```
+
+Use `--all` to stop every job and remove the shared tmux session.
 
 ## Logs
 
@@ -34,8 +37,10 @@ Adjust `-S` when more or less history is requested.
 ## List
 
 ```bash
-tmux list-windows -t '=ho-bj' -F '#{window_name} #{pane_current_path} #{pane_current_command} dead=#{pane_dead} exit=#{pane_dead_status}'
+ho-bj list
 ```
+
+List output is tab-separated: slug, status, exit code, working directory, and current command. Exited jobs remain listed until stopped.
 
 ## Human Access
 
