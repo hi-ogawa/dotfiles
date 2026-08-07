@@ -187,6 +187,7 @@ async function stopJobs({ slug, all }) {
 
 async function listJobs() {
   if (!(await hasSession())) {
+    console.error("ho-bj: no jobs");
     return;
   }
 
@@ -200,6 +201,8 @@ async function listJobs() {
   const jobs = output.split("\n").filter((line) => line && !line.startsWith("shell\t"));
   if (jobs.length > 0) {
     console.log(jobs.join("\n"));
+  } else {
+    console.error("ho-bj: no jobs");
   }
 }
 
