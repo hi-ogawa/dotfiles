@@ -29,10 +29,10 @@ Use `--all` to stop every job and remove the shared tmux session.
 ## Logs
 
 ```bash
-tmux capture-pane -p -S -200 -t '=ho-bj:=<slug>'
+ho-bj logs <slug> [--lines <count>]
 ```
 
-Adjust `-S` when more or less history is requested.
+Logs show the latest 200 lines by default. Use `--lines` to change the amount. The command returns after printing current output and does not follow the job.
 
 ## List
 

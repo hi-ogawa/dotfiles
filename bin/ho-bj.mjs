@@ -10,6 +10,7 @@ const usage = `\
 usage:
   ho-bj start <slug> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
   ho-bj list
+  ho-bj logs <slug> [--lines <count>]
   ho-bj stop <slug>
   ho-bj stop --all`;
 
@@ -28,6 +29,8 @@ async function main() {
       return stopJobs(parsed);
     case "list":
       return listJobs();
+    case "logs":
+      return showLogs(parsed);
   }
 }
 
@@ -208,6 +211,33 @@ async function listJobs() {
   }
 }
 
+async function showLogs({ slug, lines }) {
+  if (!(await hasSession())) {
+    console.error(`ho-bj: ${slug} is not running`);
+    return;
+  }
+
+  const windows = await listWindowNames();
+  if (!windows.includes(slug)) {
+    console.error(`ho-bj: ${slug} is not running`);
+    return;
+  }
+
+  const output = await runTmux([
+    "capture-pane",
+    "-p",
+    "-S",
+    `-${lines}`,
+    "-t",
+    `=${sessionName}:=${slug}`,
+  ]);
+  if (output) {
+    console.log(output);
+  } else {
+    console.error(`ho-bj: ${slug} has no output`);
+  }
+}
+
 function parseArguments() {
   const argv = process.argv.slice(2);
   const [action, ...args] = argv;
@@ -217,6 +247,8 @@ function parseArguments() {
         fail(usage, { status: 2 });
       }
       return { action };
+    case "logs":
+      return parseLogsArguments(args);
     case "stop":
       if (args.length !== 1) {
         fail(usage, { status: 2 });
@@ -231,6 +263,33 @@ function parseArguments() {
     default:
       fail(usage, { status: 2 });
   }
+}
+
+function parseLogsArguments(args) {
+  let parsed;
+  try {
+    parsed = parseArgs({
+      args,
+      options: {
+        lines: { type: "string" },
+      },
+      allowPositionals: true,
+    });
+  } catch {
+    fail(usage, { status: 2 });
+  }
+
+  const [slug = "", ...extra] = parsed.positionals;
+  if (extra.length > 0) {
+    fail(usage, { status: 2 });
+  }
+  validateSlug(slug);
+
+  const lines = Number(parsed.values.lines ?? 200);
+  if (!Number.isSafeInteger(lines) || lines <= 0) {
+    fail(`invalid line count: ${parsed.values.lines}`, { status: 2 });
+  }
+  return { action: "logs", slug, lines };
 }
 
 function parseStartArguments(argv) {
