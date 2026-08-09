@@ -132,10 +132,11 @@ def choose_session(rows: list[str]) -> tuple[str, str] | None:
             "--delimiter=\t",
             "--with-nth=2..",
             "--layout=reverse",
-            "--header=enter: continue | alt-enter: fork | esc: cancel",
+            "--header=enter: continue | alt-enter: fork | ctrl-n: new | esc: cancel",
             "--prompt=Sessions> ",
             "--bind=enter:print(continue)+accept",
             "--bind=alt-enter:print(fork)+accept",
+            "--bind=ctrl-n:print(new)+accept",
             f"--preview={shlex.quote(str(script_path))} --internal-preview {{1}}",
             "--preview-window=right:60%:wrap",
         ],
@@ -179,9 +180,11 @@ def main() -> int:
         return 0
     action, session_id = selection
 
-    arguments = ["opencode", "--session", session_id]
-    if action == "fork":
-        arguments.append("--fork")
+    arguments = ["opencode"]
+    if action != "new":
+        arguments.extend(("--session", session_id))
+        if action == "fork":
+            arguments.append("--fork")
     # Replace the wrapper process so the selected OpenCode TUI owns the terminal directly.
     os.execvp(arguments[0], arguments)
 
