@@ -54,7 +54,7 @@ wtmux run --name docs -C ./docs -- pnpm dev
 wtmux list [--all]
 ~~~
 
-Show windows, panes, clients, and stale sessions for the current workspace. Use --all to inspect every wtmux workspace.
+Show windows, panes, clients, and stale sessions for the current workspace. RUN is the stable name assigned by wtmux run; ordinary windows show -. Use --all to inspect every wtmux workspace.
 
 ~~~sh
 wtmux list
@@ -303,10 +303,10 @@ async function handleRunCommand(options) {
   );
   if (workspaceSessions.length > 0) {
     const duplicate = (await listWindows(workspaceSessions[0].id)).some(
-      (window) => window.name === options.name,
+      (window) => window.runName === options.name,
     );
     if (duplicate) {
-      throw new Error(`window already exists: ${options.name}`);
+      throw new Error(`run already exists: ${options.name}`);
     }
   }
 
@@ -388,6 +388,7 @@ async function handleRunCommand(options) {
 
     await runTmux(["set-option", "-w", "-t", paneId, "automatic-rename", "off"]);
     await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
+    await runTmux(["set-option", "-w", "-t", paneId, "@wtmux_run_name", options.name]);
     if (capturePath) {
       await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
     }
@@ -480,14 +481,16 @@ async function resolveNamedWindow(name) {
     (session) => session.workspaceDirectory === workspaceDirectory,
   );
   if (!workspaceSession) {
-    throw new Error(`window not found: ${name}`);
+    throw new Error(`run not found: ${name}`);
   }
-  const matches = (await listWindows(workspaceSession.id)).filter((window) => window.name === name);
+  const matches = (await listWindows(workspaceSession.id)).filter(
+    (window) => window.runName === name,
+  );
   if (matches.length === 0) {
-    throw new Error(`window not found: ${name}`);
+    throw new Error(`run not found: ${name}`);
   }
   if (matches.length > 1) {
-    throw new Error(`ambiguous window name: ${name}`);
+    throw new Error(`ambiguous run name: ${name}`);
   }
   return matches[0];
 }
@@ -522,7 +525,7 @@ async function handleListCommand(options) {
     const rows = panes.map((pane) => [
       pane.windowIndex,
       pane.index,
-      pane.windowName,
+      pane.runName || "-",
       pane.dead ? `exited(${pane.deadStatus})` : "running",
       pane.command,
       pane.title,
@@ -534,7 +537,7 @@ async function handleListCommand(options) {
         `== WORKSPACE - ${workspace} ==`,
         `status: ${summary.join(", ")}`,
         "",
-        formatTable(["WIN", "PANE", "NAME", "STATE", "COMMAND", "TITLE", "CWD"], rows),
+        formatTable(["WIN", "PANE", "RUN", "STATE", "COMMAND", "TITLE", "CWD"], rows),
       ].join("\n"),
     );
   }
@@ -628,19 +631,19 @@ async function listPanes(targetId) {
     "-t",
     targetId,
     "-F",
-    "#{pane_id}\t#{window_id}\t#{window_index}\t#{window_name}\t#{pane_index}\t#{pane_dead}\t#{pane_dead_status}\t#{pane_current_command}\t#{pane_title}\t#{pane_current_path}",
+    "#{pane_id}\t#{window_id}\t#{window_index}\t#{@wtmux_run_name}\t#{pane_index}\t#{pane_dead}\t#{pane_dead_status}\t#{pane_current_command}\t#{pane_title}\t#{pane_current_path}",
   );
   const output = await runTmux(args);
   return output ? output.split("\n").map(parsePane) : [];
 
   function parsePane(line) {
-    const [id, windowId, windowIndex, windowName, index, dead, deadStatus, command, title, cwd] =
+    const [id, windowId, windowIndex, runName, index, dead, deadStatus, command, title, cwd] =
       line.split("\t");
     return {
       id,
       windowId,
       windowIndex,
-      windowName,
+      runName,
       index,
       dead: dead === "1",
       deadStatus,
@@ -657,7 +660,7 @@ async function listWindows(sessionId) {
     windows.set(pane.windowId, {
       id: pane.windowId,
       index: pane.windowIndex,
-      name: pane.windowName,
+      runName: pane.runName,
     });
   }
   return [...windows.values()];
