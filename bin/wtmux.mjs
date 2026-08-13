@@ -384,8 +384,8 @@ async function stopCommand(options) {
 
 async function showLogs(options) {
   const window = await resolveNamedWindow(options.name);
-  const paneIds = await listPaneIds(window.id);
-  if (paneIds.length !== 1) {
+  const panes = await listPanes(window.id);
+  if (panes.length !== 1) {
     throw new Error(`window has multiple panes: ${options.name}`);
   }
   const output = await runTmux([
@@ -394,7 +394,7 @@ async function showLogs(options) {
     "-S",
     `-${options.lines}`,
     "-t",
-    paneIds[0],
+    panes[0].id,
   ]);
   if (output) {
     console.log(output);
@@ -549,19 +549,23 @@ async function listSessions() {
   }
 }
 
-async function listPanes(sessionId) {
-  const output = await runTmux([
-    "list-panes",
-    "-s",
+async function listPanes(targetId) {
+  const args = ["list-panes"];
+  if (targetId.startsWith("$")) {
+    args.push("-s");
+  }
+  args.push(
     "-t",
-    sessionId,
+    targetId,
     "-F",
-    "#{window_id}\t#{window_index}\t#{window_name}\t#{pane_index}\t#{pane_dead}\t#{pane_dead_status}\t#{pane_current_command}\t#{pane_title}\t#{pane_current_path}",
-  ]);
+    "#{pane_id}\t#{window_id}\t#{window_index}\t#{window_name}\t#{pane_index}\t#{pane_dead}\t#{pane_dead_status}\t#{pane_current_command}\t#{pane_title}\t#{pane_current_path}",
+  );
+  const output = await runTmux(args);
   return output ? output.split("\n").map(parsePane) : [];
 
   function parsePane(line) {
     const [
+      id,
       windowId,
       windowIndex,
       windowName,
@@ -573,6 +577,7 @@ async function listPanes(sessionId) {
       cwd,
     ] = line.split("\t");
     return {
+      id,
       windowId,
       windowIndex,
       windowName,
@@ -596,11 +601,6 @@ async function listWindows(sessionId) {
     });
   }
   return [...windows.values()];
-}
-
-async function listPaneIds(windowId) {
-  const output = await runTmux(["list-panes", "-t", windowId, "-F", "#{pane_id}"]);
-  return output ? output.split("\n") : [];
 }
 
 function chooseUniqueSessionName(cwd, existingNames) {
