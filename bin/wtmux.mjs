@@ -100,7 +100,7 @@ wtmux prune --all
 ~~~
 
 Inside Git, the common Git directory identifies the workspace. Outside Git, the current directory identifies it.
-`.trimEnd();
+`.replaceAll("~~~", "```").trimEnd();
 
 const execFileAsync = promisify(execFile);
 
