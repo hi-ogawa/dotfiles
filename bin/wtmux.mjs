@@ -431,13 +431,7 @@ async function handleRunCommand(options) {
     const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
     if (dead === "1") {
       // TODO: Include pane_dead_signal so signal termination cannot be reported as success.
-      const status = await runTmux([
-        "display-message",
-        "-p",
-        "-t",
-        paneId,
-        "#{pane_dead_status}",
-      ]);
+      const status = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead_status}"]);
       console.error(`wtmux: ${options.name} exited with status ${status}`);
       process.exitCode = Number(status);
       return;
@@ -640,18 +634,8 @@ async function listPanes(targetId) {
   return output ? output.split("\n").map(parsePane) : [];
 
   function parsePane(line) {
-    const [
-      id,
-      windowId,
-      windowIndex,
-      windowName,
-      index,
-      dead,
-      deadStatus,
-      command,
-      title,
-      cwd,
-    ] = line.split("\t");
+    const [id, windowId, windowIndex, windowName, index, dead, deadStatus, command, title, cwd] =
+      line.split("\t");
     return {
       id,
       windowId,
