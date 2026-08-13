@@ -31,17 +31,17 @@ async function main() {
   const parsed = parseCli();
   switch (parsed.action) {
     case "open":
-      return openWorkspace();
+      return handleOpenCommand();
     case "list":
-      return listWorkspaces(parsed);
+      return handleListCommand(parsed);
     case "prune":
-      return pruneWorkspaces(parsed);
+      return handlePruneCommand(parsed);
     case "run":
-      return runCommand(parsed);
+      return handleRunCommand(parsed);
     case "stop":
-      return stopCommand(parsed);
+      return handleStopCommand(parsed);
     case "logs":
-      return showLogs(parsed);
+      return handleLogsCommand(parsed);
     case "help":
       console.log(USAGE);
       return;
@@ -162,7 +162,7 @@ function validateName(name) {
   return name;
 }
 
-async function openWorkspace() {
+async function handleOpenCommand() {
   // Git checkouts share an identity through their common Git directory. Outside
   // Git, the current directory identifies the workspace.
   const workspaceDirectory = await resolveWorkspaceDirectory();
@@ -217,7 +217,7 @@ async function openWorkspace() {
   process.execve("/usr/bin/env", ["env", "tmux", ...args]);
 }
 
-async function runCommand(options) {
+async function handleRunCommand(options) {
   // TODO: Lock workspace discovery through window creation to prevent split groups and duplicate names.
   const workspaceDirectory = await resolveWorkspaceDirectory();
   const sessions = await listSessions();
@@ -375,13 +375,13 @@ async function runCommand(options) {
   }
 }
 
-async function stopCommand(options) {
+async function handleStopCommand(options) {
   const window = await resolveNamedWindow(options.name);
   await runTmux(["kill-window", "-t", window.id]);
   console.error(`wtmux: ${options.name} stopped`);
 }
 
-async function showLogs(options) {
+async function handleLogsCommand(options) {
   const window = await resolveNamedWindow(options.name);
   const panes = await listPanes(window.id);
   if (panes.length !== 1) {
@@ -421,7 +421,7 @@ async function resolveNamedWindow(name) {
   return matches[0];
 }
 
-async function listWorkspaces(options) {
+async function handleListCommand(options) {
   const sessions = await listSessions();
   const workspaceDirectory = options.all ? undefined : await resolveWorkspaceDirectory();
   const workspaceSessions = groupWorkspaceSessions(sessions, workspaceDirectory);
@@ -470,7 +470,7 @@ async function listWorkspaces(options) {
   console.log(sections.join("\n\n"));
 }
 
-async function pruneWorkspaces(options) {
+async function handlePruneCommand(options) {
   const sessions = await listSessions();
   const workspaceDirectory = options.all ? undefined : await resolveWorkspaceDirectory();
   const workspaceSessions = groupWorkspaceSessions(sessions, workspaceDirectory);
