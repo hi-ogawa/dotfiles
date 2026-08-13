@@ -156,8 +156,7 @@ function parseLogsArguments(args) {
 }
 
 function validateName(name) {
-  // TODO: Reject surrounding whitespace because runTmux trims formatted output.
-  if (!name || /[\t\r\n]/.test(name)) {
+  if (!name || name !== name.trim() || /[\t\r\n]/.test(name)) {
     throw new Error(`invalid window name: ${name ?? ""}`);
   }
   return name;
