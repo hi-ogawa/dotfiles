@@ -6,7 +6,7 @@ description: >-
 
 # Background Jobs
 
-Use one named workspace window per long-lived command. Give each command a short lowercase name such as `site-api` or `dotfiles-watch`.
+Use one named workspace window per long-lived command.
 
 ## Start
 
