@@ -104,11 +104,11 @@ function parseRunArguments(args) {
   if (commandArgs.length === 0 || (noWait && waitTimeout !== undefined)) {
     return { action: "usage" };
   }
+  // TODO: Bound the converted milliseconds so a finite seconds value cannot overflow.
   const waitTimeoutSeconds = Number(waitTimeout ?? 5);
   if (!Number.isFinite(waitTimeoutSeconds) || waitTimeoutSeconds <= 0) {
     throw new Error(`invalid wait timeout: ${waitTimeout}`);
   }
-  // TODO: Bound the converted milliseconds so a finite seconds value cannot overflow.
 
   const requestedRoot = parsed.values.root ?? process.cwd();
   const root = resolve(requestedRoot);
