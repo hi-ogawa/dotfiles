@@ -47,7 +47,7 @@ async function main() {
       return;
     case "usage":
       console.log(USAGE);
-      process.exitCode = 1;
+      process.exitCode = 2;
   }
 }
 
@@ -80,7 +80,7 @@ function parseCli() {
 function parseRunArguments(args) {
   const separator = args.indexOf("--");
   if (separator === -1) {
-    fail(USAGE, { status: 2 });
+    return { action: "usage" };
   }
   const commandArgs = args.slice(separator + 1);
   let parsed;
@@ -96,7 +96,7 @@ function parseRunArguments(args) {
       },
     });
   } catch {
-    fail(USAGE, { status: 2 });
+    return { action: "usage" };
   }
 
   const name = validateName(parsed.values.name);
@@ -108,17 +108,17 @@ function parseRunArguments(args) {
     (!detached && (noWait || waitTimeout !== undefined)) ||
     (noWait && waitTimeout !== undefined)
   ) {
-    fail(USAGE, { status: 2 });
+    return { action: "usage" };
   }
   const waitTimeoutSeconds = Number(waitTimeout ?? 5);
   if (!Number.isFinite(waitTimeoutSeconds) || waitTimeoutSeconds <= 0) {
-    fail(`invalid wait timeout: ${waitTimeout}`, { status: 2 });
+    throw new Error(`invalid wait timeout: ${waitTimeout}`);
   }
 
   const requestedRoot = parsed.values.root ?? process.cwd();
   const root = resolve(requestedRoot);
   if (!statSync(root, { throwIfNoEntry: false })?.isDirectory()) {
-    fail(`root not found: ${requestedRoot}`);
+    throw new Error(`root not found: ${requestedRoot}`);
   }
   return {
     action: "run",
@@ -136,7 +136,7 @@ function parseStopArguments(args) {
   try {
     parsed = parseArgs({ args, options: { name: { type: "string" } } });
   } catch {
-    fail(USAGE, { status: 2 });
+    return { action: "usage" };
   }
   return { action: "stop", name: validateName(parsed.values.name) };
 }
@@ -152,18 +152,18 @@ function parseLogsArguments(args) {
       },
     });
   } catch {
-    fail(USAGE, { status: 2 });
+    return { action: "usage" };
   }
   const lines = Number(parsed.values.lines ?? 200);
   if (!Number.isSafeInteger(lines) || lines <= 0) {
-    fail(`invalid line count: ${parsed.values.lines}`, { status: 2 });
+    throw new Error(`invalid line count: ${parsed.values.lines}`);
   }
   return { action: "logs", name: validateName(parsed.values.name), lines };
 }
 
 function validateName(name) {
   if (!name || /[\t\r\n]/.test(name)) {
-    fail(`invalid window name: ${name ?? ""}`, { status: 2 });
+    throw new Error(`invalid window name: ${name ?? ""}`);
   }
   return name;
 }
@@ -234,7 +234,7 @@ async function runCommand(options) {
       (window) => window.name === options.name,
     );
     if (duplicate) {
-      fail(`window already exists: ${options.name}`);
+      throw new Error(`window already exists: ${options.name}`);
     }
   }
 
@@ -474,7 +474,7 @@ async function showLogs(options) {
   const window = await resolveNamedWindow(options.name);
   const paneIds = await listPaneIds(window.id);
   if (paneIds.length !== 1) {
-    fail(`window has multiple panes: ${options.name}`);
+    throw new Error(`window has multiple panes: ${options.name}`);
   }
   const output = await runTmux([
     "capture-pane",
@@ -498,14 +498,14 @@ async function resolveNamedWindow(name) {
     (session) => session.workspaceDirectory === workspaceDirectory,
   );
   if (!workspaceSession) {
-    fail(`window not found: ${name}`);
+    throw new Error(`window not found: ${name}`);
   }
   const matches = (await listWindows(workspaceSession.id)).filter((window) => window.name === name);
   if (matches.length === 0) {
-    fail(`window not found: ${name}`);
+    throw new Error(`window not found: ${name}`);
   }
   if (matches.length > 1) {
-    fail(`ambiguous window name: ${name}`);
+    throw new Error(`ambiguous window name: ${name}`);
   }
   return matches[0];
 }
@@ -766,11 +766,6 @@ function shellQuote(value) {
 
 function sleep(milliseconds) {
   return new Promise((resolvePromise) => setTimeout(resolvePromise, milliseconds));
-}
-
-function fail(message, options = {}) {
-  console.error(message);
-  process.exit(options.status ?? 1);
 }
 
 async function runTmux(args) {
