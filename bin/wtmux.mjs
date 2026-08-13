@@ -587,19 +587,15 @@ async function listPanes(sessionId) {
 }
 
 async function listWindows(sessionId) {
-  const output = await runTmux([
-    "list-windows",
-    "-t",
-    sessionId,
-    "-F",
-    "#{window_id}\t#{window_index}\t#{window_name}",
-  ]);
-  return output ? output.split("\n").map(parseWindow) : [];
-
-  function parseWindow(line) {
-    const [id, index, name] = line.split("\t");
-    return { id, index, name };
+  const windows = new Map();
+  for (const pane of await listPanes(sessionId)) {
+    windows.set(pane.windowId, {
+      id: pane.windowId,
+      index: pane.windowIndex,
+      name: pane.windowName,
+    });
   }
+  return [...windows.values()];
 }
 
 async function listPaneIds(windowId) {
