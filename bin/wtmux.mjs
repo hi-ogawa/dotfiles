@@ -6,23 +6,100 @@ import { tmpdir } from "node:os";
 import { basename, join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
-const USAGE = `\
-usage:
-  wtmux                create and enter a new session view
-  wtmux list [--all]   list workspace panes
-  wtmux prune [--all]  remove stale sessions
-  wtmux run --name <name> [-C <root>]
-            [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
-  wtmux stop --name <name>
-  wtmux logs --name <name> [--lines <count>]
+const HELP = `\
+# wtmux
 
-options:
-  --all                 target all workspaces
-  -h, --help            show this help
+Share tmux windows across a Git repository and its linked worktrees.
 
-Linked Git worktrees share one workspace and its windows. Each invocation
-creates an independent session view. Outside Git, the current directory
-identifies the workspace.
+## Open a Workspace
+
+~~~sh
+wtmux
+~~~
+
+Create and enter a new session view. Every view shares the workspace windows while retaining independent window selection.
+
+~~~sh
+cd ~/code/project
+wtmux
+~~~
+
+## Run a Command
+
+~~~sh
+wtmux run --name <name> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
+~~~
+
+Run a command in a named shared window without changing the current client. By default, wtmux captures startup output and waits until output becomes quiet, the command exits, or five seconds pass.
+
+~~~sh
+wtmux run --name dev -- pnpm dev
+~~~
+
+Return immediately when startup observation is unnecessary:
+
+~~~sh
+wtmux run --name tests --no-wait -- pnpm test --watch
+~~~
+
+Run from another directory:
+
+~~~sh
+wtmux run --name docs -C ./docs -- pnpm dev
+~~~
+
+## Inspect a Workspace
+
+~~~sh
+wtmux list [--all]
+~~~
+
+Show windows, panes, clients, and stale sessions for the current workspace. Use --all to inspect every wtmux workspace.
+
+~~~sh
+wtmux list
+wtmux list --all
+~~~
+
+## Read Command Output
+
+~~~sh
+wtmux logs --name <name> [--lines <count>]
+~~~
+
+Read recent tmux history from a named single-pane window. The default is 200 lines.
+
+~~~sh
+wtmux logs --name dev
+wtmux logs --name dev --lines 50
+~~~
+
+## Stop a Command
+
+~~~sh
+wtmux stop --name <name>
+~~~
+
+Remove the named window and stop the processes running inside it.
+
+~~~sh
+wtmux stop --name dev
+~~~
+
+## Prune Stale Sessions
+
+~~~sh
+wtmux prune [--all]
+~~~
+
+Remove redundant detached session views. Preserve one anchor session when a workspace has no clients so its windows and processes remain alive.
+
+~~~sh
+wtmux prune
+wtmux prune --all
+~~~
+
+Inside Git, the common Git directory identifies the workspace. Outside Git, the current directory identifies it.
 `.trimEnd();
 
 const execFileAsync = promisify(execFile);
@@ -43,10 +120,10 @@ async function main() {
     case "logs":
       return handleLogsCommand(parsed);
     case "help":
-      console.log(USAGE);
+      console.log(HELP);
       return;
     case "usage":
-      console.log(USAGE);
+      console.log(HELP);
       process.exitCode = 2;
   }
 }
