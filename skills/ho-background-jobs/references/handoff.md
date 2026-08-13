@@ -2,21 +2,25 @@
 
 Launch a fresh interactive agent session in a named shared workspace window.
 
-## Workflow example
+## Workflow
+
+Choose a concise semantic name based on the project and task, using lowercase alphanumeric words separated by hyphens. Use the current working directory unless the user specifies another target.
 
 ```bash
-wtmux run --name <name> --no-wait -C <cwd> -- opencode --prompt '<initial-prompt>'
+wtmux run --name <name> --no-wait -C <cwd> -- <agent-command>
 ```
 
-Here `<name>` should be a concise semantic name based on the project and task with simple alphanumeric words.
+Use one of these agent commands:
 
-This is for Opencode, but it can apply to any other terminal based coding agent. For yolo mode on opencode, use `opencode --auto` intead.
-For Codex, `codex --prompt-something` and `codex --dangeera...`, For claude, `claude <prompt directly` and `claude --dange...`.
-TODO: probably table works here.
+| Agent | Standard | Unrestricted |
+| --- | --- | --- |
+| OpenCode | `opencode --prompt '<initial-prompt>'` | `opencode --auto --prompt '<initial-prompt>'` |
+| Codex | `codex '<initial-prompt>'` | `codex --dangerously-bypass-approvals-and-sandbox '<initial-prompt>'` |
+| Claude | `claude '<initial-prompt>'` | `claude --dangerously-skip-permissions '<initial-prompt>'` |
 
-See following guide for authoring `<initial-prompt>`.
+Use an unrestricted command only when the user requests it. Tell the user which named window contains the new session.
 
-### Prompt Guidance
+## Prompt Guidance
 
 Write the prompt as a concise, task-specific opening message for a fresh agent rather than a transcript or generic summary. Carry forward the user's intent and context that the new agent could not recover from the workspace, such as prior decisions, current work state, meaningful uncertainty, or important constraints.
 
