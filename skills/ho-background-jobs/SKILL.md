@@ -48,3 +48,7 @@ The human user can inspect or control command windows interactively:
 ```bash
 wtmux
 ```
+
+## Agent Handoff
+
+When the user requests a fresh agent handoff, read [references/handoff.md](references/handoff.md).
