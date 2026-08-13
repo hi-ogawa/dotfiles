@@ -12,6 +12,7 @@ Here `<name>` should be a concise semantic name based on the project and task wi
 
 This is for Opencode, but it can apply to any other terminal based coding agent. For yolo mode on opencode, use `opencode --auto` intead.
 For Codex, `codex --prompt-something` and `codex --dangeera...`, For claude, `claude <prompt directly` and `claude --dange...`.
+TODO: probably table works here.
 
 See following guide for authoring `<initial-prompt>`.
 
