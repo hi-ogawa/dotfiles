@@ -321,23 +321,6 @@ async function runCommand(options) {
 
     await runTmux(["set-option", "-w", "-t", paneId, "automatic-rename", "off"]);
     await runTmux(["set-option", "-w", "-t", paneId, "remain-on-exit", "on"]);
-    await runTmux(["set-option", "-w", "-t", paneId, "@wtmux_root", options.root]);
-    await runTmux([
-      "set-option",
-      "-w",
-      "-t",
-      paneId,
-      "@wtmux_command",
-      options.commandArgs.map(shellQuote).join(" "),
-    ]);
-    await runTmux([
-      "set-option",
-      "-w",
-      "-t",
-      paneId,
-      "@wtmux_started_at",
-      String(Date.now()),
-    ]);
     if (capturePath) {
       await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
     }
