@@ -11,7 +11,7 @@ usage:
   wtmux                create and enter a new session view
   wtmux list [--all]   list workspace panes
   wtmux prune [--all]  remove stale sessions
-  wtmux run --name <name> [-C <root>] [--detached]
+  wtmux run --name <name> [-C <root>]
             [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
   wtmux stop --name <name>
   wtmux logs --name <name> [--lines <count>]
@@ -90,7 +90,6 @@ function parseRunArguments(args) {
       options: {
         name: { type: "string" },
         root: { type: "string", short: "C" },
-        detached: { type: "boolean" },
         "no-wait": { type: "boolean" },
         "wait-timeout": { type: "string" },
       },
@@ -100,14 +99,9 @@ function parseRunArguments(args) {
   }
 
   const name = validateName(parsed.values.name);
-  const detached = parsed.values.detached ?? false;
   const noWait = parsed.values["no-wait"] ?? false;
   const waitTimeout = parsed.values["wait-timeout"];
-  if (
-    commandArgs.length === 0 ||
-    (!detached && (noWait || waitTimeout !== undefined)) ||
-    (noWait && waitTimeout !== undefined)
-  ) {
+  if (commandArgs.length === 0 || (noWait && waitTimeout !== undefined)) {
     return { action: "usage" };
   }
   const waitTimeoutSeconds = Number(waitTimeout ?? 5);
@@ -126,7 +120,6 @@ function parseRunArguments(args) {
     name,
     root,
     commandArgs,
-    detached,
     noWait,
     waitTimeoutMs: waitTimeoutSeconds * 1000,
   };
@@ -243,7 +236,7 @@ async function runCommand(options) {
 
   let temporaryDirectory;
   let capturePath;
-  if (options.detached && !options.noWait) {
+  if (!options.noWait) {
     temporaryDirectory = mkdtempSync(join(tmpdir(), "wtmux."));
     capturePath = join(temporaryDirectory, "startup.log");
     writeFileSync(capturePath, "");
@@ -251,7 +244,6 @@ async function runCommand(options) {
 
   let paneId;
   let sessionId;
-  let createdWorkspace = false;
   let started = false;
   let cleanedUp = false;
 
@@ -300,7 +292,6 @@ async function runCommand(options) {
         options.root,
       ]);
       [sessionId, paneId] = result.split("\t");
-      createdWorkspace = true;
       await runTmux(["set-option", "-t", sessionId, "@wtmux_workspace", workspaceDirectory]);
     } else {
       sessionId = workspaceSessions[0].id;
@@ -329,15 +320,6 @@ async function runCommand(options) {
     await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", options.root, command]);
     started = true;
 
-    if (!options.detached) {
-      return enterStartedWindow({
-        workspaceDirectory,
-        sourceSessionId: sessionId,
-        paneId,
-        createdWorkspace,
-        sessions,
-      });
-    }
     if (options.noWait) {
       console.error(`wtmux: ${options.name} started`);
       return;
@@ -392,63 +374,6 @@ async function runCommand(options) {
   } finally {
     await cleanup();
   }
-}
-
-async function enterStartedWindow(options) {
-  const windowIndex = await runTmux([
-    "display-message",
-    "-p",
-    "-t",
-    options.paneId,
-    "#{window_index}",
-  ]);
-  let targetSessionId = options.sourceSessionId;
-
-  if (!options.createdWorkspace && process.env.TMUX_PANE) {
-    const current = await runTmux([
-      "display-message",
-      "-p",
-      "-t",
-      process.env.TMUX_PANE,
-      "#{session_id}\t#{@wtmux_workspace}",
-    ]);
-    const [currentSessionId, currentWorkspace] = current.split("\t");
-    if (currentWorkspace === options.workspaceDirectory) {
-      await runTmux(["select-window", "-t", `${currentSessionId}:${windowIndex}`]);
-      return;
-    }
-  }
-
-  if (!options.createdWorkspace) {
-    const sessionName = chooseUniqueSessionName(
-      process.cwd(),
-      options.sessions.map((session) => session.name),
-    );
-    targetSessionId = await runTmux([
-      "new-session",
-      "-d",
-      "-P",
-      "-F",
-      "#{session_id}",
-      "-s",
-      sessionName,
-      "-t",
-      options.sourceSessionId,
-    ]);
-    await runTmux([
-      "set-option",
-      "-t",
-      targetSessionId,
-      "@wtmux_workspace",
-      options.workspaceDirectory,
-    ]);
-  }
-
-  await runTmux(["select-window", "-t", `${targetSessionId}:${windowIndex}`]);
-  const args = process.env.TMUX
-    ? ["switch-client", "-t", targetSessionId]
-    : ["attach-session", "-t", targetSessionId];
-  process.execve("/usr/bin/env", ["env", "tmux", ...args]);
 }
 
 async function stopCommand(options) {
