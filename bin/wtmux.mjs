@@ -11,8 +11,8 @@ usage:
   wtmux                create and enter a new session view
   wtmux list [--all]   list workspace panes
   wtmux prune [--all]  remove stale sessions
-  wtmux start --name <name> [-C <root>] [--detached]
-              [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
+  wtmux run --name <name> [-C <root>] [--detached]
+            [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
   wtmux stop --name <name>
   wtmux logs --name <name> [--lines <count>]
 
@@ -36,8 +36,8 @@ async function main() {
       return listWorkspaces(parsed);
     case "prune":
       return pruneWorkspaces(parsed);
-    case "start":
-      return startCommand(parsed);
+    case "run":
+      return runCommand(parsed);
     case "stop":
       return stopCommand(parsed);
     case "logs":
@@ -65,8 +65,8 @@ function parseCli() {
   ) {
     return { action: args[0], all: args[1] === "--all" };
   }
-  if (args[0] === "start") {
-    return parseStartArguments(args.slice(1));
+  if (args[0] === "run") {
+    return parseRunArguments(args.slice(1));
   }
   if (args[0] === "stop") {
     return parseStopArguments(args.slice(1));
@@ -77,7 +77,7 @@ function parseCli() {
   return { action: "usage" };
 }
 
-function parseStartArguments(args) {
+function parseRunArguments(args) {
   const separator = args.indexOf("--");
   if (separator === -1) {
     fail(USAGE, { status: 2 });
@@ -121,7 +121,7 @@ function parseStartArguments(args) {
     fail(`root not found: ${requestedRoot}`);
   }
   return {
-    action: "start",
+    action: "run",
     name,
     root,
     commandArgs,
@@ -223,7 +223,7 @@ async function openWorkspace() {
   process.execve("/usr/bin/env", ["env", "tmux", ...args]);
 }
 
-async function startCommand(options) {
+async function runCommand(options) {
   const workspaceDirectory = await resolveWorkspaceDirectory();
   const sessions = await listSessions();
   const workspaceSessions = sessions.filter(
