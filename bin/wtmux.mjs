@@ -114,6 +114,7 @@ function parseRunArguments(args) {
   if (!Number.isFinite(waitTimeoutSeconds) || waitTimeoutSeconds <= 0) {
     throw new Error(`invalid wait timeout: ${waitTimeout}`);
   }
+  // TODO: Bound the converted milliseconds so a finite seconds value cannot overflow.
 
   const requestedRoot = parsed.values.root ?? process.cwd();
   const root = resolve(requestedRoot);
@@ -162,6 +163,7 @@ function parseLogsArguments(args) {
 }
 
 function validateName(name) {
+  // TODO: Reject surrounding whitespace because runTmux trims formatted output.
   if (!name || /[\t\r\n]/.test(name)) {
     throw new Error(`invalid window name: ${name ?? ""}`);
   }
@@ -224,6 +226,7 @@ async function openWorkspace() {
 }
 
 async function runCommand(options) {
+  // TODO: Lock workspace discovery through window creation to prevent split groups and duplicate names.
   const workspaceDirectory = await resolveWorkspaceDirectory();
   const sessions = await listSessions();
   const workspaceSessions = sessions.filter(
@@ -386,6 +389,7 @@ async function runCommand(options) {
 
     const dead = await runTmux(["display-message", "-p", "-t", paneId, "#{pane_dead}"]);
     if (dead === "1") {
+      // TODO: Include pane_dead_signal so signal termination cannot be reported as success.
       const status = await runTmux([
         "display-message",
         "-p",
