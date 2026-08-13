@@ -4,7 +4,7 @@ Launch a fresh interactive agent session in a named shared workspace window.
 
 ## Workflow
 
-Choose a concise semantic name based on the project and task, using lowercase alphanumeric words separated by hyphens. Use the current working directory unless the user specifies another target.
+Choose a concise semantic `<name>` based on the project and task, using lowercase alphanumeric words separated by hyphens. Choose `<name>` for the target directly where agent should run.
 
 ```bash
 wtmux run --name <name> --no-wait -C <cwd> -- <agent-command>
@@ -12,13 +12,13 @@ wtmux run --name <name> --no-wait -C <cwd> -- <agent-command>
 
 Use one of these agent commands:
 
-| Agent | Standard | Unrestricted |
-| --- | --- | --- |
-| OpenCode | `opencode --prompt '<initial-prompt>'` | `opencode --auto --prompt '<initial-prompt>'` |
-| Codex | `codex '<initial-prompt>'` | `codex --dangerously-bypass-approvals-and-sandbox '<initial-prompt>'` |
-| Claude | `claude '<initial-prompt>'` | `claude --dangerously-skip-permissions '<initial-prompt>'` |
+| Agent    | Standard                               | Unrestricted (YOLO mode)                                              |
+| -------- | -------------------------------------- | --------------------------------------------------------------------- |
+| OpenCode | `opencode --prompt '<initial-prompt>'` | `opencode --auto --prompt '<initial-prompt>'`                         |
+| Codex    | `codex '<initial-prompt>'`             | `codex --dangerously-bypass-approvals-and-sandbox '<initial-prompt>'` |
+| Claude   | `claude '<initial-prompt>'`            | `claude --dangerously-skip-permissions '<initial-prompt>'`            |
 
-Use an unrestricted command only when the user requests it. Tell the user which named window contains the new session.
+Use an unrestricted command only when the user requests it.
 
 ## Prompt Guidance
 
