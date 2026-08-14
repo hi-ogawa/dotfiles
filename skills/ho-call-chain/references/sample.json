@@ -1,0 +1,62 @@
+{
+  "roots": ["handleRequest", "renderPage"],
+  "nodes": [
+    {
+      "id": "handleRequest",
+      "source": "src/server.ts:42",
+      "note": "Routes an incoming request.",
+      "calls": [
+        {
+          "to": "matchRoute",
+          "source": "src/server.ts:51",
+          "note": "Resolves route ownership before dispatch."
+        },
+        {
+          "to": "[worker RPC boundary]",
+          "source": "src/server.ts:63",
+          "note": "Transfers matched page work to the render worker."
+        }
+      ]
+    },
+    {
+      "id": "matchRoute",
+      "source": "src/router.ts:18",
+      "note": "Matches the normalized pathname."
+    },
+    {
+      "id": "[worker RPC boundary]",
+      "note": "Synthetic transition from request routing to the render worker.",
+      "calls": [
+        {
+          "to": "renderPage",
+          "source": "src/worker.ts:29",
+          "note": "Continues as a separately rendered root."
+        }
+      ]
+    },
+    {
+      "id": "renderPage",
+      "source": "src/render.ts:27",
+      "note": "Produces the page response.",
+      "calls": [
+        {
+          "to": "loadData",
+          "source": "src/render.ts:35",
+          "note": "Loads route data before rendering."
+        }
+      ]
+    },
+    {
+      "id": "loadData",
+      "source": "src/data.ts:14",
+      "note": "Loads data and follows nested dependencies with cycle protection.",
+      "calls": [
+        {
+          "to": "loadData",
+          "source": "src/data.ts:31",
+          "note": "Recurses for a nested dependency."
+        }
+      ]
+    }
+  ]
+}
