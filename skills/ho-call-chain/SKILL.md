@@ -90,6 +90,14 @@ Resolve `scripts/render.mjs` relative to this skill directory, then run:
 node <skill-dir>/scripts/render.mjs <topic-dir>/call-chain-<title>.json <topic-dir>/call-chain-<title>.html
 ```
 
+To link node definition sources to a GitHub commit, pass the repository's permanent blob URL:
+
+```sh
+node <skill-dir>/scripts/render.mjs <input.json> <output.html> --github-base https://github.com/<owner>/<repo>/blob/<full-commit-sha>
+```
+
+The renderer links repository-relative sources in `path:line` or `path:start-end` form. Sources remain plain text when this option is omitted or their format is not linkable.
+
 ## Completion
 
 Run the renderer and use successful generation as verification. Correct the JSON data and rerun when validation fails.
