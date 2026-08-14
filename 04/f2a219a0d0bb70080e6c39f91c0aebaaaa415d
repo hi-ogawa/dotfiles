@@ -1,0 +1,23 @@
+skills/ho-call-chain/SKILL.md
+  s_422483c1c05c37::t_9af707d936613d 93-100
+skills/ho-call-chain/references/design-rationale.md
+  s_422483c1c05c37::t_3da1067b5add6d 91,131-134,183
+skills/ho-call-chain/scripts/render.mjs
+  s_422483c1c05c37::t_acc8d5d24508a5 5,7-9,11,25,37-60,101-115,126,155,178,380-381
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "04f2a219a0d0bb70080e6c39f91c0aebaaaa415d",
+  "prompts": {},
+  "sessions": {
+    "s_422483c1c05c37": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0012a634affeeqKAkJ1Gvw56Cy",
+        "model": "gpt-5.6"
+      },
+      "human_author": "Hiroshi Ogawa <4232207+hi-ogawa@users.noreply.github.com>"
+    }
+  }
+}
