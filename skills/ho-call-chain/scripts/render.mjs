@@ -16,9 +16,10 @@ function main() {
   const rootAnchors = new Map(rootEntries.map(({ root, anchor }) => [root, anchor]));
   const sections = rootEntries
     .map(({ root, number, anchor }) => {
+      const seenNodes = new Map();
       return `<section class="root-section" id="${anchor}">
         <header class="root-heading"><span>${number}</span><h2><a href="#${anchor}">${escapeHtml(root)}</a></h2></header>
-        <ol class="tree root-tree">${renderOccurrence(root, new Set(), root, nodes, roots, rootAnchors)}</ol>
+        <ol class="tree root-tree">${renderOccurrence(root, null, new Set(), root, nodes, roots, rootAnchors, seenNodes, `occurrence-${number}`)}</ol>
       </section>`;
     })
     .join("");
@@ -70,19 +71,39 @@ function slugify(value) {
   );
 }
 
-function renderOccurrence(id, ancestors, activeRoot, nodes, roots, rootAnchors) {
+function renderOccurrence(
+  id,
+  incoming,
+  ancestors,
+  activeRoot,
+  nodes,
+  roots,
+  rootAnchors,
+  seenNodes,
+  anchorPrefix,
+) {
   const node = nodes.get(id);
   const missing = !node;
   const recursive = ancestors.has(id);
   const separateRoot = id !== activeRoot && roots.has(id);
+  const firstOccurrence = seenNodes.get(id);
+  const repeated = Boolean(node && !recursive && !separateRoot && firstOccurrence);
+  let occurrenceAnchor = "";
+  if (node && !recursive && !separateRoot && !repeated) {
+    occurrenceAnchor = `${anchorPrefix}-${seenNodes.size + 1}`;
+    seenNodes.set(id, occurrenceAnchor);
+  }
   const classes = ["node"];
   if (missing) classes.push("missing");
   if (recursive) classes.push("recursive");
   if (separateRoot) classes.push("root-reference");
+  if (repeated) classes.push("repeated");
 
   const marker = missing ? "unresolved" : "";
   const nameHtml = separateRoot
     ? `<a class="name root-link" href="#${rootAnchors.get(id)}">${escapeHtml(node.id)}</a>`
+    : repeated
+      ? `<a class="name repeat-link" href="#${firstOccurrence}">${escapeHtml(node.id)}</a>`
     : `<code class="name">${escapeHtml(node?.id ?? id)}</code>`;
   const markerHtml = marker ? `<span class="marker">${escapeHtml(marker)}</span>` : "";
   const identity = `<div class="identity">
@@ -90,20 +111,34 @@ function renderOccurrence(id, ancestors, activeRoot, nodes, roots, rootAnchors) 
       ${markerHtml}
       ${node?.source ? `<code class="definition">${escapeHtml(node.source)}</code>` : ""}
     </div>`;
-  const note = node?.note ? `<p class="node-note">${escapeHtml(node.note)}</p>` : "";
+  const note = node?.note && !repeated ? `<p class="node-note">${escapeHtml(node.note)}</p>` : "";
+  const edgeNote = incoming?.note
+    ? `<p class="edge-note">${escapeHtml(incoming.note)}</p>`
+    : "";
 
   let children = "";
-  if (node && !recursive && !separateRoot && node.calls.length > 0) {
+  if (node && !recursive && !separateRoot && !repeated && node.calls.length > 0) {
     const nextAncestors = new Set(ancestors).add(id);
     children = `<ol>${node.calls
       .map((call) => {
         if (typeof call.to !== "string") throw new Error(`Call from ${id} is missing string to`);
-        return renderOccurrence(call.to, nextAncestors, activeRoot, nodes, roots, rootAnchors);
+        return renderOccurrence(
+          call.to,
+          call,
+          nextAncestors,
+          activeRoot,
+          nodes,
+          roots,
+          rootAnchors,
+          seenNodes,
+          anchorPrefix,
+        );
       })
       .join("")}</ol>`;
   }
 
-  return `<li class="${classes.join(" ")}"><article>${identity}${note}</article>${children}</li>`;
+  const articleId = occurrenceAnchor ? ` id="${occurrenceAnchor}"` : "";
+  return `<li class="${classes.join(" ")}"><article${articleId}>${identity}${note}${edgeNote}</article>${children}</li>`;
 }
 
 function renderDocument(data, inputPath, rootEntries, sections) {
@@ -113,13 +148,19 @@ function renderDocument(data, inputPath, rootEntries, sections) {
         `<a href="#${anchor}"><span>${number}</span>${escapeHtml(root)}</a>`,
     )
     .join("");
-  const rootNavigation =
-    rootEntries.length > 1
-      ? `<details class="toc">
-      <summary>Roots</summary>
-      <nav aria-label="Call-chain roots">${rootIndex}</nav>
-    </details>`
-      : "";
+  const rootNavigation = rootEntries.length > 1
+    ? `<nav aria-label="Call-chain roots">${rootIndex}</nav>`
+    : "";
+  const viewNavigation = `<details class="toc">
+      <summary>View</summary>
+      <div class="toc-panel">
+        ${rootNavigation}
+        <div class="note-controls" aria-label="Note visibility">
+          <label><input id="show-node-notes" type="checkbox" checked>Node notes</label>
+          <label><input id="show-edge-notes" type="checkbox" checked>Edge notes</label>
+        </div>
+      </div>
+    </details>`;
 
   return `<!doctype html>
 <html lang="en">
@@ -184,7 +225,7 @@ function renderDocument(data, inputPath, rootEntries, sections) {
     .toc summary::-webkit-details-marker { display: none; }
     .toc summary::after { content: " ▾"; color: var(--faint); }
     .toc[open] summary::after { content: " ▴"; }
-    .toc nav {
+    .toc-panel {
       position: absolute;
       top: 36px;
       right: 0;
@@ -195,6 +236,7 @@ function renderDocument(data, inputPath, rootEntries, sections) {
       background: var(--surface);
       box-shadow: 0 8px 24px rgb(32 36 33 / 14%);
     }
+    .toc nav { padding-bottom: 7px; border-bottom: 1px solid var(--line); }
     .toc nav a {
       display: block;
       padding: 6px 8px;
@@ -204,8 +246,11 @@ function renderDocument(data, inputPath, rootEntries, sections) {
     }
     .toc nav a:hover { background: var(--accent-soft); color: var(--ink); }
     .toc nav span { display: inline-block; width: 24px; color: var(--faint); }
+    .note-controls { display: flex; gap: 12px; padding: 9px 8px 2px; color: var(--muted); }
+    .note-controls label { display: inline-flex; align-items: center; gap: 5px; }
+    .note-controls input { margin: 0; accent-color: var(--accent); }
     .root-section {
-      scroll-margin-top: 64px;
+      scroll-margin-top: 12px;
       margin-bottom: 28px;
       border: 1px solid var(--line);
       border-radius: 12px;
@@ -254,7 +299,7 @@ function renderDocument(data, inputPath, rootEntries, sections) {
       left: -22px;
       border-left: 3px solid var(--surface);
     }
-    article { position: relative; z-index: 1; min-width: 540px; }
+    article { position: relative; z-index: 1; min-width: 540px; scroll-margin-top: 12px; }
     .identity {
       display: grid;
       grid-template-columns: max-content max-content minmax(220px, 1fr);
@@ -273,6 +318,14 @@ function renderDocument(data, inputPath, rootEntries, sections) {
       text-underline-offset: 2px;
     }
     .root-link:hover { color: var(--ink); }
+    .repeat-link {
+      color: var(--source);
+      text-decoration-line: underline;
+      text-decoration-style: dotted;
+      text-decoration-color: var(--faint);
+      text-underline-offset: 3px;
+    }
+    .repeat-link:hover { color: var(--ink); }
     .definition {
       justify-self: end;
       color: var(--source);
@@ -293,6 +346,9 @@ function renderDocument(data, inputPath, rootEntries, sections) {
     }
     .missing .marker { background: #f7e5e2; color: var(--alert); }
     .node-note { max-width: 780px; margin: 2px 0 3px; color: var(--muted); font-size: 13px; }
+    .edge-note { max-width: 780px; margin: 1px 0 3px; color: #765c3b; font-size: 12px; }
+    body:has(#show-node-notes:not(:checked)) .node-note { display: none; }
+    body:has(#show-edge-notes:not(:checked)) .edge-note { display: none; }
     @media (max-width: 760px) {
       .shell { width: min(100% - 20px, 1180px); }
       .root-tree { padding-inline: 13px; }
@@ -315,7 +371,7 @@ function renderDocument(data, inputPath, rootEntries, sections) {
     <div class="shell header-row">
       <h1>Call chain</h1>
       <p class="meta">Dataset <code>${escapeHtml(basename(inputPath))}</code> · ${data.nodes.length} nodes · ${data.roots.length} roots</p>
-      ${rootNavigation}
+      ${viewNavigation}
     </div>
   </header>
   <main class="shell">${sections}</main>
