@@ -1,7 +1,7 @@
 ---
 name: ho-artifacts
 description: >-
-  Author self-contained HTML visualization artifacts, iterate on them locally (alongside ho-dev-notes), and optionally publish them to the public artifacts host. Use only when the user explicitly invokes "ho-artifacts".
+  Author self-contained HTML visualization artifacts, iterate on them locally (alongside ho-dev-notes), and optionally share or publish them. Use only when the user explicitly invokes "ho-artifacts".
 ---
 
 # Artifacts
@@ -45,7 +45,9 @@ A page that reads at a glance and stays accurate to the code:
 
 ## Publishing
 
-Publish only when the user wants it public. Target repo `~/code/personal/artifacts`, where `src/` is served at the site root via a Cloudflare worker at `https://artifacts.hiro18181.workers.dev`.
+Focused standalone apps can use an unlisted gist through GistHost for lightweight or temporary sharing; follow `references/standalone-apps.md` for the workflow. Use the artifacts host for durable publication.
+
+Publish to the artifacts host only when the user wants it public. Target repo `~/code/personal/artifacts`, where `src/` is served at the site root via a Cloudflare worker at `https://artifacts.hiro18181.workers.dev`.
 
 **Public repo.** Anyone with the URL can read it. Before copying, committing, or pushing, check for secrets, tokens, absolute home paths, private hostnames, and unreleased details. If the content might be sensitive, confirm before publishing.
 
