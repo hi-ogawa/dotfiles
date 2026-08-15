@@ -21,10 +21,10 @@ Common intents:
 Worktree directories live as siblings of the main worktree:
 
 ```
-<repo>                          # main worktree
+<repo>                        # main worktree
 <repo>-pr-<NNNN>-<slug>       # reviewing or working on a pull request
 <repo>-issue-<NNNN>-<slug>    # fix branch after triage of an issue
-<repo>-<slug>                   # topic with no issue/PR anchor
+<repo>-<slug>                 # topic with no issue/PR anchor
 ```
 
 Choose a concise slug that reflects the worktree's purpose. Infer it case by case from the broader issue or PR context rather than mechanically deriving it from the title.
@@ -37,4 +37,4 @@ Determine the type from context:
 - **Issue fix**: `git worktree add ../<repo>-issue-<N>-<slug> -b fix/issue-<N>`.
 - **Topic**: `git worktree add ../<repo>-<slug> -b <slug>`.
 
-Always base new worktrees off the current main branch tip.
+Install dependencies normally in new worktrees when required.
