@@ -2,10 +2,13 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
 
 function main() {
-  const [inputPath, outputPath] = process.argv.slice(2);
+  const [inputPath, outputPath, ...optionArgs] = process.argv.slice(2);
   if (!inputPath || !outputPath) {
-    throw new Error("Usage: render.mjs <input.json> <output.html>");
+    throw new Error(
+      "Usage: render.mjs <input.json> <output.html> [--github-base <permanent-blob-url>]",
+    );
   }
+  const { githubBase } = parseOptions(optionArgs);
   const data = JSON.parse(readFileSync(inputPath, "utf8"));
   const { nodes, roots } = buildIndex(data);
   const rootEntries = data.roots.map((root, index) => ({
@@ -19,7 +22,7 @@ function main() {
       const seenNodes = new Map();
       return `<section class="root-section" id="${anchor}">
         <header class="root-heading"><span>${number}</span><h2><a href="#${anchor}">${escapeHtml(root)}</a></h2></header>
-        <ol class="tree root-tree">${renderOccurrence(root, null, new Set(), root, nodes, roots, rootAnchors, seenNodes, `occurrence-${number}`)}</ol>
+        <ol class="tree root-tree">${renderOccurrence(root, null, new Set(), root, nodes, roots, rootAnchors, seenNodes, `occurrence-${number}`, githubBase)}</ol>
       </section>`;
     })
     .join("");
@@ -29,6 +32,30 @@ function main() {
   console.log(
     `Rendered ${data.nodes.length} nodes across ${data.roots.length} roots to ${outputPath}`,
   );
+}
+
+function parseOptions(args) {
+  if (args.length === 0) return { githubBase: "" };
+  if (args.length !== 2 || args[0] !== "--github-base") {
+    throw new Error(
+      "Usage: render.mjs <input.json> <output.html> [--github-base <permanent-blob-url>]",
+    );
+  }
+
+  let url;
+  try {
+    url = new URL(args[1]);
+  } catch {
+    throw new Error("--github-base must be a valid HTTP or HTTPS URL");
+  }
+  if (!["http:", "https:"].includes(url.protocol)) {
+    throw new Error("--github-base must be a valid HTTP or HTTPS URL");
+  }
+  if (!/\/blob\/[0-9a-f]{40}\/?$/i.test(url.pathname) || url.search || url.hash) {
+    throw new Error("--github-base must end with /blob/<40-character-commit-sha>");
+  }
+
+  return { githubBase: args[1].replace(/\/$/, "") };
 }
 
 function buildIndex(data) {
@@ -71,6 +98,21 @@ function slugify(value) {
   );
 }
 
+function renderSource(source, githubBase) {
+  const text = escapeHtml(source);
+  const match = String(source).match(/^(.+):(\d+)(?:-(\d+))?$/);
+  if (!githubBase || !match) return `<code class="definition">${text}</code>`;
+
+  const [, path, startLine, endLine] = match;
+  if (path.startsWith("/") || path.split("/").includes("..")) {
+    return `<code class="definition">${text}</code>`;
+  }
+  const encodedPath = path.split("/").map(encodeURIComponent).join("/");
+  const lineFragment = `#L${startLine}${endLine ? `-L${endLine}` : ""}`;
+  const href = `${githubBase}/${encodedPath}${lineFragment}`;
+  return `<a class="definition definition-link" href="${escapeHtml(href)}" target="_blank" rel="noreferrer"><code>${text}</code></a>`;
+}
+
 function renderOccurrence(
   id,
   incoming,
@@ -81,6 +123,7 @@ function renderOccurrence(
   rootAnchors,
   seenNodes,
   anchorPrefix,
+  githubBase,
 ) {
   const node = nodes.get(id);
   const missing = !node;
@@ -109,7 +152,7 @@ function renderOccurrence(
   const identity = `<div class="identity">
       ${nameHtml}
       ${markerHtml}
-      ${node?.source ? `<code class="definition">${escapeHtml(node.source)}</code>` : ""}
+      ${node?.source ? renderSource(node.source, githubBase) : ""}
     </div>`;
   const note = node?.note && !repeated ? `<p class="node-note">${escapeHtml(node.note)}</p>` : "";
   const edgeNote = incoming?.note
@@ -132,6 +175,7 @@ function renderOccurrence(
           rootAnchors,
           seenNodes,
           anchorPrefix,
+          githubBase,
         );
       })
       .join("")}</ol>`;
@@ -333,6 +377,8 @@ function renderDocument(data, inputPath, rootEntries, sections) {
       overflow-wrap: anywhere;
       text-align: right;
     }
+    .definition-link { text-decoration: underline dotted var(--faint); text-underline-offset: 3px; }
+    .definition-link:hover { color: var(--ink); }
     .marker {
       padding: 1px 6px;
       border-radius: 999px;
