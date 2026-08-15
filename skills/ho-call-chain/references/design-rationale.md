@@ -88,7 +88,7 @@ VS Code Call Hierarchy already provides the simultaneous source-level probing wo
 
 `ho-call-chain` should not reproduce that interactivity. Its separate responsibility is the stable whole-flow overview: curated roots, meaningful branches, conceptual edges, narration, and visible source context.
 
-Sources remain in the rendered output, but they are static text. The HTML does not need source links, previews, hover behavior, collapsing, or runtime JavaScript.
+Sources remain plain text by default. The renderer can optionally link definition sources to a supplied GitHub permanent blob URL, but it does not need previews, hover behavior, collapsing, or runtime JavaScript.
 
 ### Treat CallDiff As Adjacent
 
@@ -127,6 +127,10 @@ The intermediate data retains each call's optional source and note, but the rend
 ### Use The Artifact Navigation Shell
 
 Multiple focused roots can make the page long enough to require navigation. Root navigation adapts the established `ho-artifacts` pattern into one fixed `<details>` at the header's top-right, with an opaque summary trigger, an absolutely positioned root menu, stable fragment IDs, self-linking root headings, and fragment offsets. This keeps navigation available without reserving page width or adding JavaScript.
+
+### Allow Optional Permanent Source Links
+
+Definition sources are useful jump points when sharing or reviewing the generated page outside an editor. The renderer accepts an optional GitHub blob URL pinned to a full commit SHA and links repository-relative `path:line` sources. Keeping the repository context in a renderer option avoids expanding the graph schema, while requiring the caller to supply the permanent base avoids guessing the repository or generating mutable branch links.
 
 ### Package Before Dogfooding
 
@@ -176,7 +180,7 @@ The first skill deliberately uses one inline collector. It does not automaticall
 - JSON is the intermediate format.
 - Static self-contained HTML is the primary render.
 - Multiple roots use the canonical `ho-artifacts` dropdown navigation.
-- Sources are visible but non-interactive.
+- Sources are visible as plain text by default, with optional GitHub links pinned to a full commit SHA.
 - One inline collector is the initial execution model.
 - No CallDiff integration by default.
 - No strong graph validation or symbol-resolution machinery.
