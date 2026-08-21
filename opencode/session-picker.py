@@ -125,6 +125,16 @@ def list_sessions(query: str) -> list[str]:
 def choose_session(rows: list[str]) -> tuple[str, str] | None:
     # fzf owns the list, filtering, and live right-hand preview.
     script_path = Path(__file__).resolve()
+    if rows:
+        header = "enter: continue | alt-enter: fork | ctrl-n: new | esc: cancel"
+        selection_bindings = [
+            "--bind=enter:print(continue)+accept",
+            "--bind=alt-enter:print(fork)+accept",
+        ]
+    else:
+        header = "ctrl-n: new | esc: cancel"
+        selection_bindings = ["--bind=enter:ignore"]
+
     result = subprocess.run(
         [
             "fzf",
@@ -132,19 +142,18 @@ def choose_session(rows: list[str]) -> tuple[str, str] | None:
             "--delimiter=\t",
             "--with-nth=2..",
             "--layout=reverse",
-            "--header=enter: continue | alt-enter: fork | ctrl-n: new | esc: cancel",
+            f"--header={header}",
             "--prompt=Sessions> ",
-            "--bind=enter:print(continue)+accept",
-            "--bind=alt-enter:print(fork)+accept",
+            *selection_bindings,
             "--bind=ctrl-n:print(new)+accept",
             f"--preview={shlex.quote(str(script_path))} --internal-preview {{1}}",
             "--preview-window=right:60%:wrap",
         ],
-        input="\n".join(rows) + "\n",
+        input="\n".join(rows) if rows else "\t-- No sessions found --",
         stdout=subprocess.PIPE,
         text=True,
     )
-    if result.returncode != 0 or not result.stdout:
+    if result.returncode != 0 or not result.stdout.strip():
         return None
     action, _, selection = result.stdout.partition("\n")
     return action, selection.partition("\t")[0]
@@ -168,13 +177,6 @@ def main() -> int:
             return 1
 
     sessions = list_sessions(arguments.query)
-    if not sessions:
-        if arguments.query:
-            print(f"No OpenCode sessions matching: {arguments.query}", file=sys.stderr)
-        else:
-            print("No OpenCode sessions found for this project.", file=sys.stderr)
-        return 1
-
     selection = choose_session(sessions)
     if selection is None:
         return 0
