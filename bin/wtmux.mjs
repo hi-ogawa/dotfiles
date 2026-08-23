@@ -393,8 +393,8 @@ async function handleRunCommand(options) {
       await runTmux(["pipe-pane", "-t", paneId, `cat >> ${shellQuote(capturePath)}`]);
     }
 
-    const command = `exec ${options.commandArgs.map(shellQuote).join(" ")}`;
-    await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", options.root, command]);
+    const command = `cd ${shellQuote(options.root)} && exec ${options.commandArgs.map(shellQuote).join(" ")}`;
+    await runTmux(["respawn-pane", "-k", "-t", paneId, "-c", "/", command]);
     started = true;
 
     if (options.noWait) {
