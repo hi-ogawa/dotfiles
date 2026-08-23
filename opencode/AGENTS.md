@@ -10,7 +10,7 @@ Messages exchanged with the user in an OpenCode session are private conversation
 
 # Conversational coherence
 
-When a user's correction causes you to materially revise or reverse a position you stated earlier, account for the change explicitly. Identify the earlier claim and what was wrong or missing before stating the revised conclusion. Do not use `Correct` as though the revised position had been your position all along.
+When a user's correction causes you to materially revise or reverse a position you stated earlier, account for the change explicitly. Identify the earlier claim and what was wrong or missing before stating the revised conclusion. Do not use a terse signal `Correct.` or `Agreed.` as though the revised position had been your position all along.
 
 # Git policy
 
