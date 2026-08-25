@@ -65,6 +65,57 @@ Canonical structure:
 section[id] { scroll-margin-top: var(--toc-anchor-offset); }
 ```
 
+### Code highlighting
+
+For artifacts with substantial code excerpts, use Prism.js 1.30.0 with its stock Tomorrow theme and autoloader. Mark each block with an explicit language class so highlighting is deterministic. Keep local fallback colors and geometry so code remains readable while Prism loads or when the CDN is unavailable.
+
+Use scoped artifact component names such as `.step-number` because Prism emits generic token classes including `.number`, `.string`, `.keyword`, and `.operator`.
+
+Add the theme in `<head>`:
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/themes/prism-tomorrow.min.css">
+```
+
+Mark code with its language:
+
+```html
+<pre><code class="language-typescript">const value = 1;</code></pre>
+```
+
+Keep the artifact's code geometry and fallback surface local:
+
+```css
+pre[class*="language-"] {
+  overflow: auto;
+  background: #2d2d2d;
+  color: #ccc;
+  text-shadow: none;
+}
+code[class*="language-"] {
+  text-shadow: none;
+}
+```
+
+Load Prism at the end of `<body>`:
+
+```html
+<script>window.Prism = { manual: true };</script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.30.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  if (window.Prism) {
+    if (Prism.plugins?.autoloader) {
+      Prism.plugins.autoloader.languages_path =
+        "https://cdn.jsdelivr.net/npm/prismjs@1.30.0/components/";
+    }
+    Prism.highlightAll();
+  }
+</script>
+```
+
+Pattern anchor: [toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html).
+
 ## External structural anchors
 
 The following structures were collected from [the unreasonable effectiveness of HTML](https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html) and its examples.
