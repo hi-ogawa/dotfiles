@@ -8,8 +8,8 @@ Produce a concept-linearized walkthrough:
 
 1. Briefly establish the existing system relevant to the change.
 2. Explain the change's core intuition with a concrete example before implementation detail.
-3. Walk through the code in causal or dependency order rather than file order.
-4. Connect each concept to pinned code links and selected raw diff hunks when exact details matter.
+3. Make the code walkthrough the primary deliverable and organize it in causal or dependency order rather than file order.
+4. Ground each step in a representative changed-code excerpt with enough surrounding context to understand local control flow; pinned links support excerpts but do not replace them.
 5. End with five medium-difficulty quiz questions about behavior and causality rather than trivia.
 
 Inspect the complete diff and enough surrounding code to explain behavior accurately. Read linked issues, design notes, and explorations for context, but do not repeat material the reader already supplied or treat prior exploration as a specification.
