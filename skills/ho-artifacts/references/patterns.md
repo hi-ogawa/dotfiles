@@ -114,7 +114,7 @@ Load Prism at the end of `<body>`:
 </script>
 ```
 
-Pattern anchor: [toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html).
+Pattern anchors: [rendered toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html) and [raw HTML](https://gist.githubusercontent.com/hi-ogawa-agent/5f0654fb261396e00cc9e7e9264d3f40/raw/toy-midi-pr-363-explain-diff.html).
 
 ## External structural anchors
 
