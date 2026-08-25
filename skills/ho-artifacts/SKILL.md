@@ -10,6 +10,8 @@ description: >-
 
 `references/patterns.md` catalogs established local patterns and external structural anchors. When an artifact needs navigation, read and follow its canonical navigation shell. Consult the other patterns for inspiration when picking a layout, and mine them when iterating on this skill.
 
+When an artifact includes substantial code excerpts, read and follow the canonical code-highlighting pattern in `references/patterns.md`.
+
 When the user asks for a focused standalone browser app, read `references/standalone-apps.md` for app-specific workflow.
 
 When the artifact explains a code change, diff, branch, commit series, or PR, read `references/explain-diff.md` for investigation and narrative guidance. Inherit this skill's authoring, location, and publishing rules.
@@ -36,7 +38,7 @@ Author the `.html` inside the relevant `ho-dev-notes` topic dir (per that skill'
 
 A page that reads at a glance and stays accurate to the code:
 
-- **Self-contained.** One `.html` file, all CSS and SVG inline. No external fonts or CDNs. Explanatory artifacts should render offline and remain readable without runtime JS.
+- **Self-contained core.** Keep artifact-specific CSS, SVG, and explanatory content in one `.html` file. Optional pinned external enhancements preserve a readable fallback.
 - **Consistent visual language.** Reuse the same color, shape, or token for the same concept everywhere. When those encodings carry meaning that is not obvious, define them in a legend up front.
 - **Provenance from the first draft.** Include high-level pointers — repo, PR, issue — as clickable links from the initial draft, not just at publish time. They are durable and inexpensive because the prose usually cites them already. A self-contained artifact travels without its surrounding context, so it needs provenance even more than the note beside it.
 - **Anchor to code.** Reference the relevant `file.ts:line`, and verify every claim against the actual code before drawing it — don't invent structure. Prefer pinned GitHub permalinks tied to a commit SHA. Add or upgrade these at publish time.
