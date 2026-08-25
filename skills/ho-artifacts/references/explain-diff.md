@@ -14,8 +14,6 @@ Produce a concept-linearized walkthrough:
 
 Inspect the complete diff and enough surrounding code to explain behavior accurately. Read linked issues, design notes, and explorations for context, but do not repeat material the reader already supplied or treat prior exploration as a specification.
 
-Use `<pre><code>` for code and preserve whitespace with `white-space: pre` or `pre-wrap`. Link the complete PR diff instead of reproducing it in full.
-
 ## Deep Explanation
 
 When the user asks to deeply understand or onboard to an unfamiliar change, expand the background, toy examples, and diagrams.
