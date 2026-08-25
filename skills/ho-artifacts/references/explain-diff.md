@@ -10,6 +10,7 @@ Produce a concept-linearized walkthrough:
 2. Explain the change's core intuition with a concrete example before implementation detail.
 3. Walk through the code in causal or dependency order rather than file order.
 4. Connect each concept to pinned code links and selected raw diff hunks when exact details matter.
+5. End with five medium-difficulty quiz questions about behavior and causality rather than trivia.
 
 Inspect the complete diff and enough surrounding code to explain behavior accurately. Read linked issues, design notes, and explorations for context, but do not repeat material the reader already supplied or treat prior exploration as a specification.
 
@@ -17,7 +18,7 @@ Use `<pre><code>` for code and preserve whitespace with `white-space: pre` or `p
 
 ## Deep Explanation
 
-When the user asks to deeply understand or onboard to an unfamiliar change, expand the background, toy examples, and diagrams. Add five medium-difficulty quiz questions when a comprehension check would help; ask about behavior and causality rather than trivia.
+When the user asks to deeply understand or onboard to an unfamiliar change, expand the background, toy examples, and diagrams.
 
 ## Inspiration
 
