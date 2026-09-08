@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.codex/notify.sh",
+            "command": "node ~/.codex/notify.mjs",
             "timeout": 5
           }
         ]
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.codex/notify.sh",
+            "command": "node ~/.codex/notify.mjs",
             "timeout": 5
           }
         ]

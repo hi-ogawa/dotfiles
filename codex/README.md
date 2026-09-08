@@ -7,7 +7,7 @@ User-level config for `~/.codex/`.
 - `config.toml` - user-level Codex config
 - `AGENTS.md` - global instructions loaded into Codex sessions
 - `hooks.json` - global Codex hook config
-- `notify.sh` - desktop notification hook script
+- `notify.mjs` - desktop notification hook script
 
 ## Moving from OpenCode to Codex
 
@@ -46,13 +46,13 @@ This package enables hooks with `features.hooks = true` and installs two desktop
 - `Stop` shows the final assistant message when a turn finishes.
 - `PermissionRequest` shows “Approval requested” before an approval prompt.
 
-The notification script calls the OS directly, so it does not depend on terminal notification support or tmux passthrough. It supports Linux `notify-send`, WSL/Git Bash through PowerShell BurntToast, and macOS `osascript`. Install `jq` to extract event details; without it, notifications use generic text. Agent-question notifications are not covered by this setup.
+The notification script calls the OS directly, so it does not depend on terminal notification support or tmux passthrough. It supports Linux `notify-send`, WSL/Git Bash through PowerShell BurntToast, and macOS `osascript`. Requires Node.js on `PATH`; no npm packages or `jq` are needed. Agent-question notifications are not covered by this setup.
 
 To install or update only the notification files, inspect the diff before applying:
 
 ```sh
-./sync.sh diff codex/hooks.json codex/notify.sh
-./sync.sh apply codex/hooks.json codex/notify.sh
+./sync.sh diff codex/hooks.json codex/notify.mjs
+./sync.sh apply codex/hooks.json codex/notify.mjs
 ```
 
 Open `/hooks` in Codex and review and trust both notification handlers. New or changed hook definitions are skipped until trusted. If they do not appear, restart or resume Codex and open `/hooks` again.
