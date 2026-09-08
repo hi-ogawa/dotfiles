@@ -11,6 +11,7 @@ FILES_LINUX=(
   "bin/wtmux.mjs:$HOME/.local/bin/wtmux"
   "shell/.bashrc:$HOME/.bashrc"
   "shell/.zshrc:$HOME/.zshrc"
+  "tmux/.tmux.conf:$HOME/.tmux.conf"
   "git/.gitconfig:$HOME/.gitconfig"
   "git/.gitignore.global:$HOME/.gitignore.global"
   "vscode/settings.json:$HOME/.config/Code/User/settings.json"

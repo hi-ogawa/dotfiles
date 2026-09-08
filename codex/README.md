@@ -9,6 +9,10 @@ User-level config for `~/.codex/`.
 - `hooks.json` - global Codex hook config
 - `notify.sh` - desktop notification hook script
 
+## Moving from OpenCode to Codex
+
+See [Moving from OpenCode to Codex](opencode-to-codex.md) for session forks, worktree scoping, permissions, and tmux scrolling.
+
 ## Goal
 
 Match what Claude does — add a `Co-authored-by` trailer to AI-assisted commits:

@@ -17,6 +17,7 @@ Personal configuration files for Linux (Arch), Windows, and macOS.
 ## Configs
 
 - [Shell](shell/)
+- [tmux](tmux/)
 - [Git](git/)
 - [VSCode](vscode/)
 - [Claude](claude/)
