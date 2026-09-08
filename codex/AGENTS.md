@@ -8,7 +8,7 @@ Create pull requests as drafts by default.
 
 # Git commit attribution
 
-When you write or edit a git commit message, ensure the message ends with a `Co-authored-by: Codex <noreply@openai.com>` trailer. Keep existing trailers, append this trailer at the end if missing, do not duplicate it if it already exists, and keep one blank line between the commit body and trailer block.
+When you write or edit a git commit message, ensure the message ends with a `Co-authored-by: Codex (<model>) <noreply@openai.com>` trailer, where `<model>` is the model name explicitly identified in your session context. For example, context identifying you as based on GPT-6 yields `Co-authored-by: Codex (GPT-6) <noreply@openai.com>`. If session context does not identify the model, use `Co-authored-by: Codex <noreply@openai.com>`.
 
 # Writing style
 
