@@ -41,11 +41,25 @@ Codex resolves `AGENTS.md` files in a hierarchy: `~/.codex/AGENTS.md` (lowest pr
 
 ## Hooks and Notifications
 
-Codex CLI has experimental hooks behind the `codex_hooks` feature flag. See the official hooks reference instead of duplicating the event schema here.
+This package enables hooks with `features.hooks = true` and installs two desktop notification handlers in `~/.codex/hooks.json`:
 
-This dotfiles package enables hooks and installs a `Stop` hook that runs `~/.codex/notify.sh`. Local assessment: `Stop` is the closest current hook for desktop notifications, but Codex does not currently expose the same dedicated notification/attention events used by the local Claude and OpenCode setups.
+- `Stop` shows the final assistant message when a turn finishes.
+- `PermissionRequest` shows “Approval requested” before an approval prompt.
 
-The notification script uses `last_assistant_message` when available, falls back to a generic message, and supports Linux `notify-send`, WSL/Git Bash through PowerShell BurntToast, and macOS `osascript`.
+The notification script calls the OS directly, so it does not depend on terminal notification support or tmux passthrough. It supports Linux `notify-send`, WSL/Git Bash through PowerShell BurntToast, and macOS `osascript`. Install `jq` to extract event details; without it, notifications use generic text. Agent-question notifications are not covered by this setup.
+
+To install or update only the notification files, inspect the diff before applying:
+
+```sh
+./sync.sh diff codex/hooks.json codex/notify.sh
+./sync.sh apply codex/hooks.json codex/notify.sh
+```
+
+Open `/hooks` in Codex and review and trust both notification handlers. New or changed hook definitions are skipped until trusted. If they do not appear, restart or resume Codex and open `/hooks` again.
+
+Existing inline hooks in `~/.codex/config.toml`, such as git-ai checkpoints, run alongside these handlers. Codex merges both sources but warns when a config layer contains both inline hooks and `hooks.json`.
+
+Codex also offers built-in terminal notifications through `tui.notifications`. These depend on the terminal notification method and may duplicate completion alerts if enabled alongside this script.
 
 ## References
 

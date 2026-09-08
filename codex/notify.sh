@@ -33,7 +33,7 @@ windows_notify() {
   powershell.exe -NoProfile -Command "
     \$jsonText = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('$input_b64'))
     \$json = \$jsonText | ConvertFrom-Json
-    \$message = if (\$json.last_assistant_message) { \$json.last_assistant_message } elseif (\$json.message) { \$json.message } else { 'Codex finished' }
+    \$message = if (\$json.hook_event_name -eq 'PermissionRequest') { 'Approval requested' } elseif (\$json.last_assistant_message) { \$json.last_assistant_message } elseif (\$json.message) { \$json.message } else { 'Codex finished' }
     if (\$message.Length -gt 240) { \$message = \$message.Substring(0, 237) + '...' }
     \$cwd = \$json.cwd
     \$project = if (\$cwd) { Split-Path \$cwd -Leaf } else { '' }
@@ -47,7 +47,7 @@ windows_notify() {
   " >/dev/null 2>&1 || true
 }
 
-message=$(json_get '.last_assistant_message // .message // .hook_event_name' 'Codex finished')
+message=$(json_get 'if .hook_event_name == "PermissionRequest" then "Approval requested" else (.last_assistant_message // .message) end' 'Codex finished')
 message=$(truncate_message "$message")
 cwd=$(json_get '.cwd' '')
 project=$(basename "$cwd")
@@ -67,7 +67,11 @@ case "$(uname -s)" in
     fi
     ;;
   Darwin*)
-    osascript -e "display notification \"${message//\"/\\\"}\" with title \"${title//\"/\\\"}\"" >/dev/null 2>&1 || true
+    osascript - "$title" "$message" >/dev/null 2>&1 <<'APPLESCRIPT' || true
+on run argv
+  display notification (item 2 of argv) with title (item 1 of argv)
+end run
+APPLESCRIPT
     ;;
   MINGW*|MSYS*|CYGWIN*)
     input_b64=$(printf '%s' "$input" | base64 | tr -d '\n')
