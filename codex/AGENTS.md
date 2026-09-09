@@ -1,6 +1,10 @@
+# Conversational coherence
+
+When a user's correction causes you to materially revise or reverse a position you stated earlier, account for the change explicitly. Identify the earlier claim and what was wrong or missing before stating the revised conclusion. Do not use a terse signal `Correct.` or `Agreed.` as though the revised position had been your position all along.
+
 # Git policy
 
-Never rebase, amend, force push, reset hard, delete commits, or otherwise rewrite commit history unless the user explicitly asks for that exact operation.
+Default to preserving commit history. Avoid rebasing, amending commits, force pushing, hard resetting, deleting commits, or otherwise rewriting history.
 
 For GitHub and git actions, prefer direct `git` and `gh` commands unless explicitly asked otherwise. This includes reading GitHub resources: to view or summarize an issue, PR, comments, checks, or releases, use `gh` (for example `gh issue view <n> --json` or `gh api`), never fetch a github.com URL directly (for example with curl or a web tool). Fetching gets server-rendered HTML and silently drops dynamically loaded content such as comments, so it will make you report discussions as empty when they are not.
 
