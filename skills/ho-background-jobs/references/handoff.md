@@ -18,7 +18,7 @@ Use one of these agent commands:
 | Codex    | `codex '<initial-prompt>'`             | `codex --dangerously-bypass-approvals-and-sandbox '<initial-prompt>'` |
 | Claude   | `claude '<initial-prompt>'`            | `claude --dangerously-skip-permissions '<initial-prompt>'`            |
 
-Default to the unrestricted (YOLO mode) command. Use the standard command when the user requests approval prompts or sandboxing.
+Default to the unrestricted (YOLO mode) command for OpenCode and Codex, and to the standard command for Claude. Use the other variant when the user requests it.
 
 ## Prompt Guidance
 
