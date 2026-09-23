@@ -18,7 +18,7 @@ Use one of these agent commands:
 | Codex    | `codex '<initial-prompt>'`             | `codex --dangerously-bypass-approvals-and-sandbox '<initial-prompt>'` |
 | Claude   | `claude '<initial-prompt>'`            | `claude --dangerously-skip-permissions '<initial-prompt>'`            |
 
-Use an unrestricted command only when the user requests it.
+Default to the unrestricted (YOLO mode) command. Use the standard command when the user requests approval prompts or sandboxing.
 
 ## Prompt Guidance
 
