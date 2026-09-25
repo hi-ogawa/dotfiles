@@ -7,6 +7,8 @@
 
 `CLAUDE.md` is a symlink to `../codex/AGENTS.md` — shared source of truth for user-level agent instructions.
 
+See [Moving from Codex to Claude Code](codex-to-claude.md) for session forks, background sessions, worktree scoping, and permissions.
+
 ## User-Level Instructions (`CLAUDE.md`)
 
 `~/.claude/CLAUDE.md` is loaded as system instructions for every Claude Code session, across all projects. Use it for global policies that should always apply regardless of the project's own `CLAUDE.md`.
