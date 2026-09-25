@@ -4,8 +4,9 @@
 
 - `settings.json` - Synced to `~/.claude/settings.json`
 - `notify.sh` - Notification hook script
+- `CLAUDE.md` - Synced to `~/.claude/CLAUDE.md`
 
-`CLAUDE.md` is a symlink to `../codex/AGENTS.md` — shared source of truth for user-level agent instructions.
+`CLAUDE.md` is maintained separately from `../codex/AGENTS.md` and `../opencode/AGENTS.md`, so port shared sections by hand. It has no attribution rules, so Claude Code's default commit and pull request attribution applies.
 
 See [Moving from Codex to Claude Code](codex-to-claude.md) for session forks, background sessions, worktree scoping, and permissions.
 
