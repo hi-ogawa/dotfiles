@@ -1,12 +1,16 @@
-# Patterns
+> Archived guided style from before the authoring rules were loosened. Read only when the user asks for the guardrails.
 
-Optional reading. The snippets solve recurring mechanics so they do not need to be reinvented, and the gallery collects structures that worked before. Use either when it helps the page at hand, and ignore both otherwise.
+# Pattern Anchors
 
-## Snippets
+Optional meta reference for established local patterns and external structural inspiration. These are anchors rather than templates: borrow their information architecture and interaction patterns, not their typography, palette, spacing, or decorative treatment.
+
+## Established patterns
+
+These patterns come from our own artifact iterations.
 
 ### Navigation shell
 
-A table of contents for long, vertically stacked pages that stays out of the content's width.
+For vertically stacked artifacts with roughly four or more major sections. Short artifacts do not need navigation merely to satisfy a template.
 
 - Use one self-contained, zero-height sticky `<details>` element before the main content so it overlays the page and sticks immediately without reducing content width.
 - Render the collapsed trigger with `<summary>` and position the expanded `<nav>` absolutely below it. Give both elements their own opaque background, border, and shadow.
@@ -14,9 +18,9 @@ A table of contents for long, vertically stacked pages that stays out of the con
 - Make each section heading a link to its own fragment so the URL can be opened or shared directly.
 - Use an anchor offset such as `scroll-margin-top` so fragment targets remain clear of the sticky control.
 - Keep the implementation static and usable without JavaScript.
-- Example: [adaptive browser sessions](https://artifacts.hiro18181.workers.dev/vitest-pr-10726-adaptive-sessions).
+- Pattern anchor: [adaptive browser sessions](https://artifacts.hiro18181.workers.dev/vitest-pr-10726-adaptive-sessions).
 
-Structure:
+Canonical structure:
 
 ```html
 <main class="wrap">
@@ -65,7 +69,7 @@ section[id] { scroll-margin-top: var(--toc-anchor-offset); }
 
 ### Code highlighting
 
-Syntax highlighting for pages with substantial code excerpts, using Prism.js 1.30.0 with its stock Tomorrow theme and autoloader. Mark each block with an explicit language class so highlighting is deterministic. Keep local fallback colors and geometry so code remains readable while Prism loads or when the CDN is unavailable.
+For artifacts with substantial code excerpts, use Prism.js 1.30.0 with its stock Tomorrow theme and autoloader. Mark each block with an explicit language class so highlighting is deterministic. Keep local fallback colors and geometry so code remains readable while Prism loads or when the CDN is unavailable.
 
 Use scoped artifact component names such as `.step-number` because Prism emits generic token classes including `.number`, `.string`, `.keyword`, and `.operator`.
 
@@ -112,11 +116,11 @@ Load Prism at the end of `<body>`:
 </script>
 ```
 
-Examples: [rendered toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html) and [raw HTML](https://gist.githubusercontent.com/hi-ogawa-agent/5f0654fb261396e00cc9e7e9264d3f40/raw/toy-midi-pr-363-explain-diff.html).
+Pattern anchors: [rendered toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html) and [raw HTML](https://gist.githubusercontent.com/hi-ogawa-agent/5f0654fb261396e00cc9e7e9264d3f40/raw/toy-midi-pr-363-explain-diff.html).
 
-## Gallery
+## External structural anchors
 
-Structures collected from [the unreasonable effectiveness of HTML](https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html) and its examples.
+The following structures were collected from [the unreasonable effectiveness of HTML](https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html) and its examples.
 
 ### Phased plan
 
