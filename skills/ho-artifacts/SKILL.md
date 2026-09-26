@@ -6,48 +6,34 @@ description: >-
 
 # Artifacts
 
-## References
+Turn a dev process (PR review, architecture exploration, bug triage) into a single HTML page when a picture, a layout, or interaction makes the finding easier to understand than Markdown, then optionally share it.
 
-`references/patterns.md` catalogs established local patterns and external structural anchors. When an artifact needs navigation, read and follow its canonical navigation shell. Consult the other patterns for inspiration when picking a layout, and mine them when iterating on this skill.
+This skill fixes the workflow around the page, not the page itself. The mechanics below are required so artifacts stay easy to find, trace, and share. How the page looks and is structured is up to the author and the request.
 
-When an artifact includes substantial code excerpts, read and follow the canonical code-highlighting pattern in `references/patterns.md`.
+## Authoring
 
-When the user asks for a focused standalone browser app, read `references/standalone-apps.md` for app-specific workflow.
+Decide the form from the request, not from a template.
 
-When the artifact explains a code change, diff, branch, commit series, or PR, read `references/explain-diff.md` for investigation and narrative guidance. Inherit this skill's authoring, location, and publishing rules.
+- **Start from the reader.** Name who will read the page and what they should come away with, for example a reviewer following a PR link, someone onboarding to a subsystem, or the user weighing options. Let that decide the scope, depth, and shape.
+- **Show a concrete case early.** Walk one scenario, value, or before-and-after through the idea before abstracting it or showing code.
+- **Every visual earns its place.** A diagram, color, or layout should change how something is understood. Leave out what does not.
+- **Stay true to the code.** Verify every claim and every drawn structure against the actual code before publishing, and keep illustrative values distinguishable from measured ones.
 
-## Purpose
+`references/` holds optional reading: `explain-diff.md` for pages about a change, `standalone-apps.md` for small browser tools, and `patterns.md` for past artifacts and reusable snippets.
 
-Turn a dev process (PR review, architecture exploration, bug triage) into a single self-contained HTML page when visual encoding, rendered diagrams, or nonlinear layout makes the finding easier to inspect than Markdown — then optionally share it via a public URL. Artifacts support lightweight review, so rendered-content verification is not required and iterating design with human reviews is preferred.
+## Mechanics
 
-## Why HTML
+### File
 
-HTML is worth the effort when it materially improves inspection over plain prose. Build the artifact around at least one of these advantages — and let that advantage drive the layout:
+Keep the artifact in one self-contained `.html` file. External scripts and styles from a CDN are fine when pinned to exact versions, as long as the page stays readable without them.
 
-- **Visual encoding:** color/shape/size correlates or contrasts concepts.
-- **Embedded visual components:** rendered flows, connections, diagrams, callouts.
-- **Nonlinear reading:** columns, boxes, anchors, or progressive disclosure reduce cognitive load.
+### Location
 
-Aim for inspection value, not decoration: the page should change how the finding is read, not just style the prose.
+Author the file inside the relevant `ho-dev-notes` topic directory, following that skill's convention, so it lives next to its note. If there is no note, use a temporary directory.
 
-## Location
+### Provenance
 
-Author the `.html` inside the relevant `ho-dev-notes` topic dir (per that skill's convention) so it lives next to its note and iterates as understanding improves. If there is no note, scratch in a temp dir.
-
-## Authoring Rubric
-
-A page that reads at a glance and stays accurate to the code:
-
-- **Self-contained core.** Keep artifact-specific CSS, SVG, and explanatory content in one `.html` file. Optional pinned external enhancements preserve a readable fallback.
-- **Consistent visual language.** Reuse the same color, shape, or token for the same concept everywhere. When those encodings carry meaning that is not obvious, define them in a legend up front.
-- **Provenance from the first draft.** Include high-level pointers — repo, PR, issue — as clickable links from the initial draft, not just at publish time. They are durable and inexpensive because the prose usually cites them already. A self-contained artifact travels without its surrounding context, so it needs provenance even more than the note beside it.
-- **Anchor to code.** Reference the relevant `file.ts:line`, and verify every claim against the actual code before drawing it — don't invent structure. Prefer pinned GitHub permalinks tied to a commit SHA. Add or upgrade these at publish time.
-- **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace, one primary font with monospace reserved for code, and no full-uppercase emphasis — so the content stays the focus. Avoid decoration that does not encode information; pick the rest per artifact.
-- **Progressive disclosure.** Lead with the idea and observable behavior; move implementation detail later. Keep the artifact focused on its stated purpose.
-- **Semantic fidelity.** Visual simplification must preserve the causal units and boundaries that matter. Keep examples internally consistent and distinguish illustrative values from measurements.
-- **Navigation.** For vertically stacked artifacts with roughly four or more major sections, use one zero-height sticky `<details>` before the main content. Give its `<summary>` and absolutely positioned `<nav>` separate opaque surfaces so the control overlays the page without reducing content width. Link stable section IDs, make headings self-linking, and offset fragment targets. Follow the canonical navigation shell in `references/patterns.md`.
-
-## Publishing
+Link the repo, PR, and issue near the top from the first draft, because the page travels without its surrounding context. Link code as `file.ts:line` using GitHub permalinks pinned to a commit SHA, and upgrade any unpinned links before publishing.
 
 ### GistHost
 
@@ -57,31 +43,29 @@ For lightweight or temporary sharing, create an unlisted gist:
 gh gist create app.html --desc "App description"
 ```
 
-Users can open it through GistHost:
+Open it through GistHost:
 
 ```text
 https://gisthost.github.io/?<gist-id>/<filename>
 ```
 
-Unlisted gists are accessible to anyone with the URL, and GistHost apps share a third-party origin. Do not use sensitive code or data, and give browser storage an app-specific prefix to avoid collisions.
+Unlisted gists are readable by anyone with the URL, and GistHost pages share a third-party origin. Check for secrets, local paths, and sensitive data first, and give browser storage an app-specific prefix.
 
 ### Artifacts Repository
 
-Publish to the artifacts host only when the user wants it public. Target repo `~/code/personal/artifacts`, where `src/` is served at the site root via a Cloudflare worker at `https://artifacts.hiro18181.workers.dev`.
+Publish to the artifacts host only when the user wants it public. The target repo is `~/code/personal/artifacts`, where `src/` is served at the site root by a Cloudflare worker at `https://artifacts.hiro18181.workers.dev`.
 
-**Public repo.** Anyone with the URL can read it. Before copying, committing, or pushing, check for secrets, tokens, absolute home paths, private hostnames, and unreleased details. If the content might be sensitive, confirm before publishing.
+The repo is public. Before copying, committing, or pushing, check for secrets, tokens, absolute home paths, private hostnames, and unreleased details, and confirm before publishing anything that might be sensitive.
 
-1. Copy to `src/<slug>.html` (slug usually `<project>-<topic>`).
+1. Copy the file to `src/<slug>.html`, usually with a `<project>-<topic>` slug.
 2. Link it from `src/index.html`.
-3. Commit and push `main` — Cloudflare deploys on push.
+3. Commit and push `main`. Cloudflare deploys on push.
 
-The page then lives at `https://artifacts.hiro18181.workers.dev/<slug>`.
+The page then lives at `https://artifacts.hiro18181.workers.dev/<slug>`. Return that URL after pushing without polling the deployment.
 
-After a successful push, return the expected URL without polling deployment availability.
+### Screenshot
 
-## Screenshot Review
-
-When reviewing a rendered artifact as an image, capture a full-page screenshot with Playwright's one-shot command. Write the disposable PNG to a temporary location and use absolute paths:
+To review the rendered page as an image, capture it with Playwright's one-shot command, writing the PNG to a temporary location with absolute paths:
 
 ```bash
 npx -y playwright screenshot --full-page \
@@ -89,4 +73,4 @@ npx -y playwright screenshot --full-page \
   "/temporary/path/to/preview.png"
 ```
 
-Omit `--full-page` when the viewport itself is the intended composition. Do not start a local server merely to render a compliant artifact.
+Omit `--full-page` when the viewport itself is the composition. If the bundled browser is missing, run the command through a project's installed Playwright instead, for example `pnpm exec playwright screenshot`. Iterating with the user's review matters more than rendered verification.

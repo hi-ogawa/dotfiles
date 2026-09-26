@@ -11,4 +11,4 @@ Iterate through human review. Treat automatic verification as a lower priority u
 ## Authoring
 
 - Keep the app in one `.html` file and prefer browser-native APIs. External JavaScript or CSS from a CDN is allowed when it materially simplifies the app; pin exact versions and account for the resulting network dependency.
-- Design around the task rather than the explanatory-artifact rubric.
+- Design around the task.

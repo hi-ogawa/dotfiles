@@ -1,22 +1,19 @@
 # Explain Diff Artifacts
 
-Reference for explaining a code change, diff, branch, commit series, or PR as a self-contained HTML artifact. Inherit the base skill's visual taste, navigation, location, provenance, and publishing workflow.
+Optional reading for pages that explain a code change, diff, branch, commit series, or PR.
 
-## Default
+## Read first
 
-Produce a concept-linearized walkthrough:
+Inspect the complete diff and enough surrounding code to explain behavior accurately. Read linked issues and design notes for context, but do not repeat what the reader already has open, and do not treat earlier explorations as a specification.
 
-1. Briefly establish the existing system relevant to the change.
-2. Explain the change's core intuition with a concrete example before implementation detail.
-3. Make the code walkthrough the primary deliverable and organize it in causal or dependency order rather than file order.
-4. Ground each step in a representative changed-code excerpt with enough surrounding context to understand local control flow. Add pinned links as supporting references.
-5. End with five medium-difficulty interactive multiple-choice questions about behavior and causality. Give immediate correctness feedback and explain each answer.
+## Fit the reader
 
-Inspect the complete diff and enough surrounding code to explain behavior accurately. Read linked issues, design notes, and explorations for context, but do not repeat material the reader already supplied or treat prior exploration as a specification.
+The same change calls for different pages depending on who reads it.
 
-## Deep Explanation
+- **A reviewer or future reader following a PR link** already has the diff. Give them what the diff does not show: the concept, what changes in behavior and what does not, the few code spots that carry the change, and what the change leaves for later.
+- **Someone onboarding to an unfamiliar change** needs more background, a toy example, and a walkthrough in causal order. A few questions with immediate feedback can help here.
 
-When the user asks to deeply understand or onboard to an unfamiliar change, expand the background, toy examples, and diagrams.
+In both cases, lead with one concrete scenario traced before and after the change, and order explanations so causes come before the effects that depend on them.
 
 ## Inspiration
 
