@@ -11,9 +11,13 @@
   "security.workspace.trust.untrustedFiles": "open",
   "extensions.ignoreRecommendations": true,
   "git.openRepositoryInParentFolders": "never",
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
   "explorer.confirmDragAndDrop": false,
-  "python.defaultInterpreterPath": "/bin/python",
+  "explorer.confirmPasteNative": false,
   "markdown.preview.scrollPreviewWithEditor": false,
   "markdown.preview.scrollEditorWithPreview": false,
+  "githubPullRequests.pullBranch": "never",
+  "githubPullRequests.openPullLinks": false,
   "update.mode": "none"
 }
