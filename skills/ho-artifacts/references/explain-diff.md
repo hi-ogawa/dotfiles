@@ -1,6 +1,6 @@
 # Explain Diff Artifacts
 
-Optional reading for pages that explain a code change, diff, branch, commit series, or PR.
+Material for iterating on a page that explains a code change, diff, branch, commit series, or PR, once a first draft exists.
 
 ## Read first
 

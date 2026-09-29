@@ -1,6 +1,6 @@
 # Patterns
 
-Optional reading. These patterns solve recurring needs so they do not need to be reinvented. Use them when they help the page at hand, and ignore them otherwise.
+Patterns to bring in while iterating, when the user asks for them or the feedback calls for them. They solve recurring needs so they do not need to be reinvented.
 
 ## Provenance
 

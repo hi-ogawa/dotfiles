@@ -8,20 +8,23 @@ description: >-
 
 Turn a dev process (PR review, architecture exploration, bug triage) into a single HTML page when a picture, a layout, or interaction makes the finding easier to understand than Markdown, then optionally share it.
 
-This skill fixes the workflow around the page, not the page itself. The mechanics below are required so artifacts stay easy to find and share. How the page looks and is structured is up to the author and the request.
+This skill delegates the page to you and fixes only the workflow around it. The mechanics below are required so artifacts stay easy to find and share. Everything else is your call.
 
 ## Authoring
 
-Decide the form from the request, not from a template.
+Organize the page however you judge most effective for the request and the material. Choose the structure, visuals, and interaction from your own instinct, and write the first draft without reaching for a template or the references.
 
-- **Start from the reader.** Name who will read the page and what they should come away with, for example a reviewer following a PR link, someone onboarding to a subsystem, or the user weighing options. Let that decide the scope, depth, and shape.
-- **Show a concrete case early.** Walk one scenario, value, or before-and-after through the idea before abstracting it or showing code.
-- **Every visual earns its place.** A diagram, color, or layout should change how something is understood. Leave out what does not.
-- **Stay true to the code.** Verify every claim and every drawn structure against the actual code before sharing, and keep illustrative values distinguishable from measured ones.
+The one constraint is accuracy. Verify every claim and drawn structure against the actual code, and keep illustrative values distinguishable from measured ones.
 
-`references/` holds optional reading: `explain-diff.md` for pages about a change, `standalone-apps.md` for small browser tools, and `patterns.md` for reusable patterns such as provenance links, navigation, and code highlighting.
+## Iteration
 
-`references/archive/` keeps the retired, more prescriptive version of this skill for reference. Read it only when the user points to it.
+The user reviews the draft and steers from there. `references/` holds material to bring in at that point, when the user asks for it or the feedback calls for it:
+
+- `explain-diff.md`: fitting a page about a change to its reader.
+- `patterns.md`: provenance links, navigation, and code highlighting.
+- `archive/`: the retired, more prescriptive version of this skill. Read it only when the user points to it.
+
+When the request is a standalone browser tool rather than an explanatory page, read `references/standalone-apps.md` before starting.
 
 ## Mechanics
 
