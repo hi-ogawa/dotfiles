@@ -1,0 +1,44 @@
+> Archived: the earlier, more prescriptive version of this skill, retired when the authoring rules were loosened. Kept for reference only.
+
+# Artifacts
+
+## References
+
+`references/archive/patterns.md` catalogs established local patterns and external structural anchors. When an artifact needs navigation, read and follow its canonical navigation shell. Consult the other patterns for inspiration when picking a layout, and mine them when iterating on this skill.
+
+When an artifact includes substantial code excerpts, read and follow the canonical code-highlighting pattern in `references/archive/patterns.md`.
+
+When the user asks for a focused standalone browser app, read `references/archive/standalone-apps.md` for app-specific workflow.
+
+When the artifact explains a code change, diff, branch, commit series, or PR, read `references/archive/explain-diff.md` for investigation and narrative guidance. Inherit this skill's authoring, location, and publishing rules.
+
+## Purpose
+
+Turn a dev process (PR review, architecture exploration, bug triage) into a single self-contained HTML page when visual encoding, rendered diagrams, or nonlinear layout makes the finding easier to inspect than Markdown — then optionally share it via a public URL. Artifacts support lightweight review, so rendered-content verification is not required and iterating design with human reviews is preferred.
+
+## Why HTML
+
+HTML is worth the effort when it materially improves inspection over plain prose. Build the artifact around at least one of these advantages — and let that advantage drive the layout:
+
+- **Visual encoding:** color/shape/size correlates or contrasts concepts.
+- **Embedded visual components:** rendered flows, connections, diagrams, callouts.
+- **Nonlinear reading:** columns, boxes, anchors, or progressive disclosure reduce cognitive load.
+
+Aim for inspection value, not decoration: the page should change how the finding is read, not just style the prose.
+
+## Location
+
+Author the `.html` inside the relevant `ho-dev-notes` topic dir (per that skill's convention) so it lives next to its note and iterates as understanding improves. If there is no note, scratch in a temp dir.
+
+## Authoring Rubric
+
+A page that reads at a glance and stays accurate to the code:
+
+- **Self-contained core.** Keep artifact-specific CSS, SVG, and explanatory content in one `.html` file. Optional pinned external enhancements preserve a readable fallback.
+- **Consistent visual language.** Reuse the same color, shape, or token for the same concept everywhere. When those encodings carry meaning that is not obvious, define them in a legend up front.
+- **Provenance from the first draft.** Include high-level pointers — repo, PR, issue — as clickable links from the initial draft, not just at publish time. They are durable and inexpensive because the prose usually cites them already. A self-contained artifact travels without its surrounding context, so it needs provenance even more than the note beside it.
+- **Anchor to code.** Reference the relevant `file.ts:line`, and verify every claim against the actual code before drawing it — don't invent structure. Prefer pinned GitHub permalinks tied to a commit SHA. Add or upgrade these at publish time.
+- **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace, one primary font with monospace reserved for code, and no full-uppercase emphasis — so the content stays the focus. Avoid decoration that does not encode information; pick the rest per artifact.
+- **Progressive disclosure.** Lead with the idea and observable behavior; move implementation detail later. Keep the artifact focused on its stated purpose.
+- **Semantic fidelity.** Visual simplification must preserve the causal units and boundaries that matter. Keep examples internally consistent and distinguish illustrative values from measurements.
+- **Navigation.** For vertically stacked artifacts with roughly four or more major sections, use one zero-height sticky `<details>` before the main content. Give its `<summary>` and absolutely positioned `<nav>` separate opaque surfaces so the control overlays the page without reducing content width. Link stable section IDs, make headings self-linking, and offset fragment targets. Follow the canonical navigation shell in `references/archive/patterns.md`.

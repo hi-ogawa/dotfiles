@@ -1,14 +1,14 @@
-# Pattern Anchors
+# Patterns
 
-Optional meta reference for established local patterns and external structural inspiration. These are anchors rather than templates: borrow their information architecture and interaction patterns, not their typography, palette, spacing, or decorative treatment.
+Patterns to bring in while iterating, when the user asks for them or the feedback calls for them. They solve recurring needs so they do not need to be reinvented.
 
-## Established patterns
+## Provenance
 
-These patterns come from our own artifact iterations.
+When the page will travel without its surrounding context, link the repo, PR, and issue near the top. Link code as `file.ts:line` using GitHub permalinks pinned to a commit SHA, so the links keep pointing at the code the page describes.
 
-### Navigation shell
+## Navigation shell
 
-For vertically stacked artifacts with roughly four or more major sections. Short artifacts do not need navigation merely to satisfy a template.
+A table of contents for long, vertically stacked pages that stays out of the content's width.
 
 - Use one self-contained, zero-height sticky `<details>` element before the main content so it overlays the page and sticks immediately without reducing content width.
 - Render the collapsed trigger with `<summary>` and position the expanded `<nav>` absolutely below it. Give both elements their own opaque background, border, and shadow.
@@ -16,9 +16,9 @@ For vertically stacked artifacts with roughly four or more major sections. Short
 - Make each section heading a link to its own fragment so the URL can be opened or shared directly.
 - Use an anchor offset such as `scroll-margin-top` so fragment targets remain clear of the sticky control.
 - Keep the implementation static and usable without JavaScript.
-- Pattern anchor: [adaptive browser sessions](https://artifacts.hiro18181.workers.dev/vitest-pr-10726-adaptive-sessions).
+- Example: [adaptive browser sessions](https://artifacts.hiro18181.workers.dev/vitest-pr-10726-adaptive-sessions).
 
-Canonical structure:
+Structure:
 
 ```html
 <main class="wrap">
@@ -65,9 +65,9 @@ Canonical structure:
 section[id] { scroll-margin-top: var(--toc-anchor-offset); }
 ```
 
-### Code highlighting
+## Code highlighting
 
-For artifacts with substantial code excerpts, use Prism.js 1.30.0 with its stock Tomorrow theme and autoloader. Mark each block with an explicit language class so highlighting is deterministic. Keep local fallback colors and geometry so code remains readable while Prism loads or when the CDN is unavailable.
+Syntax highlighting for pages with substantial code excerpts, using Prism.js 1.30.0 with its stock Tomorrow theme and autoloader. Mark each block with an explicit language class so highlighting is deterministic. Keep local fallback colors and geometry so code remains readable while Prism loads or when the CDN is unavailable.
 
 Use scoped artifact component names such as `.step-number` because Prism emits generic token classes including `.number`, `.string`, `.keyword`, and `.operator`.
 
@@ -114,41 +114,4 @@ Load Prism at the end of `<body>`:
 </script>
 ```
 
-Pattern anchors: [rendered toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html) and [raw HTML](https://gist.githubusercontent.com/hi-ogawa-agent/5f0654fb261396e00cc9e7e9264d3f40/raw/toy-midi-pr-363-explain-diff.html).
-
-## External structural anchors
-
-The following structures were collected from [the unreasonable effectiveness of HTML](https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html) and its examples.
-
-### Phased plan
-
-Implementation or migration plan; before/after or phased narrative.
-
-- Candidate pipeline: summary strip → milestone timeline → rendered data-flow SVG → key code → risks → open questions.
-- A timeline can make ordering and scope skimmable; a data-flow SVG earns its place when paths are visually different, such as request flow versus realtime fan-out.
-- Mockups earn their place only when they clarify placement/nesting — not pixel-perfect UI theater.
-- Ref: https://thariqs.github.io/html-effectiveness/16-implementation-plan.html
-
-### Code understanding
-
-Onboarding to an unfamiliar codebase or request path.
-
-- Candidate pipeline: one-sentence invariant → architecture/path diagram → step-by-step file tour → key files → gotchas.
-- Prefer the mental model first when it gives the reader a useful trust boundary, then ground it in files.
-- Ref: https://thariqs.github.io/html-effectiveness/04-code-understanding.html
-
-### Feature explainer
-
-Explain a feature when the reader should jump by question, not read linearly.
-
-- Candidate pipeline: TL;DR → page nav → navigable request path → concrete config example → gotchas → FAQ.
-- HTML helps because native expandable steps, static config/code views, and anchors let the reader jump rather than scroll.
-- Ref: https://thariqs.github.io/html-effectiveness/14-research-feature-explainer.html
-
-### Option comparison
-
-Weigh N approaches against each other.
-
-- Candidate pipeline: N options with an identical schema (code / pros / cons / metrics) → compact tradeoff facts → recommendation → revisit trigger.
-- Same-schema comparison kept spatially parallel is the point; in Markdown this collapses into a long sequential scroll. Not just prettier cards.
-- Ref: https://thariqs.github.io/html-effectiveness/01-exploration-code-approaches.html
+Examples: [rendered toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html) and [raw HTML](https://gist.githubusercontent.com/hi-ogawa-agent/5f0654fb261396e00cc9e7e9264d3f40/raw/toy-midi-pr-363-explain-diff.html).

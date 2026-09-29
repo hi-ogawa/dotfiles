@@ -1,3 +1,5 @@
+> Archived: the earlier, more prescriptive version of this skill, retired when the authoring rules were loosened. Kept for reference only.
+
 # Standalone HTML Apps
 
 Reference for focused browser apps delivered as one HTML file. Read this when the user asks for a standalone app or utility rather than an explanatory artifact.
