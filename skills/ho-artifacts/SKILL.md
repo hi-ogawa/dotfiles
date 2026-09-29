@@ -19,7 +19,7 @@ Decide the form from the request, not from a template.
 - **Every visual earns its place.** A diagram, color, or layout should change how something is understood. Leave out what does not.
 - **Stay true to the code.** Verify every claim and every drawn structure against the actual code before sharing, and keep illustrative values distinguishable from measured ones.
 
-`references/` holds optional reading: `explain-diff.md` for pages about a change, `standalone-apps.md` for small browser tools, and `patterns.md` for past artifacts and reusable snippets.
+`references/` holds optional reading: `explain-diff.md` for pages about a change, `standalone-apps.md` for small browser tools, and `patterns.md` for reusable snippets.
 
 `references/archive/` keeps the retired, more prescriptive version of this skill for reference. Read it only when the user points to it.
 

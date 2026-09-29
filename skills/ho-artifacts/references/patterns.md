@@ -1,6 +1,6 @@
 # Patterns
 
-Optional reading. The snippets solve recurring mechanics so they do not need to be reinvented, and the gallery collects structures that worked before. Use either when it helps the page at hand, and ignore both otherwise.
+Optional reading. These snippets solve recurring mechanics so they do not need to be reinvented. Use them when they help the page at hand, and ignore them otherwise.
 
 ## Snippets
 
@@ -113,40 +113,3 @@ Load Prism at the end of `<body>`:
 ```
 
 Examples: [rendered toy-midi PR 363 explain-diff](https://gisthost.github.io/?5f0654fb261396e00cc9e7e9264d3f40/toy-midi-pr-363-explain-diff.html) and [raw HTML](https://gist.githubusercontent.com/hi-ogawa-agent/5f0654fb261396e00cc9e7e9264d3f40/raw/toy-midi-pr-363-explain-diff.html).
-
-## Gallery
-
-Structures collected from [the unreasonable effectiveness of HTML](https://claude.com/blog/using-claude-code-the-unreasonable-effectiveness-of-html) and its examples.
-
-### Phased plan
-
-Implementation or migration plan; before/after or phased narrative.
-
-- Candidate pipeline: summary strip → milestone timeline → rendered data-flow SVG → key code → risks → open questions.
-- A timeline can make ordering and scope skimmable; a data-flow SVG earns its place when paths are visually different, such as request flow versus realtime fan-out.
-- Mockups earn their place only when they clarify placement/nesting — not pixel-perfect UI theater.
-- Ref: https://thariqs.github.io/html-effectiveness/16-implementation-plan.html
-
-### Code understanding
-
-Onboarding to an unfamiliar codebase or request path.
-
-- Candidate pipeline: one-sentence invariant → architecture/path diagram → step-by-step file tour → key files → gotchas.
-- Prefer the mental model first when it gives the reader a useful trust boundary, then ground it in files.
-- Ref: https://thariqs.github.io/html-effectiveness/04-code-understanding.html
-
-### Feature explainer
-
-Explain a feature when the reader should jump by question, not read linearly.
-
-- Candidate pipeline: TL;DR → page nav → navigable request path → concrete config example → gotchas → FAQ.
-- HTML helps because native expandable steps, static config/code views, and anchors let the reader jump rather than scroll.
-- Ref: https://thariqs.github.io/html-effectiveness/14-research-feature-explainer.html
-
-### Option comparison
-
-Weigh N approaches against each other.
-
-- Candidate pipeline: N options with an identical schema (code / pros / cons / metrics) → compact tradeoff facts → recommendation → revisit trigger.
-- Same-schema comparison kept spatially parallel is the point; in Markdown this collapses into a long sequential scroll. Not just prettier cards.
-- Ref: https://thariqs.github.io/html-effectiveness/01-exploration-code-approaches.html
