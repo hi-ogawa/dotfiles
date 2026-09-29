@@ -2,10 +2,6 @@
 
 Material for iterating on a page that explains a code change, diff, branch, commit series, or PR, once a first draft exists.
 
-## Read first
-
-Inspect the complete diff and enough surrounding code to explain behavior accurately. Read linked issues and design notes for context, but do not repeat what the reader already has open, and do not treat earlier explorations as a specification.
-
 ## Fit the reader
 
 The same change calls for different pages depending on who reads it.

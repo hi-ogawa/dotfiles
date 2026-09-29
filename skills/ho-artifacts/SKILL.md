@@ -14,7 +14,7 @@ This skill delegates the page to you and fixes only the workflow around it. The 
 
 Organize the page however you judge most effective for the request and the material. Choose the structure, visuals, and interaction from your own instinct, and write the first draft without reaching for a template or the references.
 
-The one constraint is accuracy. Verify every claim and drawn structure against the actual code, and keep illustrative values distinguishable from measured ones.
+The one constraint is accuracy. Inspect the material in full first, such as the complete diff and enough surrounding code to explain behavior, and treat earlier explorations as context rather than a specification. Verify every claim and drawn structure against the actual code, and keep illustrative values distinguishable from measured ones.
 
 ## Iteration
 
