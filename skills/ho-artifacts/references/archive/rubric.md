@@ -8,7 +8,7 @@
 
 When an artifact includes substantial code excerpts, read and follow the canonical code-highlighting pattern in `references/archive/patterns.md`.
 
-When the user asks for a focused standalone browser app, read `references/standalone-apps.md` for app-specific workflow.
+When the user asks for a focused standalone browser app, read `references/archive/standalone-apps.md` for app-specific workflow.
 
 When the artifact explains a code change, diff, branch, commit series, or PR, read `references/archive/explain-diff.md` for investigation and narrative guidance. Inherit this skill's authoring, location, and publishing rules.
 
