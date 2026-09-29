@@ -1,16 +1,16 @@
-> Archived guided style from before the authoring rules were loosened. Read only when the user asks for the guardrails.
+> Archived: the earlier, more prescriptive version of this skill, retired when the authoring rules were loosened. Kept for reference only.
 
 # Artifacts
 
 ## References
 
-`references/guardrails/patterns.md` catalogs established local patterns and external structural anchors. When an artifact needs navigation, read and follow its canonical navigation shell. Consult the other patterns for inspiration when picking a layout, and mine them when iterating on this skill.
+`references/archive/patterns.md` catalogs established local patterns and external structural anchors. When an artifact needs navigation, read and follow its canonical navigation shell. Consult the other patterns for inspiration when picking a layout, and mine them when iterating on this skill.
 
-When an artifact includes substantial code excerpts, read and follow the canonical code-highlighting pattern in `references/guardrails/patterns.md`.
+When an artifact includes substantial code excerpts, read and follow the canonical code-highlighting pattern in `references/archive/patterns.md`.
 
 When the user asks for a focused standalone browser app, read `references/standalone-apps.md` for app-specific workflow.
 
-When the artifact explains a code change, diff, branch, commit series, or PR, read `references/guardrails/explain-diff.md` for investigation and narrative guidance. Inherit this skill's authoring, location, and publishing rules.
+When the artifact explains a code change, diff, branch, commit series, or PR, read `references/archive/explain-diff.md` for investigation and narrative guidance. Inherit this skill's authoring, location, and publishing rules.
 
 ## Purpose
 
@@ -41,4 +41,4 @@ A page that reads at a glance and stays accurate to the code:
 - **Minimal style.** Default to light mode (light background, dark text). Keep it clean and restrained — limited palette, clear hierarchy, generous whitespace, one primary font with monospace reserved for code, and no full-uppercase emphasis — so the content stays the focus. Avoid decoration that does not encode information; pick the rest per artifact.
 - **Progressive disclosure.** Lead with the idea and observable behavior; move implementation detail later. Keep the artifact focused on its stated purpose.
 - **Semantic fidelity.** Visual simplification must preserve the causal units and boundaries that matter. Keep examples internally consistent and distinguish illustrative values from measurements.
-- **Navigation.** For vertically stacked artifacts with roughly four or more major sections, use one zero-height sticky `<details>` before the main content. Give its `<summary>` and absolutely positioned `<nav>` separate opaque surfaces so the control overlays the page without reducing content width. Link stable section IDs, make headings self-linking, and offset fragment targets. Follow the canonical navigation shell in `references/guardrails/patterns.md`.
+- **Navigation.** For vertically stacked artifacts with roughly four or more major sections, use one zero-height sticky `<details>` before the main content. Give its `<summary>` and absolutely positioned `<nav>` separate opaque surfaces so the control overlays the page without reducing content width. Link stable section IDs, make headings self-linking, and offset fragment targets. Follow the canonical navigation shell in `references/archive/patterns.md`.

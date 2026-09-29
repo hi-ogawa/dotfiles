@@ -1,4 +1,4 @@
-> Archived guided style from before the authoring rules were loosened. Read only when the user asks for the guardrails.
+> Archived: the earlier, more prescriptive version of this skill, retired when the authoring rules were loosened. Kept for reference only.
 
 # Explain Diff Artifacts
 

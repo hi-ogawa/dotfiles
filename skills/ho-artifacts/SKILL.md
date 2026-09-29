@@ -21,7 +21,7 @@ Decide the form from the request, not from a template.
 
 `references/` holds optional reading: `explain-diff.md` for pages about a change, `standalone-apps.md` for small browser tools, and `patterns.md` for past artifacts and reusable snippets.
 
-When the user asks for the guardrails or the guided style, read `references/guardrails/rubric.md` and follow it instead of this section. It is the earlier prescriptive version, with its own `explain-diff.md` and `patterns.md` alongside.
+`references/archive/` keeps the retired, more prescriptive version of this skill for reference. Read it only when the user points to it.
 
 ## Mechanics
 
