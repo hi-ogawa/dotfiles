@@ -8,7 +8,7 @@ description: >-
 
 Turn a dev process (PR review, architecture exploration, bug triage) into a single HTML page when a picture, a layout, or interaction makes the finding easier to understand than Markdown, then optionally share it.
 
-This skill fixes the workflow around the page, not the page itself. The mechanics below are required so artifacts stay easy to find, trace, and share. How the page looks and is structured is up to the author and the request.
+This skill fixes the workflow around the page, not the page itself. The mechanics below are required so artifacts stay easy to find and share. How the page looks and is structured is up to the author and the request.
 
 ## Authoring
 
@@ -19,7 +19,7 @@ Decide the form from the request, not from a template.
 - **Every visual earns its place.** A diagram, color, or layout should change how something is understood. Leave out what does not.
 - **Stay true to the code.** Verify every claim and every drawn structure against the actual code before sharing, and keep illustrative values distinguishable from measured ones.
 
-`references/` holds optional reading: `explain-diff.md` for pages about a change, `standalone-apps.md` for small browser tools, and `patterns.md` for reusable snippets.
+`references/` holds optional reading: `explain-diff.md` for pages about a change, `standalone-apps.md` for small browser tools, and `patterns.md` for reusable patterns such as provenance links, navigation, and code highlighting.
 
 `references/archive/` keeps the retired, more prescriptive version of this skill for reference. Read it only when the user points to it.
 
@@ -32,10 +32,6 @@ Keep the artifact in one self-contained `.html` file. External scripts and style
 ### Location
 
 Author the file inside the relevant `ho-dev-notes` topic directory, following that skill's convention, so it lives next to its note. If there is no note, use a temporary directory.
-
-### Provenance
-
-Link the repo, PR, and issue near the top from the first draft, because the page travels without its surrounding context. Link code as `file.ts:line` using GitHub permalinks pinned to a commit SHA, and upgrade any unpinned links before sharing.
 
 ### GistHost
 

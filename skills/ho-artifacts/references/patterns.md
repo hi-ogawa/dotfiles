@@ -1,10 +1,12 @@
 # Patterns
 
-Optional reading. These snippets solve recurring mechanics so they do not need to be reinvented. Use them when they help the page at hand, and ignore them otherwise.
+Optional reading. These patterns solve recurring needs so they do not need to be reinvented. Use them when they help the page at hand, and ignore them otherwise.
 
-## Snippets
+## Provenance
 
-### Navigation shell
+When the page will travel without its surrounding context, link the repo, PR, and issue near the top. Link code as `file.ts:line` using GitHub permalinks pinned to a commit SHA, so the links keep pointing at the code the page describes.
+
+## Navigation shell
 
 A table of contents for long, vertically stacked pages that stays out of the content's width.
 
@@ -63,7 +65,7 @@ Structure:
 section[id] { scroll-margin-top: var(--toc-anchor-offset); }
 ```
 
-### Code highlighting
+## Code highlighting
 
 Syntax highlighting for pages with substantial code excerpts, using Prism.js 1.30.0 with its stock Tomorrow theme and autoloader. Mark each block with an explicit language class so highlighting is deterministic. Keep local fallback colors and geometry so code remains readable while Prism loads or when the CDN is unavailable.
 
