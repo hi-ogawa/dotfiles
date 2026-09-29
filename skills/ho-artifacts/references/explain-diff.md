@@ -14,8 +14,3 @@ The same change calls for different pages depending on who reads it.
 - **Someone onboarding to an unfamiliar change** needs more background, a toy example, and a walkthrough in causal order. A few questions with immediate feedback can help here.
 
 In both cases, lead with one concrete scenario traced before and after the change, and order explanations so causes come before the effects that depend on them.
-
-## Inspiration
-
-- Geoffrey Litt, [Understanding is the new bottleneck](https://www.geoffreylitt.com/2026/07/02/understanding-is-the-new-bottleneck)
-- Geoffrey Litt, [`explain-diff-html`](https://gist.github.com/geoffreylitt/a29df1b5f9865506e8952488eac3d524)
