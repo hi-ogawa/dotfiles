@@ -2,8 +2,8 @@
 
 ## Files
 
-- `settings.json` - Synced to `~/.claude/settings.json`
-- `notify.sh` - Notification hook script
+- `settings.json` - Shared settings for `~/.claude/settings.json`. Merge by hand because the local file keeps machine-specific keys such as `env`
+- `notify.mjs` - Desktop notification hook script
 - `CLAUDE.md` - Synced to `~/.claude/CLAUDE.md`
 
 `CLAUDE.md` is maintained separately from `../codex/AGENTS.md` and `../opencode/AGENTS.md`, so port shared sections by hand. It has no attribution rules, so Claude Code's default commit and pull request attribution applies.
@@ -20,44 +20,19 @@ Multiple `CLAUDE.md` files can coexist at different scopes and are all loaded. P
 
 ## Notifications
 
-Notifications use [hooks](https://code.claude.com/docs/en/hooks) to trigger native OS notifications when Claude is waiting for input.
+`settings.json` runs `notify.mjs` from two hooks:
 
-### Setup
+- `Stop` shows the final assistant message when a turn finishes.
+- `Notification` shows the notification text for permission prompts and MCP elicitation dialogs. Claude Code sends these only after about six seconds without typing, so they skip prompts you are already watching.
 
-**Windows:** Install [BurntToast](https://github.com/Windos/BurntToast):
+`idle_prompt` is left out because `Stop` already covers a finished turn.
 
-```powershell
-Install-Module -Name BurntToast -Scope CurrentUser
-```
+The script calls the OS directly, so it does not depend on terminal notification support or tmux passthrough. It supports Linux `notify-send`, WSL through PowerShell [BurntToast](https://github.com/Windos/BurntToast), and macOS `osascript`. Requires Node.js on `PATH`. It is a copy of [`../codex/notify.mjs`](../codex/notify.mjs) with the title and message adjusted for Claude Code, so port fixes by hand.
 
-> Note: The script uses the lower-level BurntToast API (`New-BTContent` with `-ActivationType Protocol`) instead of `New-BurntToastNotification` to prevent a shell window from flashing when clicking notifications.
+Claude Code also has built-in desktop notifications in iTerm2, Ghostty, and Kitty. `preferredNotifChannel` is set to `notifications_disabled` so they do not duplicate the hook. Hooks still run with that value.
 
-The notification icon (`claude-icon.png`) is from [UXWing](https://uxwing.com/claude-ai-icon/) (free for commercial use, no attribution required).
-
-**Linux:** Ensure `notify-send` and `jq` are installed.
-
-### Hook Input
-
-The notification hook receives JSON via stdin:
-
-```json
-{
-  "session_id": "abc123",
-  "transcript_path": "/path/to/transcript.jsonl",
-  "cwd": "/current/dir",
-  "hook_event_name": "Notification",
-  "message": "Claude needs your permission to use Bash",
-  "notification_type": "permission_prompt"
-}
-```
-
-### Notification Types
-
-| Matcher             | Description              |
-| ------------------- | ------------------------ |
-| `""`                | All notifications        |
-| `permission_prompt` | Permission requests only |
-| `idle_prompt`       | Idle for 60+ seconds     |
+- [Terminal notifications](https://code.claude.com/docs/en/terminal-config#get-a-terminal-bell-or-notification)
+- [Notification hook](https://code.claude.com/docs/en/hooks#notification)
 
 ## See Also
 

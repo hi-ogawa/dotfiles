@@ -1,39 +1,26 @@
 {
-  "permissions": {
-    "allow": [
-      "Bash(git:*)",
-      "Bash(gh:*)",
-      "Bash(node:*)",
-      "Bash(npm:*)",
-      "Bash(pnpm:*)",
-      "Bash(uv:*)",
-      "Bash(ls:*)",
-      "Bash(mkdir:*)",
-      "Bash(mv:*)",
-      "Bash(rm:*)",
-      "Bash(cp:*)",
-      "Bash(tree:*)",
-      "Bash(wc:*)",
-      "Bash(sort:*)",
-      "Bash(wget:*)",
-      "Bash(curl:*)",
-      "Bash(grep:*)",
-      "Read(~/code/**)",
-      "WebFetch(domain:github.com)",
-      "WebSearch"
-    ],
-    "deny": []
-  },
-  "model": "opus",
-  "alwaysThinkingEnabled": true,
+  "theme": "dark",
+  "preferredNotifChannel": "notifications_disabled",
   "hooks": {
-    "Notification": [
+    "Stop": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "bash ~/.claude/notify.sh"
+            "command": "node ~/.claude/notify.mjs",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|elicitation_dialog|elicitation_url_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/notify.mjs",
+            "timeout": 5
           }
         ]
       }
