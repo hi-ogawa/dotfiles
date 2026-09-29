@@ -6,7 +6,7 @@ description: >-
 
 # Artifacts
 
-Turn a dev process (PR review, architecture exploration, bug triage) into a single HTML page when a picture, a layout, or interaction makes the finding easier to understand than Markdown, then optionally share it.
+Turn a dev process (PR review, architecture exploration, bug triage) into a single HTML page when a picture, a layout, or interaction makes the finding easier to understand than Markdown, or build a small single-purpose browser tool, then optionally share it.
 
 This skill delegates the page to you and fixes only the workflow around it. The mechanics below are required so artifacts stay easy to find and share. Everything else is your call.
 
@@ -23,8 +23,6 @@ The user reviews the draft and steers from there. `references/` holds material t
 - `explain-diff.md`: fitting a page about a change to its reader.
 - `patterns.md`: provenance links, navigation, and code highlighting.
 - `archive/`: the retired, more prescriptive version of this skill. Read it only when the user points to it.
-
-When the request is a standalone browser tool rather than an explanatory page, read `references/standalone-apps.md` before starting.
 
 ## Mechanics
 
