@@ -6,7 +6,7 @@
 - `notify.mjs` - Desktop notification hook script
 - `CLAUDE.md` - Synced to `~/.claude/CLAUDE.md`
 
-`CLAUDE.md` is maintained separately from `../codex/AGENTS.md` and `../opencode/AGENTS.md`, so port shared sections by hand. It has no attribution rules, so Claude Code's default commit and pull request attribution applies.
+`CLAUDE.md` is maintained separately from `../codex/AGENTS.md` and `../opencode/AGENTS.md`, so port shared sections by hand. It has no attribution rules. `settings.json` sets `attribution.pr` to an empty string, so pull request descriptions carry no Claude Code line, while commits keep the default `Co-Authored-By` trailer.
 
 See [Moving from Codex to Claude Code](codex-to-claude.md) for session forks, background sessions, worktree scoping, and permissions.
 

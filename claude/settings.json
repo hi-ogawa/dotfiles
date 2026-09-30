@@ -1,6 +1,9 @@
 {
   "theme": "dark",
   "preferredNotifChannel": "notifications_disabled",
+  "attribution": {
+    "pr": ""
+  },
   "hooks": {
     "Stop": [
       {
