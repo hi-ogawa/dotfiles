@@ -64,10 +64,10 @@ wtmux list --all
 ## Pick a Window
 
 ~~~sh
-wtmux pick
+wtmux pick [--all]
 ~~~
 
-Choose a window from every wtmux workspace with fzf, most recently active first, with a live preview of its screen. Enter opens a new session view focused on that window. Ctrl-X stops the highlighted window, and Ctrl-R refreshes the list. Requires fzf.
+Choose a window from the current workspace with fzf, most recently active first, with a live preview of its screen. Enter opens a new session view focused on that window. Ctrl-N opens a new session view on a new window at the current directory, outside --all. Ctrl-X stops the highlighted window, and Ctrl-R refreshes the list. Use --all to choose from every wtmux workspace. Requires fzf.
 
 ## Read Command Output
 
@@ -120,9 +120,9 @@ async function main() {
     case "list":
       return handleListCommand(parsed);
     case "pick":
-      return handlePickCommand();
+      return handlePickCommand(parsed);
     case "pick-rows":
-      return console.log((await listPickRows()).join("\n"));
+      return console.log((await listPickRows(parsed)).join("\n"));
     case "prune":
       return handlePruneCommand(parsed);
     case "run":
@@ -154,12 +154,16 @@ function parseCli() {
   ) {
     return { action: args[0], all: args[1] === "--all" };
   }
-  if (args.length === 1 && args[0] === "pick") {
-    return { action: "pick" };
+  if (args[0] === "pick" && (args.length === 1 || (args.length === 2 && args[1] === "--all"))) {
+    return { action: "pick", all: args[1] === "--all" };
   }
   // fzf reinvokes wtmux in this internal mode to reload the picker rows.
-  if (args.length === 2 && args[0] === "pick" && args[1] === "--internal-rows") {
-    return { action: "pick-rows" };
+  if (
+    args[0] === "pick" &&
+    args[1] === "--internal-rows" &&
+    (args.length === 2 || (args.length === 3 && args[2] === "--all"))
+  ) {
+    return { action: "pick-rows", all: args[2] === "--all" };
   }
   if (args[0] === "run") {
     return parseRunArguments(args.slice(1));
@@ -570,18 +574,29 @@ async function handleListCommand(options) {
   console.log(sections.join("\n\n"));
 }
 
-async function handlePickCommand() {
-  const rows = await listPickRows();
+async function handlePickCommand(options) {
+  const workspaceDirectory = options.all ? undefined : await resolveWorkspaceDirectory();
+  const rows = await listPickRows(options, workspaceDirectory);
   // The first row is the column header.
   if (rows.length <= 1) {
-    console.error("wtmux: no workspaces");
+    console.error(
+      options.all ? "wtmux: no workspaces" : `wtmux: no workspace: ${workspaceDirectory}`,
+    );
     return;
   }
 
   // fzf owns the list, filtering, and live preview. The hidden leading TSV
   // fields carry the pane, window, and workspace through selection.
   const self = `${shellQuote(process.execPath)} ${shellQuote(process.argv[1])}`;
-  const reload = `reload(${self} pick --internal-rows)`;
+  const reload = `reload(${self} pick --internal-rows${options.all ? " --all" : ""})`;
+  // A new window needs one target workspace, so only the single-workspace mode offers it.
+  const header = [
+    "enter: open window",
+    ...(options.all ? [] : ["ctrl-n: new window"]),
+    "ctrl-x: stop window",
+    "ctrl-r: refresh",
+    "esc: cancel",
+  ].join(" | ");
   let selection;
   try {
     selection = await runInteractive(
@@ -592,8 +607,11 @@ async function handlePickCommand() {
         "--with-nth=5",
         "--header-lines=1",
         "--layout=reverse",
-        "--header=enter: open | ctrl-x: stop | ctrl-r: refresh | esc: cancel",
+        `--header=${header}`,
         "--prompt=wtmux> ",
+        // The first output line names the action, and the second carries the highlighted row.
+        "--bind=enter:print(open)+accept",
+        ...(options.all ? [] : ["--bind=ctrl-n:print(new)+accept"]),
         `--bind=ctrl-x:execute-silent(tmux kill-window -t {2})+${reload}`,
         `--bind=ctrl-r:${reload}`,
         "--preview=tmux capture-pane -p -e -t {1}",
@@ -611,16 +629,30 @@ async function handlePickCommand() {
     return;
   }
 
-  const [, , windowIndex, workspaceDirectory, , cwd] = selection.split("\t");
-  const sessionId = await createView(workspaceDirectory, cwd);
+  const [action, row = ""] = selection.split("\n");
+  if (action === "new") {
+    const sessionId = await createView(workspaceDirectory, process.cwd());
+    await runTmux(["new-window", "-t", `${sessionId}:`, "-c", process.cwd()]);
+    enterView(sessionId);
+  }
+  if (!row) {
+    return;
+  }
+
+  const [, , windowIndex, selectedWorkspace, , cwd] = row.split("\t");
+  const sessionId = await createView(selectedWorkspace, cwd);
   // Grouped sessions share window indexes, so the index targets the same window.
   await runTmux(["select-window", "-t", `${sessionId}:${windowIndex}`]);
   enterView(sessionId);
 }
 
-async function listPickRows() {
+async function listPickRows(options, workspaceDirectory) {
+  workspaceDirectory ??= options.all ? undefined : await resolveWorkspaceDirectory();
   const panes = [];
-  for (const [workspace, views] of groupWorkspaceSessions(await listSessions())) {
+  for (const [workspace, views] of groupWorkspaceSessions(
+    await listSessions(),
+    workspaceDirectory,
+  )) {
     for (const pane of await listPanes(views[0].id)) {
       if (pane.active) {
         // Exited panes report no current path, so fall back to the workspace checkout.
