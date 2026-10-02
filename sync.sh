@@ -229,7 +229,7 @@ cmd_help() {
   echo "  diff   Show differences between repo and system"
   echo "  apply  Copy dotfiles from repo to system"
   echo "  save   Copy dotfiles from system to repo"
-  echo "  help   Show this help"
+  echo "  help   Show this help (also -h, --help)"
   echo
   echo "Filter:"
   echo "  Optional patterns to filter files (e.g., 'vscode', 'claude')"
@@ -247,7 +247,7 @@ case "$COMMAND" in
   diff)  cmd_diff "$@" ;;
   apply) cmd_apply "$@" ;;
   save)  cmd_save "$@" ;;
-  help)  cmd_help ;;
+  help|-h|--help) cmd_help ;;
   *)
     echo "Unknown command: $COMMAND"
     cmd_help
