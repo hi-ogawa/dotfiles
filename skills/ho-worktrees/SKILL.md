@@ -33,7 +33,7 @@ Choose a concise slug that reflects the worktree's purpose. Infer it case by cas
 
 ## Main Worktree
 
-The main worktree always stays on the latest `main`. Branch work happens only in sibling worktrees.
+The main worktree always stays on the latest `main`. Branch work happens only in sibling worktrees. "Latest" means the remote branch that `main` tracks (`main@{upstream}`), which is `upstream/main` rather than `origin/main` in fork setups. If `main` has no upstream configured, report it instead of guessing a remote.
 
 Before creating a worktree, check the main worktree:
 

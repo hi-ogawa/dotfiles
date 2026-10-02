@@ -4,7 +4,7 @@
 
 Prune first (`git worktree prune`) to clear stale entries from manually deleted directories.
 
-Report the main worktree on its own line: its branch, and how far it is behind `origin/main` after `git fetch`. Flag it when it is not on `main`.
+Report the main worktree on its own line: its branch, and how far it is behind `main@{upstream}` after fetching that remote. Flag it when it is not on `main`.
 
 Gather what's needed to classify each non-main worktree:
 
