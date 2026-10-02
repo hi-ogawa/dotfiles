@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { basename, join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
 const HELP = `\
@@ -61,6 +61,14 @@ wtmux list
 wtmux list --all
 ~~~
 
+## Pick a Window
+
+~~~sh
+wtmux pick
+~~~
+
+Choose a window from every wtmux workspace with fzf, most recently active first, with a live preview of its screen. Enter opens a new session view focused on that window. Ctrl-X stops the highlighted window, and Ctrl-R refreshes the list. Requires fzf.
+
 ## Read Command Output
 
 ~~~sh
@@ -111,6 +119,10 @@ async function main() {
       return handleOpenCommand();
     case "list":
       return handleListCommand(parsed);
+    case "pick":
+      return handlePickCommand();
+    case "pick-rows":
+      return console.log((await listPickRows()).join("\n"));
     case "prune":
       return handlePruneCommand(parsed);
     case "run":
@@ -141,6 +153,13 @@ function parseCli() {
     (args.length === 1 || (args.length === 2 && args[1] === "--all"))
   ) {
     return { action: args[0], all: args[1] === "--all" };
+  }
+  if (args.length === 1 && args[0] === "pick") {
+    return { action: "pick" };
+  }
+  // fzf reinvokes wtmux in this internal mode to reload the picker rows.
+  if (args.length === 2 && args[0] === "pick" && args[1] === "--internal-rows") {
+    return { action: "pick-rows" };
   }
   if (args[0] === "run") {
     return parseRunArguments(args.slice(1));
@@ -243,7 +262,11 @@ async function handleOpenCommand() {
   // Git checkouts share an identity through their common Git directory. Outside
   // Git, the current directory identifies the workspace.
   const workspaceDirectory = await resolveWorkspaceDirectory();
-  const cwd = process.cwd();
+  const sessionId = await createView(workspaceDirectory, process.cwd());
+  enterView(sessionId);
+}
+
+async function createView(workspaceDirectory, cwd) {
   const sessions = await listSessions();
   const workspaceSessions = sessions.filter(
     (session) => session.workspaceDirectory === workspaceDirectory,
@@ -286,7 +309,10 @@ async function handleOpenCommand() {
     ]);
   }
   await runTmux(["set-option", "-t", sessionId, "@wtmux_workspace", workspaceDirectory]);
+  return sessionId;
+}
 
+function enterView(sessionId) {
   // Replace wtmux with tmux so no wrapper process remains while attached.
   const args = process.env.TMUX
     ? ["switch-client", "-t", sessionId]
@@ -544,6 +570,89 @@ async function handleListCommand(options) {
   console.log(sections.join("\n\n"));
 }
 
+async function handlePickCommand() {
+  const rows = await listPickRows();
+  // The first row is the column header.
+  if (rows.length <= 1) {
+    console.error("wtmux: no workspaces");
+    return;
+  }
+
+  // fzf owns the list, filtering, and live preview. The hidden leading TSV
+  // fields carry the pane, window, and workspace through selection.
+  const self = `${shellQuote(process.execPath)} ${shellQuote(process.argv[1])}`;
+  const reload = `reload(${self} pick --internal-rows)`;
+  let selection;
+  try {
+    selection = await runInteractive(
+      "fzf",
+      [
+        "--ansi",
+        "--delimiter=\t",
+        "--with-nth=5",
+        "--header-lines=1",
+        "--layout=reverse",
+        "--header=enter: open | ctrl-x: stop | ctrl-r: refresh | esc: cancel",
+        "--prompt=wtmux> ",
+        `--bind=ctrl-x:execute-silent(tmux kill-window -t {2})+${reload}`,
+        `--bind=ctrl-r:${reload}`,
+        "--preview=tmux capture-pane -p -e -t {1}",
+        "--preview-window=down:70%",
+      ],
+      rows.join("\n"),
+    );
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      throw new Error("fzf not found");
+    }
+    throw error;
+  }
+  if (!selection) {
+    return;
+  }
+
+  const [, , windowIndex, workspaceDirectory, , cwd] = selection.split("\t");
+  const sessionId = await createView(workspaceDirectory, cwd);
+  // Grouped sessions share window indexes, so the index targets the same window.
+  await runTmux(["select-window", "-t", `${sessionId}:${windowIndex}`]);
+  enterView(sessionId);
+}
+
+async function listPickRows() {
+  const panes = [];
+  for (const [workspace, views] of groupWorkspaceSessions(await listSessions())) {
+    for (const pane of await listPanes(views[0].id)) {
+      if (pane.active) {
+        // Exited panes report no current path, so fall back to the workspace checkout.
+        const cwd = pane.cwd || (basename(workspace) === ".git" ? dirname(workspace) : workspace);
+        panes.push({ ...pane, workspace, cwd });
+      }
+    }
+  }
+  panes.sort((left, right) => right.windowActivity - left.windowActivity);
+
+  const now = Date.now() / 1000;
+  const display = formatTable(
+    ["CHECKOUT", "WINDOW", "STATE", "IDLE", "COMMAND", "TITLE"],
+    panes.map((pane) => [
+      basename(pane.cwd),
+      pane.runName || pane.windowName,
+      pane.dead ? `exited(${pane.deadStatus})` : "running",
+      formatDuration(now - pane.windowActivity),
+      pane.command,
+      pane.title.replaceAll(/[\t\r\n]/g, " "),
+    ]),
+  ).split("\n");
+  return [
+    ["", "", "", "", display[0], ""].join("\t"),
+    ...panes.map((pane, index) =>
+      [pane.id, pane.windowId, pane.windowIndex, pane.workspace, display[index + 1], pane.cwd].join(
+        "\t",
+      ),
+    ),
+  ];
+}
+
 async function handlePruneCommand(options) {
   const sessions = await listSessions();
   const workspaceDirectory = options.all ? undefined : await resolveWorkspaceDirectory();
@@ -631,14 +740,27 @@ async function listPanes(targetId) {
     "-t",
     targetId,
     "-F",
-    "#{pane_id}\t#{window_id}\t#{window_index}\t#{@wtmux_run_name}\t#{pane_index}\t#{pane_dead}\t#{pane_dead_status}\t#{pane_current_command}\t#{pane_title}\t#{pane_current_path}",
+    "#{pane_id}\t#{window_id}\t#{window_index}\t#{@wtmux_run_name}\t#{pane_index}\t#{pane_dead}\t#{pane_dead_status}\t#{pane_current_command}\t#{pane_title}\t#{pane_current_path}\t#{window_name}\t#{pane_active}\t#{window_activity}",
   );
   const output = await runTmux(args);
   return output ? output.split("\n").map(parsePane) : [];
 
   function parsePane(line) {
-    const [id, windowId, windowIndex, runName, index, dead, deadStatus, command, title, cwd] =
-      line.split("\t");
+    const [
+      id,
+      windowId,
+      windowIndex,
+      runName,
+      index,
+      dead,
+      deadStatus,
+      command,
+      title,
+      cwd,
+      windowName,
+      active,
+      windowActivity,
+    ] = line.split("\t");
     return {
       id,
       windowId,
@@ -650,6 +772,9 @@ async function listPanes(targetId) {
       command,
       title,
       cwd,
+      windowName,
+      active: active === "1",
+      windowActivity: Number(windowActivity),
     };
   }
 }
@@ -697,6 +822,19 @@ function formatTable(headers, rows) {
     .join("\n");
 }
 
+function formatDuration(seconds) {
+  if (seconds < 60) {
+    return `${Math.max(0, Math.floor(seconds))}s`;
+  }
+  if (seconds < 3600) {
+    return `${Math.floor(seconds / 60)}m`;
+  }
+  if (seconds < 86400) {
+    return `${Math.floor(seconds / 3600)}h`;
+  }
+  return `${Math.floor(seconds / 86400)}d`;
+}
+
 function formatCount(count, noun) {
   return `${count} ${noun}${count === 1 ? "" : "s"}`;
 }
@@ -737,6 +875,20 @@ function shellQuote(value) {
 
 function sleep(milliseconds) {
   return new Promise((resolvePromise) => setTimeout(resolvePromise, milliseconds));
+}
+
+// Run a terminal UI that draws on the TTY while its selection is read from stdout.
+function runInteractive(command, args, input) {
+  return new Promise((resolvePromise, rejectPromise) => {
+    const child = spawn(command, args, { stdio: ["pipe", "pipe", "inherit"] });
+    let stdout = "";
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => (stdout += chunk));
+    child.on("error", rejectPromise);
+    // fzf exits with 1 for no match and 130 for cancel, which both mean no selection.
+    child.on("close", (code) => resolvePromise(code === 0 ? stdout.trimEnd() : ""));
+    child.stdin.end(input);
+  });
 }
 
 async function runTmux(args) {
