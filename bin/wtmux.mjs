@@ -61,10 +61,10 @@ wtmux list
 wtmux list --all
 ~~~
 
-## Pick a Window
+## Interactive UI
 
 ~~~sh
-wtmux pick [--all]
+wtmux ui [--all]
 ~~~
 
 Choose a window from the current workspace with fzf, most recently active first, with a live preview of its screen. Enter opens a new session view focused on that window. Ctrl-N opens a new session view on a new window at the current directory, outside --all. Ctrl-X stops the highlighted window, and Ctrl-R refreshes the list. Use --all to choose from every wtmux workspace. Requires fzf.
@@ -119,10 +119,10 @@ async function main() {
       return handleOpenCommand();
     case "list":
       return handleListCommand(parsed);
-    case "pick":
-      return handlePickCommand(parsed);
-    case "pick-rows":
-      return console.log((await listPickRows(parsed)).join("\n"));
+    case "ui":
+      return handleUiCommand(parsed);
+    case "ui-rows":
+      return console.log((await listUiRows(parsed)).join("\n"));
     case "prune":
       return handlePruneCommand(parsed);
     case "run":
@@ -154,16 +154,16 @@ function parseCli() {
   ) {
     return { action: args[0], all: args[1] === "--all" };
   }
-  if (args[0] === "pick" && (args.length === 1 || (args.length === 2 && args[1] === "--all"))) {
-    return { action: "pick", all: args[1] === "--all" };
+  if (args[0] === "ui" && (args.length === 1 || (args.length === 2 && args[1] === "--all"))) {
+    return { action: "ui", all: args[1] === "--all" };
   }
-  // fzf reinvokes wtmux in this internal mode to reload the picker rows.
+  // fzf reinvokes wtmux in this internal mode to reload the UI rows.
   if (
-    args[0] === "pick" &&
+    args[0] === "ui" &&
     args[1] === "--internal-rows" &&
     (args.length === 2 || (args.length === 3 && args[2] === "--all"))
   ) {
-    return { action: "pick-rows", all: args[2] === "--all" };
+    return { action: "ui-rows", all: args[2] === "--all" };
   }
   if (args[0] === "run") {
     return parseRunArguments(args.slice(1));
@@ -574,9 +574,9 @@ async function handleListCommand(options) {
   console.log(sections.join("\n\n"));
 }
 
-async function handlePickCommand(options) {
+async function handleUiCommand(options) {
   const workspaceDirectory = options.all ? undefined : await resolveWorkspaceDirectory();
-  const rows = await listPickRows(options, workspaceDirectory);
+  const rows = await listUiRows(options, workspaceDirectory);
   // The first row is the column header.
   if (rows.length <= 1) {
     console.error(
@@ -588,7 +588,7 @@ async function handlePickCommand(options) {
   // fzf owns the list, filtering, and live preview. The hidden leading TSV
   // fields carry the pane, window, and workspace through selection.
   const self = `${shellQuote(process.execPath)} ${shellQuote(process.argv[1])}`;
-  const reload = `reload(${self} pick --internal-rows${options.all ? " --all" : ""})`;
+  const reload = `reload(${self} ui --internal-rows${options.all ? " --all" : ""})`;
   // A new window needs one target workspace, so only the single-workspace mode offers it.
   const header = [
     "enter: open window",
@@ -646,7 +646,7 @@ async function handlePickCommand(options) {
   enterView(sessionId);
 }
 
-async function listPickRows(options, workspaceDirectory) {
+async function listUiRows(options, workspaceDirectory) {
   workspaceDirectory ??= options.all ? undefined : await resolveWorkspaceDirectory();
   const panes = [];
   for (const [workspace, views] of groupWorkspaceSessions(
