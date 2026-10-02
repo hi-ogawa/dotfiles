@@ -29,7 +29,8 @@ Personal configuration files for Linux (Arch), Windows, and macOS.
 Personal agent skills live under `skills/`. The sync script links them into `~/.agents/skills` and `~/.claude/skills`:
 
 ```bash
-./sync-skills.sh
+./sync-skills.sh         # link all skills
+./sync-skills.sh --help  # show help
 ```
 
 Run the script after adding a new skill. Existing linked skills do not need to be synced after edits because changes made through either path affect the same repository file. Restart the agent application after skill changes so it reloads them. If a skill is renamed or removed, clean up stale links manually.

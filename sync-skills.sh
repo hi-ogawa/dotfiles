@@ -1,5 +1,32 @@
 #!/bin/bash
+# Agent skills sync
+# Usage: ./sync-skills.sh
+
 set -euo pipefail
+
+cmd_help() {
+  echo "Usage: $0"
+  echo
+  echo "Link every skills/*/ directory into ~/.agents/skills and ~/.claude/skills,"
+  echo "replacing any existing entry with the same name."
+  echo
+  echo "Options:"
+  echo "  -h, --help  Show this help"
+}
+
+if [[ $# -gt 0 ]]; then
+  case "$1" in
+    -h|--help)
+      cmd_help
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $1"
+      cmd_help
+      exit 1
+      ;;
+  esac
+fi
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
