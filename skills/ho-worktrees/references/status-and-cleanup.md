@@ -4,6 +4,8 @@
 
 Prune first (`git worktree prune`) to clear stale entries from manually deleted directories.
 
+Report the main worktree on its own line: its branch, and how far it is behind `origin/main` after `git fetch`. Flag it when it is not on `main`.
+
 Gather what's needed to classify each non-main worktree:
 
 - **Type** — inferred from directory name (pr/issue/topic).
@@ -23,4 +25,4 @@ When the user asks to clean up or remove worktrees:
 
 1. Run a status query first, which also prunes stale entries.
 2. Collect stale worktrees.
-3. List them in a table with statuses and confirm with the user before removing.
+3. List them in a table with statuses and confirm with the user before removing. If the main worktree is not on the latest `main`, include restoring it as a row, following the main worktree check in `SKILL.md`.
