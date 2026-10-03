@@ -19,4 +19,8 @@ Create the PR as a draft.
 
 ## Editing
 
-When a description no longer matches the code, rewrite it in this style rather than patching the stale words. Edit the live body in place, and keep blocks you did not write, such as content CI appends.
+A PR description has other writers, such as the user in the browser, CI, and other sessions, so treat an edit as a read-modify-write:
+
+- Update the description only when a change alters what it says, such as the behavior, scope, or motivation, not after every commit.
+- Read the live body right before writing, never a copy from earlier in the session.
+- Rewrite the stale prose in this style rather than patching words, and keep the rest of the body as it is.
