@@ -14,7 +14,7 @@ Use one named workspace window per long-lived command.
 wtmux run --name <name> [-C <root>] [--wait-timeout <seconds> | --no-wait] -- <command> [args...]
 ```
 
-`-C` defaults to the current directory. Run waits up to five seconds for initial output, then reports whether the command is still running or exited. Use `--wait-timeout` to change this limit.
+The window joins the workspace of the directory you invoke `wtmux run` from, while `-C` only sets where the command starts and defaults to the current directory. To put a window in another repository's workspace, run `cd <repo> && wtmux run ...`. Run waits up to five seconds for initial output, then reports whether the command is still running or exited. Use `--wait-timeout` to change this limit.
 Use `--no-wait` to return immediately without capturing startup output.
 
 ## Stop
