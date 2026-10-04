@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { execFile, spawn } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { homedir, tmpdir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 import { parseArgs, promisify } from "node:util";
 
@@ -67,7 +67,9 @@ wtmux list --all
 wtmux ui [--all]
 ~~~
 
-Choose a window from the current workspace with fzf, most recently active first, with a live preview of its screen. Enter opens a new session view focused on that window. Ctrl-N opens a new session view on a new window at the current directory, outside --all. Ctrl-X stops the highlighted window, and Ctrl-R refreshes the list. Use --all to choose from every wtmux workspace. Requires fzf.
+Choose a window from the current workspace with fzf, most recently active first, with a live preview of its screen. Enter opens a new session view focused on that window. Ctrl-N opens a new session view on a new window at the current directory. Ctrl-X stops the highlighted window, and Ctrl-R refreshes the list. Requires fzf.
+
+Use --all to choose from every wtmux workspace. There, Ctrl-N opens the new window in the home workspace, a conventional starting directory at $WTMUX_HOME, which defaults to ~/.local/state/wtmux/home.
 
 ## Read Command Output
 
@@ -576,23 +578,16 @@ async function handleListCommand(options) {
 
 async function handleUiCommand(options) {
   const workspaceDirectory = options.all ? undefined : await resolveWorkspaceDirectory();
+  // The list may be empty, because Ctrl-N is still useful when nothing is running.
   const rows = await listUiRows(options, workspaceDirectory);
-  // The first row is the column header.
-  if (rows.length <= 1) {
-    console.error(
-      options.all ? "wtmux: no workspaces" : `wtmux: no workspace: ${workspaceDirectory}`,
-    );
-    return;
-  }
 
   // fzf owns the list, filtering, and live preview. The hidden leading TSV
   // fields carry the pane, window, and workspace through selection.
   const self = `${shellQuote(process.execPath)} ${shellQuote(process.argv[1])}`;
   const reload = `reload(${self} ui --internal-rows${options.all ? " --all" : ""})`;
-  // A new window needs one target workspace, so only the single-workspace mode offers it.
   const header = [
     "enter: open window",
-    ...(options.all ? [] : ["ctrl-n: new window"]),
+    `ctrl-n: new window${options.all ? " at home" : ""}`,
     "ctrl-x: stop window",
     "ctrl-r: refresh",
     "esc: cancel",
@@ -611,7 +606,7 @@ async function handleUiCommand(options) {
         "--prompt=wtmux> ",
         // The first output line names the action, and the second carries the highlighted row.
         "--bind=enter:print(open)+accept",
-        ...(options.all ? [] : ["--bind=ctrl-n:print(new)+accept"]),
+        "--bind=ctrl-n:print(new)+accept",
         `--bind=ctrl-x:execute-silent(tmux kill-window -t {2})+${reload}`,
         `--bind=ctrl-r:${reload}`,
         "--preview=tmux capture-pane -p -e -t {1}",
@@ -631,8 +626,20 @@ async function handleUiCommand(options) {
 
   const [action, row = ""] = selection.split("\n");
   if (action === "new") {
-    const sessionId = await createView(workspaceDirectory, process.cwd());
-    await runTmux(["new-window", "-t", `${sessionId}:`, "-c", process.cwd()]);
+    // Across every workspace there is no single target, so new windows go to the
+    // conventional home workspace instead.
+    let target = workspaceDirectory;
+    let cwd = process.cwd();
+    if (options.all) {
+      target = cwd = resolveHomeDirectory();
+      mkdirSync(cwd, { recursive: true });
+    }
+    const exists = (await listSessions()).some((session) => session.workspaceDirectory === target);
+    const sessionId = await createView(target, cwd);
+    // The first view of a new workspace already starts with a window at cwd.
+    if (exists) {
+      await runTmux(["new-window", "-t", `${sessionId}:`, "-c", cwd]);
+    }
     enterView(sessionId);
   }
   if (!row) {
@@ -725,6 +732,14 @@ function groupWorkspaceSessions(sessions, workspaceDirectory) {
     ),
     (session) => session.workspaceDirectory,
   );
+}
+
+function resolveHomeDirectory() {
+  if (process.env.WTMUX_HOME) {
+    return resolve(process.env.WTMUX_HOME);
+  }
+  const stateHome = process.env.XDG_STATE_HOME || join(homedir(), ".local", "state");
+  return join(stateHome, "wtmux", "home");
 }
 
 async function resolveWorkspaceDirectory() {
@@ -917,8 +932,9 @@ function runInteractive(command, args, input) {
     child.stdout.setEncoding("utf8");
     child.stdout.on("data", (chunk) => (stdout += chunk));
     child.on("error", rejectPromise);
-    // fzf exits with 1 for no match and 130 for cancel, which both mean no selection.
-    child.on("close", (code) => resolvePromise(code === 0 ? stdout.trimEnd() : ""));
+    // fzf exits with 1 when nothing matches, but print() actions still produce
+    // output then. Only 130 (cancel) and other failures mean no selection.
+    child.on("close", (code) => resolvePromise(code === 0 || code === 1 ? stdout.trimEnd() : ""));
     child.stdin.end(input);
   });
 }
