@@ -15,6 +15,8 @@ Create the PR as a draft.
 - Describe behavior a user or reviewer sees, not internals such as function names, file paths, or types, because the diff already shows them and review keeps changing them. A description written this way only needs an update when a change alters the behavior, scope, or motivation, not after every commit.
 - Title follows the repo's commit convention.
 
+GitHub's stacked PRs only support a linear stack, and it refuses to retarget a PR inside one. When a PR depends on another in a way that would not form a linear stack, base it on `main`, link the dependency as `- depends on <url>`, and tell the user.
+
 ## Editing
 
 A PR description has other writers, such as the user, CI, and other sessions, so treat an edit as a read-modify-write. Read the live body right before writing, rewrite only the stale prose, and keep the rest as it is.

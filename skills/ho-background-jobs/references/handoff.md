@@ -27,7 +27,3 @@ Write the prompt as a concise, task-specific opening message for a fresh agent r
 Give the agent enough context to start in the right place, while leaving recoverable details and follow-up questions to the new session. Do not investigate or begin the handed-off task merely to make the prompt more complete unless the user asks.
 
 Do not repeat rules the agent already loads, such as repository instructions, global instructions, and skills. Check the current branch and PR state before writing the prompt, and do not relay steps from branches that are still changing.
-
-## Parallel Sessions
-
-Base each new branch on `main`. Stack a branch on another only for a real code dependency, and prefer landing the dependency first. Otherwise, name the dependency in the prompt. Settle scope before handing off, so a change that turns into a refactor plus a feature starts as two PRs rather than being reshaped mid-flight.
