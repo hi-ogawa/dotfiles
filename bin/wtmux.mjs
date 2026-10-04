@@ -585,7 +585,7 @@ async function handleListCommand(options) {
 
 async function handleUiCommand(options) {
   const workspaceDirectory = options.all ? undefined : await resolveWorkspaceDirectory();
-  // The list may be empty, because Ctrl-N is still useful when nothing is running.
+  // Open fzf even with no windows, because Ctrl-N is how you start the first one.
   const rows = await listUiRows(options, workspaceDirectory);
 
   // fzf owns the list, filtering, and live preview. The hidden leading TSV
