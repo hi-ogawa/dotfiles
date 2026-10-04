@@ -124,7 +124,7 @@ async function main() {
     case "ui":
       return handleUiCommand(parsed);
     case "ui-rows":
-      return console.log((await listUiRows(parsed)).join("\n"));
+      return handleUiRowsCommand(parsed);
     case "prune":
       return handlePruneCommand(parsed);
     case "run":
@@ -318,6 +318,13 @@ async function createView(workspaceDirectory, cwd) {
   return sessionId;
 }
 
+/**
+ * Hand this terminal over to a session view. Outside tmux, the terminal attaches
+ * to the view. Inside tmux, the current client switches to it instead. Either
+ * way wtmux is replaced by tmux, so callers never regain control.
+ *
+ * @returns {never}
+ */
 function enterView(sessionId) {
   // Replace wtmux with tmux so no wrapper process remains while attached.
   const args = process.env.TMUX
@@ -641,6 +648,7 @@ async function handleUiCommand(options) {
     if (exists) {
       await runTmux(["new-window", "-t", `${sessionId}:`, "-c", cwd]);
     }
+    // enterView never returns, so Ctrl-N never falls through to the open path.
     enterView(sessionId);
   }
   if (!row) {
@@ -652,6 +660,10 @@ async function handleUiCommand(options) {
   // Grouped sessions share window indexes, so the index targets the same window.
   await runTmux(["select-window", "-t", `${sessionId}:${windowIndex}`]);
   enterView(sessionId);
+}
+
+async function handleUiRowsCommand(options) {
+  console.log((await listUiRows(options)).join("\n"));
 }
 
 async function listUiRows(options, workspaceDirectory) {
