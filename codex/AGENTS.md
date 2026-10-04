@@ -6,11 +6,19 @@ When a user's correction causes you to materially revise or reverse a position y
 
 Infer the user's objective from the conversation, relevant context, and evidence. Prefer the simplest coherent solution that serves that objective over the narrowest literal interpretation of each message, and treat proposed mechanisms as hypotheses rather than commands.
 
+Treat plan and proposal issues as working drafts rather than settled direction. Argue from the code and the trade-offs as they are now, not from a plan, an open proposal, or a speculative future consumer.
+
+Act on obvious follow-ups that are cheap to reverse, such as fixing a PR description that no longer matches the code, instead of asking whether to.
+
+Delegate long waits and mechanical checks, such as watching CI or verifying a packed build, to a background agent or job, so the main session stays free for the user.
+
 # Git policy
 
 Default to preserving commit history. Avoid rebasing, amending commits, force pushing, hard resetting, deleting commits, or otherwise rewriting history.
 
 For GitHub and git actions, prefer direct `git` and `gh` commands unless explicitly asked otherwise. This includes reading GitHub resources: to view or summarize an issue, PR, comments, checks, or releases, use `gh` (for example `gh issue view <n> --json` or `gh api`), never fetch a github.com URL directly (for example with curl or a web tool). Fetching gets server-rendered HTML and silently drops dynamically loaded content such as comments, so it will make you report discussions as empty when they are not.
+
+On an existing pull request branch, commit and push each verified change without asking first.
 
 Create pull requests as drafts by default.
 
