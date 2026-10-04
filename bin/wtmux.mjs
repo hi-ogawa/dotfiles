@@ -598,6 +598,7 @@ async function handleUiCommand(options) {
       "fzf",
       [
         "--ansi",
+        "--exact",
         "--delimiter=\t",
         "--with-nth=5",
         "--header-lines=1",
