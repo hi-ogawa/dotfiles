@@ -42,8 +42,6 @@ Before creating a worktree, check the main worktree:
 - **Dirty tree**: stop and ask. Do not stash.
 - **Fast-forward fails**: stop and report the divergence. Do not reset.
 
-After noticing a merge into `main`, such as a PR you merged or saw land, fast-forward the main worktree the same way when it is on `main` and clean, and mention it, because the user may run tools or apps from it.
-
 ## Creation
 
 Determine the type from context:
