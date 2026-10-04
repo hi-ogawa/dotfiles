@@ -7,8 +7,10 @@ Launch a fresh interactive agent session in a named shared workspace window.
 Choose a concise semantic `<name>` based on the project and task, using lowercase alphanumeric words separated by hyphens. Choose `<name>` for the target directly where agent should run.
 
 ```bash
-wtmux run --name <name> --no-wait -C <cwd> -- <agent-command>
+cd <repo> && wtmux run --name <name> --no-wait -C <cwd> -- <agent-command>
 ```
+
+Invoke `wtmux run` from the target repository so the window lands in that repository's workspace, because `-C` only sets the agent's directory.
 
 Use one of these agent commands:
 
@@ -27,3 +29,17 @@ Write the prompt as a concise, task-specific opening message for a fresh agent r
 Give the agent enough context to start in the right place, while leaving recoverable details and follow-up questions to the new session. Do not investigate or begin the handed-off task merely to make the prompt more complete unless the user asks.
 
 Do not repeat rules the agent already loads, such as repository instructions, global instructions, and skills.
+
+## Fork
+
+When the user asks to fork the current session, launch a copy of this conversation in a named shared workspace window instead of writing a fresh prompt. Only Claude is covered for now.
+
+```bash
+cd <repo> && wtmux run --name <name> --no-wait -C <session-cwd> -- claude --resume "$CLAUDE_CODE_SESSION_ID" --fork-session
+```
+
+- Read the current session ID from `$CLAUDE_CODE_SESSION_ID`.
+- Set `-C` to the directory where the current session started, because Claude stores sessions per directory and `--resume` cannot find the session from elsewhere.
+- Invoke `wtmux run` from the repository the fork's task belongs to, so the window lands in that workspace. The workspace and `-C` are independent, so the window can belong to one repository while the session resumes from another directory.
+- Always pass `--no-wait`, because startup capture of an interactive TUI is only escape sequences.
+- Name the window after the task the fork is for, because the fork inherits the original session's title and the run name is the only thing that tells the windows apart.
