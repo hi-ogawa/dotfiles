@@ -51,4 +51,4 @@ wtmux
 
 ## Agent Handoff
 
-When the user requests a fresh agent handoff, read [references/handoff.md](references/handoff.md).
+When the user requests a fresh agent handoff or a fork of the current session, read [references/handoff.md](references/handoff.md).
