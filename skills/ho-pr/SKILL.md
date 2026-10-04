@@ -11,9 +11,8 @@ Create the PR as a draft.
 - Put related links first as bullets, e.g. `- closes <url>`, `- follow-up to <url>`.
 - Then write a few short paragraphs of prose, not summary bullets, covering both why (what was broken, or the motivation) and what this PR does.
 - Accompany the prose with a minimal snippet, table, or diagram when it shows the change more effectively.
-- No sections such as `## Summary` or `## Testing`.
+- No sections such as `## Summary` or `## Testing`, no testing or validation checklists, and no notes to the person who requested the PR, because the description is for reviewers and future readers.
 - Describe behavior a user or reviewer sees, not internals such as function names, file paths, or types, because the diff already shows them and review keeps changing them.
-- No testing, validation, or coverage lists, and no notes addressed to the user.
 - Describe what the PR does, not a settled future direction it implies.
 - Title follows the repo's commit convention.
 
