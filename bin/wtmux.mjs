@@ -327,10 +327,22 @@ async function createView(workspaceDirectory, cwd) {
  */
 function enterView(sessionId) {
   // Replace wtmux with tmux so no wrapper process remains while attached.
-  const args = process.env.TMUX
-    ? ["switch-client", "-t", sessionId]
-    : ["attach-session", "-t", sessionId];
-  process.execve("/usr/bin/env", ["env", "tmux", ...args]);
+  if (isInsideTmuxPane()) {
+    process.execve("/usr/bin/env", ["env", "tmux", "switch-client", "-t", sessionId]);
+  }
+  // A leaked TMUX would make tmux refuse to attach as a nested client.
+  const { TMUX, TMUX_PANE, ...env } = process.env;
+  process.execve("/usr/bin/env", ["env", "tmux", "attach-session", "-t", sessionId], env);
+}
+
+/**
+ * TMUX alone is not enough, because a GUI app launched from a tmux pane (for
+ * example `code`) passes it on to its own terminals. Those terminals overwrite
+ * TERM_PROGRAM, so switching there would move the tmux client of the original
+ * pane instead of this terminal.
+ */
+function isInsideTmuxPane() {
+  return Boolean(process.env.TMUX) && process.env.TERM_PROGRAM === "tmux";
 }
 
 async function handleRunCommand(options) {
