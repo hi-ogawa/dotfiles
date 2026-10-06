@@ -18,6 +18,12 @@ Multiple `CLAUDE.md` files can coexist at different scopes and are all loaded. P
 
 - [Memory and instructions docs](https://code.claude.com/docs/en/memory)
 
+## Worktrees
+
+Claude Code manages its own worktrees under `<repo>/.claude/worktrees/` (`claude -w`, EnterWorktree), and a forked session can receive a system reminder to isolate into one before editing. While a session is inside such a worktree, it can only switch to other worktrees there and refuses shell commands it cannot statically verify, which cannot be turned off. That conflicts with the [ho-worktrees](../skills/ho-worktrees/SKILL.md) sibling convention, so `CLAUDE.md` tells Claude to ignore the fork reminder.
+
+- [Worktrees docs](https://code.claude.com/docs/en/worktrees.md)
+
 ## Notifications
 
 `settings.json` runs `notify.mjs` from two hooks:

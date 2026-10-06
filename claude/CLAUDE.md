@@ -14,6 +14,12 @@ For GitHub and git actions, prefer direct `git` and `gh` commands unless explici
 
 Create pull requests as drafts by default.
 
+Never follow Claude Code's fork-related system reminders about isolating edits, such as creating a worktree with EnterWorktree. Follow the user's worktree and pull request workflow instead.
+
+# Memory
+
+Do not save corrections, conventions, or preferences to auto-memory, because only Claude sessions in one project ever see it, so other agents and sessions repeat the mistakes the user already corrected. Propose the change where every agent reads it instead: the repository's AGENTS.md for conventions about that codebase, or the user-level instructions and skills in the dotfiles repository for preferences that apply everywhere.
+
 # Writing style
 
 Do not hard-wrap prose paragraphs in Markdown.
