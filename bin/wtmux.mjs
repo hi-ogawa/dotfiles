@@ -710,12 +710,14 @@ async function listUiRows(options, workspaceDirectory) {
     }
   }
 
+  // Hide the window running this picker, because selecting it would switch to where you already are.
+  const selfPaneId = isInsideTmuxPane() ? process.env.TMUX_PANE : undefined;
   const groups = [];
   for (const [workspace, views] of workspaces) {
     const root = resolveWorkspaceRoot(workspace);
     const panes = [];
     for (const pane of views.length > 0 ? await listPanes(views[0].id) : []) {
-      if (pane.active) {
+      if (pane.active && pane.id !== selfPaneId) {
         // Exited panes report no current path, so fall back to the workspace checkout.
         panes.push({ ...pane, workspace, cwd: pane.cwd || root });
       }
