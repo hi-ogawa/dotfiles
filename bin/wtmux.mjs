@@ -67,9 +67,9 @@ wtmux list --all
 wtmux ui [--all]
 ~~~
 
-Choose a window from the current workspace with fzf, with a live preview of its screen. Each workspace is listed as a bold row followed by its windows, most recently active first. Enter on a window opens a new session view focused on that window, and Enter on a workspace row opens a new window at its checkout root. Ctrl-N opens a new window in the highlighted row's directory. Ctrl-X stops the highlighted window, or forgets the highlighted workspace, and Ctrl-R refreshes the list. Requires fzf.
+Choose a window from the current workspace with fzf, with a live preview of its screen. Each workspace is listed as a bold row followed by its windows, most recently active first. Enter on a window opens a new session view focused on that window, and Enter on a workspace row opens a new window at its checkout root. Ctrl-N opens a new window in the highlighted row's directory, or the current directory when nothing is highlighted. Ctrl-X stops the highlighted window, or forgets the highlighted workspace, and Ctrl-R refreshes the list. Requires fzf.
 
-Use --all to choose from every wtmux workspace. wtmux remembers each workspace it creates a session for, so the workspace stays listed after its last window closes until you forget it. With nothing highlighted, Ctrl-N opens the new window in the home workspace, a conventional starting directory at $WTMUX_HOME, which defaults to ~/.local/state/wtmux/home.
+Use --all to choose from every wtmux workspace. wtmux remembers each workspace it creates a session for, so the workspace stays listed after its last window closes until you forget it.
 
 ## Read Command Output
 
@@ -656,17 +656,12 @@ async function handleUiCommand(options) {
   const [paneId, windowId, , selectedWorkspace, , cwd] = row.split("\t");
   if (action === "new" || (row && !paneId)) {
     // A highlighted row supplies the workspace and directory. With nothing
-    // highlighted, use the current workspace, or across every workspace, the
-    // conventional home workspace.
+    // highlighted, use the current directory and its workspace.
     let target = selectedWorkspace;
     let directory = cwd;
     if (!row) {
-      target = workspaceDirectory;
+      target = workspaceDirectory ?? (await resolveWorkspaceDirectory());
       directory = process.cwd();
-      if (options.all) {
-        target = directory = resolveHomeDirectory();
-        mkdirSync(directory, { recursive: true });
-      }
     }
     if (!statSync(directory, { throwIfNoEntry: false })?.isDirectory()) {
       throw new Error(`directory not found: ${directory}`);
@@ -816,13 +811,6 @@ function groupWorkspaceSessions(sessions, workspaceDirectory) {
     ),
     (session) => session.workspaceDirectory,
   );
-}
-
-function resolveHomeDirectory() {
-  if (process.env.WTMUX_HOME) {
-    return resolve(process.env.WTMUX_HOME);
-  }
-  return join(resolveStateDirectory(), "home");
 }
 
 function resolveStateDirectory() {
