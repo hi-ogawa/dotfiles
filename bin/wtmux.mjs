@@ -67,9 +67,9 @@ wtmux list --all
 wtmux ui [--all]
 ~~~
 
-Choose a window from the current workspace with fzf, most recently active first, with a live preview of its screen. Enter opens a new session view focused on that window. Ctrl-N opens a new session view on a new window at the current directory. Ctrl-X stops the highlighted window, and Ctrl-R refreshes the list. Requires fzf.
+Choose a window from the current workspace with fzf, with a live preview of its screen. Each workspace is listed as a bold row followed by its windows, most recently active first. Enter on a window opens a new session view focused on that window, and Enter on a workspace row opens a new window at its checkout root. Ctrl-N opens a new window in the highlighted row's directory. Ctrl-X stops the highlighted window, or forgets the highlighted workspace, and Ctrl-R refreshes the list. Requires fzf.
 
-Use --all to choose from every wtmux workspace. There, Ctrl-N opens the new window in the home workspace, a conventional starting directory at $WTMUX_HOME, which defaults to ~/.local/state/wtmux/home.
+Use --all to choose from every wtmux workspace. wtmux remembers each workspace it creates a session for, so the workspace stays listed after its last window closes until you forget it. With nothing highlighted, Ctrl-N opens the new window in the home workspace, a conventional starting directory at $WTMUX_HOME, which defaults to ~/.local/state/wtmux/home.
 
 ## Read Command Output
 
@@ -125,6 +125,8 @@ async function main() {
       return handleUiCommand(parsed);
     case "ui-rows":
       return handleUiRowsCommand(parsed);
+    case "ui-stop":
+      return handleUiStopCommand(parsed);
     case "prune":
       return handlePruneCommand(parsed);
     case "run":
@@ -166,6 +168,10 @@ function parseCli() {
     (args.length === 2 || (args.length === 3 && args[2] === "--all"))
   ) {
     return { action: "ui-rows", all: args[2] === "--all" };
+  }
+  // Ctrl-X passes the highlighted window ID, empty on workspace rows, and workspace.
+  if (args[0] === "ui" && args[1] === "--internal-stop" && args.length === 4) {
+    return { action: "ui-stop", windowId: args[2], workspace: args[3] };
   }
   if (args[0] === "run") {
     return parseRunArguments(args.slice(1));
@@ -315,6 +321,7 @@ async function createView(workspaceDirectory, cwd) {
     ]);
   }
   await runTmux(["set-option", "-t", sessionId, "@wtmux_workspace", workspaceDirectory]);
+  rememberWorkspace(workspaceDirectory);
   return sessionId;
 }
 
@@ -420,6 +427,7 @@ async function handleRunCommand(options) {
       ]);
       [sessionId, paneId] = result.split("\t");
       await runTmux(["set-option", "-t", sessionId, "@wtmux_workspace", workspaceDirectory]);
+      rememberWorkspace(workspaceDirectory);
     } else {
       sessionId = workspaceSessions[0].id;
       paneId = await runTmux([
@@ -600,13 +608,14 @@ async function handleUiCommand(options) {
   const rows = await listUiRows(options, workspaceDirectory);
 
   // fzf owns the list, filtering, and live preview. The hidden leading TSV
-  // fields carry the pane, window, and workspace through selection.
+  // fields carry the pane, window, workspace, and directory through selection.
+  // Workspace rows leave the pane and window fields empty.
   const self = `${shellQuote(process.execPath)} ${shellQuote(process.argv[1])}`;
   const reload = `reload(${self} ui --internal-rows${options.all ? " --all" : ""})`;
   const header = [
-    "enter: open window",
-    `ctrl-n: new window${options.all ? " at home" : ""}`,
-    "ctrl-x: stop window",
+    "enter: open",
+    "ctrl-n: new window here",
+    "ctrl-x: stop window or forget workspace",
     "ctrl-r: refresh",
     "esc: cancel",
   ].join(" | ");
@@ -626,9 +635,9 @@ async function handleUiCommand(options) {
         // The first output line names the action, and the second carries the highlighted row.
         "--bind=enter:print(open)+accept",
         "--bind=ctrl-n:print(new)+accept",
-        `--bind=ctrl-x:execute-silent(tmux kill-window -t {2})+${reload}`,
+        `--bind=ctrl-x:execute-silent(${self} ui --internal-stop {2} {4})+${reload}`,
         `--bind=ctrl-r:${reload}`,
-        "--preview=tmux capture-pane -p -e -t {1}",
+        "--preview=if [ -n {1} ]; then tmux capture-pane -p -e -t {1}; else echo {6}; git -C {6} worktree list 2>/dev/null; fi",
         "--preview-window=down:70%",
       ],
       rows.join("\n"),
@@ -644,29 +653,37 @@ async function handleUiCommand(options) {
   }
 
   const [action, row = ""] = selection.split("\n");
-  if (action === "new") {
-    // Across every workspace there is no single target, so new windows go to the
-    // conventional home workspace instead.
-    let target = workspaceDirectory;
-    let cwd = process.cwd();
-    if (options.all) {
-      target = cwd = resolveHomeDirectory();
-      mkdirSync(cwd, { recursive: true });
+  const [paneId, windowId, , selectedWorkspace, , cwd] = row.split("\t");
+  if (action === "new" || (row && !paneId)) {
+    // A highlighted row supplies the workspace and directory. With nothing
+    // highlighted, use the current workspace, or across every workspace, the
+    // conventional home workspace.
+    let target = selectedWorkspace;
+    let directory = cwd;
+    if (!row) {
+      target = workspaceDirectory;
+      directory = process.cwd();
+      if (options.all) {
+        target = directory = resolveHomeDirectory();
+        mkdirSync(directory, { recursive: true });
+      }
+    }
+    if (!statSync(directory, { throwIfNoEntry: false })?.isDirectory()) {
+      throw new Error(`directory not found: ${directory}`);
     }
     const exists = (await listSessions()).some((session) => session.workspaceDirectory === target);
-    const sessionId = await createView(target, cwd);
-    // The first view of a new workspace already starts with a window at cwd.
+    const sessionId = await createView(target, directory);
+    // The first view of a new workspace already starts with a window at its directory.
     if (exists) {
-      await runTmux(["new-window", "-t", `${sessionId}:`, "-c", cwd]);
+      await runTmux(["new-window", "-t", `${sessionId}:`, "-c", directory]);
     }
-    // enterView never returns, so Ctrl-N never falls through to the open path.
+    // enterView never returns, so new windows never fall through to the open path.
     enterView(sessionId);
   }
   if (!row) {
     return;
   }
 
-  const [, windowId, , selectedWorkspace, , cwd] = row.split("\t");
   const sessionId = await createView(selectedWorkspace, cwd);
   // Target by window ID because renumber-windows can shift indexes after the list was built.
   await runTmux(["select-window", "-t", `${sessionId}:${windowId}`]);
@@ -677,42 +694,85 @@ async function handleUiRowsCommand(options) {
   console.log((await listUiRows(options)).join("\n"));
 }
 
+async function handleUiStopCommand(options) {
+  if (options.windowId) {
+    await runTmux(["kill-window", "-t", options.windowId]);
+  } else if (options.workspace) {
+    // Forgetting never touches live windows, so a live workspace stays listed until they close.
+    forgetWorkspace(options.workspace);
+  }
+}
+
 async function listUiRows(options, workspaceDirectory) {
   workspaceDirectory ??= options.all ? undefined : await resolveWorkspaceDirectory();
-  const panes = [];
-  for (const [workspace, views] of groupWorkspaceSessions(
-    await listSessions(),
-    workspaceDirectory,
-  )) {
-    for (const pane of await listPanes(views[0].id)) {
-      if (pane.active) {
-        // Exited panes report no current path, so fall back to the workspace checkout.
-        const cwd = pane.cwd || (basename(workspace) === ".git" ? dirname(workspace) : workspace);
-        panes.push({ ...pane, workspace, cwd });
-      }
+  const workspaces = groupWorkspaceSessions(await listSessions(), workspaceDirectory);
+  // Remembered workspaces stay listed after their last window closes, and the
+  // current workspace is always listed so its row can start the first window.
+  const listed = workspaceDirectory === undefined ? readWorkspaces() : [workspaceDirectory];
+  for (const workspace of listed) {
+    if (!workspaces.has(workspace)) {
+      workspaces.set(workspace, []);
     }
   }
-  panes.sort((left, right) => right.windowActivity - left.windowActivity);
+
+  const groups = [];
+  for (const [workspace, views] of workspaces) {
+    const root = resolveWorkspaceRoot(workspace);
+    const panes = [];
+    for (const pane of views.length > 0 ? await listPanes(views[0].id) : []) {
+      if (pane.active) {
+        // Exited panes report no current path, so fall back to the workspace checkout.
+        panes.push({ ...pane, workspace, cwd: pane.cwd || root });
+      }
+    }
+    panes.sort((left, right) => right.windowActivity - left.windowActivity);
+    groups.push({ workspace, root, panes, activity: panes[0]?.windowActivity ?? 0 });
+  }
+  // Recently active workspaces come first, and workspaces without windows follow by path.
+  groups.sort(
+    (left, right) => right.activity - left.activity || left.root.localeCompare(right.root),
+  );
 
   const now = Date.now() / 1000;
+  const entries = groups.flatMap((group) => [
+    {
+      workspaceRow: true,
+      fields: ["", "", "", group.workspace, group.root],
+      columns: [
+        basename(group.root),
+        "+",
+        statSync(group.root, { throwIfNoEntry: false })?.isDirectory()
+          ? formatCount(group.panes.length, "window")
+          : "missing",
+        group.panes.length > 0 ? formatDuration(now - group.activity) : "-",
+        "-",
+        group.root,
+      ],
+    },
+    ...group.panes.map((pane) => ({
+      fields: [pane.id, pane.windowId, pane.windowIndex, pane.workspace, pane.cwd],
+      columns: [
+        basename(pane.cwd),
+        pane.runName || pane.windowName,
+        pane.dead ? `exited(${pane.deadStatus})` : "running",
+        formatDuration(now - pane.windowActivity),
+        pane.command,
+        pane.title.replaceAll(/[\t\r\n]/g, " "),
+      ],
+    })),
+  ]);
   const display = formatTable(
     ["CHECKOUT", "WINDOW", "STATE", "IDLE", "COMMAND", "TITLE"],
-    panes.map((pane) => [
-      basename(pane.cwd),
-      pane.runName || pane.windowName,
-      pane.dead ? `exited(${pane.deadStatus})` : "running",
-      formatDuration(now - pane.windowActivity),
-      pane.command,
-      pane.title.replaceAll(/[\t\r\n]/g, " "),
-    ]),
+    entries.map((entry) => entry.columns),
   ).split("\n");
   return [
     ["", "", "", "", display[0], ""].join("\t"),
-    ...panes.map((pane, index) =>
-      [pane.id, pane.windowId, pane.windowIndex, pane.workspace, display[index + 1], pane.cwd].join(
-        "\t",
-      ),
-    ),
+    ...entries.map((entry, index) => {
+      const [paneId, windowId, windowIndex, workspace, cwd] = entry.fields;
+      // Bold workspace rows so each group's windows read as belonging to the row above.
+      const text = entry.workspaceRow ? `\x1b[1m${display[index + 1]}\x1b[0m` : display[index + 1];
+      return [paneId, windowId, windowIndex, workspace, text, cwd].join("\t");
+    }),
   ];
 }
 
@@ -762,8 +822,50 @@ function resolveHomeDirectory() {
   if (process.env.WTMUX_HOME) {
     return resolve(process.env.WTMUX_HOME);
   }
+  return join(resolveStateDirectory(), "home");
+}
+
+function resolveStateDirectory() {
   const stateHome = process.env.XDG_STATE_HOME || join(homedir(), ".local", "state");
-  return join(stateHome, "wtmux", "home");
+  return join(stateHome, "wtmux");
+}
+
+// A Git workspace is identified by its common Git directory, whose parent is the main checkout.
+function resolveWorkspaceRoot(workspace) {
+  return basename(workspace) === ".git" ? dirname(workspace) : workspace;
+}
+
+function readWorkspaces() {
+  try {
+    return JSON.parse(readFileSync(join(resolveStateDirectory(), "workspaces.json"), "utf8"));
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return [];
+    }
+    throw error;
+  }
+}
+
+function writeWorkspaces(workspaces) {
+  mkdirSync(resolveStateDirectory(), { recursive: true });
+  writeFileSync(
+    join(resolveStateDirectory(), "workspaces.json"),
+    `${JSON.stringify(workspaces, null, 2)}\n`,
+  );
+}
+
+function rememberWorkspace(workspace) {
+  const workspaces = readWorkspaces();
+  if (!workspaces.includes(workspace)) {
+    writeWorkspaces([...workspaces, workspace]);
+  }
+}
+
+function forgetWorkspace(workspace) {
+  const workspaces = readWorkspaces();
+  if (workspaces.includes(workspace)) {
+    writeWorkspaces(workspaces.filter((candidate) => candidate !== workspace));
+  }
 }
 
 async function resolveWorkspaceDirectory() {
