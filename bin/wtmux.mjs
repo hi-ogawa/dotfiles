@@ -666,10 +666,10 @@ async function handleUiCommand(options) {
     return;
   }
 
-  const [, , windowIndex, selectedWorkspace, , cwd] = row.split("\t");
+  const [, windowId, , selectedWorkspace, , cwd] = row.split("\t");
   const sessionId = await createView(selectedWorkspace, cwd);
-  // Grouped sessions share window indexes, so the index targets the same window.
-  await runTmux(["select-window", "-t", `${sessionId}:${windowIndex}`]);
+  // Target by window ID because renumber-windows can shift indexes after the list was built.
+  await runTmux(["select-window", "-t", `${sessionId}:${windowId}`]);
   enterView(sessionId);
 }
 
