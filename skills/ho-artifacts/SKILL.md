@@ -1,14 +1,14 @@
 ---
 name: ho-artifacts
 description: >-
-  Author visual artifacts, either Markdown notes with SVG figures or self-contained HTML pages, iterate on them locally (alongside ho-dev-notes), and share them for review via gists. Use only when the user explicitly invokes "ho-artifacts".
+  Author visual artifacts, either Markdown notes with SVG figures or self-contained HTML pages, iterate on them locally (alongside ho-dev-notes), and share them via gists on request. Use only when the user explicitly invokes "ho-artifacts".
 ---
 
 # Artifacts
 
 Turn a dev process (PR review, architecture exploration, bug triage, design exploration) into something visual when a picture, a layout, or interaction communicates better than plain Markdown.
 
-This skill delegates the content to you and fixes only the workflow around it. The mechanics below are required so artifacts stay easy to find and share. Everything else is your call.
+This skill delegates the content to you and fixes only the workflow around it. The deliverable is a local file next to its note, which the user opens directly. Share it only when the user asks. The mechanics below are required so artifacts stay easy to find. Everything else is your call.
 
 ## Authoring
 
@@ -56,7 +56,7 @@ Keep the page in one self-contained `.html` file. External scripts and styles fr
 
 ### Sharing
 
-To share an HTML page for review, create an unlisted gist and send the user the GistHost URL. The user reviews the rendered page directly, so iterate on their feedback rather than rendering it yourself.
+When the user asks to share an HTML page, create an unlisted gist and send the user the GistHost URL.
 
 ```bash
 gh gist create app.html --desc "App description"
@@ -68,6 +68,6 @@ Open it through GistHost:
 https://gisthost.github.io/?<gist-id>/<filename>
 ```
 
-To share a Markdown note with SVG figures, publish it as a gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copy of the note so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>`. Keep the local note's relative links unchanged.
+When the user asks to share a Markdown note with SVG figures, publish it as a gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copy of the note so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>`. Keep the local note's relative links unchanged.
 
 Unlisted gists are readable by anyone with the URL, and GistHost pages share a third-party origin. Check for secrets, local paths, and sensitive data first, and give browser storage an app-specific prefix.
