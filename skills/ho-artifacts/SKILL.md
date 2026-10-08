@@ -1,7 +1,7 @@
 ---
 name: ho-artifacts
 description: >-
-  Author visual artifacts, either Markdown notes with SVG figures or self-contained HTML pages, iterate on them locally (alongside ho-dev-notes), and share HTML pages for review via GistHost. Use only when the user explicitly invokes "ho-artifacts".
+  Author visual artifacts, either Markdown notes with SVG figures or self-contained HTML pages, iterate on them locally (alongside ho-dev-notes), and share them for review via gists. Use only when the user explicitly invokes "ho-artifacts".
 ---
 
 # Artifacts
