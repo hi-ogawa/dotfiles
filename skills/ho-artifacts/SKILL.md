@@ -48,7 +48,7 @@ Author artifacts inside the relevant `ho-dev-notes` topic directory, following t
 
 ### Markdown with SVG
 
-Put figures in an `images/` directory next to the note and embed them with relative links, which the local Markdown preview renders. Make each SVG show one point, and state that point in the image alt text. When a figure plots data, generate it with a small script kept beside it rather than drawing values by hand.
+Put figures in an `images/` directory next to the note and embed them with relative links, which the local Markdown preview renders. Make each SVG show one point, and state that point in the image alt text. Give each SVG `width` and `height` equal to its `viewBox`, and size text in those units as page pixels, so a figure displays at its drawn size instead of stretching to the preview width. When a figure plots data, generate it with a small script kept beside it rather than drawing values by hand.
 
 ### HTML
 
