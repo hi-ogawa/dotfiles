@@ -1,0 +1,13 @@
+{
+  "name": "markdown-preview-light",
+  "displayName": "Markdown Preview Light",
+  "description": "Light Markdown preview under a dark editor theme",
+  "publisher": "hi-ogawa",
+  "version": "0.0.1",
+  "private": true,
+  "engines": { "vscode": "^1.80.0" },
+  "categories": ["Other"],
+  "contributes": {
+    "markdown.previewStyles": ["./style.css"]
+  }
+}

@@ -1,0 +1,103 @@
+/* Light Markdown preview under a dark editor theme (contributed via markdown.previewStyles). */
+
+body.vscode-dark {
+  --vscode-editor-background: #ffffff;
+  --vscode-editor-foreground: #1f2328;
+  --vscode-textLink-foreground: #0969da;
+  --vscode-textLink-activeForeground: #0550ae;
+  --vscode-textPreformat-foreground: #1f2328;
+  --vscode-textPreformat-background: rgba(175, 184, 193, 0.2);
+  --vscode-textBlockQuote-background: #f6f8fa;
+  --vscode-textBlockQuote-border: #d0d7de;
+  --vscode-textSeparator-foreground: #d0d7de;
+  --vscode-widget-border: #d0d7de;
+  background-color: #ffffff;
+  color: #1f2328;
+}
+
+body.vscode-dark h1,
+body.vscode-dark h2,
+body.vscode-dark hr,
+body.vscode-dark td {
+  border-color: rgba(0, 0, 0, 0.18);
+}
+
+body.vscode-dark th {
+  border-color: rgba(0, 0, 0, 0.69);
+}
+
+body.vscode-dark pre {
+  --vscode-textCodeBlock-background: #f6f8fa;
+}
+
+/*
+ * Copied from the `.vscode-light` rules of VS Code 1.140.0's built-in highlight.css, with `.vscode-light` replaced by `body.vscode-dark`:
+ * https://github.com/microsoft/vscode/blob/07f806f999227108933c2e30515b26eecc1fda74/extensions/markdown-language-features/media/highlight.css
+ */
+body.vscode-dark .hljs-function,
+body.vscode-dark .hljs-params,
+body.vscode-dark .hljs-number,
+body.vscode-dark .hljs-class  {
+  color: inherit;
+}
+
+body.vscode-dark .hljs-comment,
+body.vscode-dark .hljs-quote,
+body.vscode-dark .hljs-number,
+body.vscode-dark .hljs-class,
+body.vscode-dark .hljs-variable {
+  color: #008000;
+}
+
+body.vscode-dark .hljs-keyword,
+body.vscode-dark .hljs-selector-tag,
+body.vscode-dark .hljs-name,
+body.vscode-dark .hljs-tag {
+  color: #00f;
+}
+
+body.vscode-dark .hljs-built_in,
+body.vscode-dark .hljs-builtin-name {
+  color: #007acc;
+}
+
+body.vscode-dark .hljs-string,
+body.vscode-dark .hljs-section,
+body.vscode-dark .hljs-attribute,
+body.vscode-dark .hljs-literal,
+body.vscode-dark .hljs-template-tag,
+body.vscode-dark .hljs-template-variable,
+body.vscode-dark .hljs-type {
+  color: #a31515;
+}
+
+body.vscode-dark .hljs-subst,
+body.vscode-dark .hljs-selector-attr,
+body.vscode-dark .hljs-selector-pseudo,
+body.vscode-dark .hljs-meta,
+body.vscode-dark .hljs-meta-keyword {
+  color: #2b91af;
+}
+body.vscode-dark .hljs-title,
+body.vscode-dark .hljs-doctag {
+  color: #808080;
+}
+
+body.vscode-dark .hljs-attr {
+  color: #f00;
+}
+
+body.vscode-dark .hljs-symbol,
+body.vscode-dark .hljs-bullet,
+body.vscode-dark .hljs-link {
+  color: #00b0e8;
+}
+
+
+body.vscode-dark .hljs-emphasis {
+  font-style: italic;
+}
+
+body.vscode-dark .hljs-strong {
+  font-weight: bold;
+}

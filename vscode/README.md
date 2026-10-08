@@ -66,3 +66,17 @@ tamasfe.even-better-toml
 ...
 EOF
 ```
+
+## Light Markdown Preview
+
+`markdown-preview-light/` is a local extension that renders the Markdown preview in light colors under a dark editor theme. Light SVG figures then sit on a light page, matching how notes look on GitHub. It only declares a stylesheet through `markdown.previewStyles`, because the `markdown.styles` setting cannot load a file from outside the open workspace or the Markdown file's folder. The stylesheet applies only under a dark theme, including code blocks, which reuse the syntax colors that VS Code uses under a light theme.
+
+VS Code installs a copy, so package and reinstall after changing `style.css`:
+
+```sh
+cd vscode/markdown-preview-light
+npx @vscode/vsce package --skip-license --allow-missing-repository -o /tmp/markdown-preview-light.vsix
+code --install-extension /tmp/markdown-preview-light.vsix
+```
+
+Context: https://github.com/hi-ogawa/dotfiles/issues/77
