@@ -54,7 +54,7 @@ Put figures in an `images/` directory next to the note and embed them with relat
 
 Keep the page in one self-contained `.html` file. External scripts and styles from a CDN are fine when pinned to exact versions, as long as the page stays readable without them.
 
-### GistHost
+### Sharing
 
 To share an HTML page for review, create an unlisted gist and send the user the GistHost URL. The user reviews the rendered page directly, so iterate on their feedback rather than rendering it yourself.
 
@@ -67,5 +67,7 @@ Open it through GistHost:
 ```text
 https://gisthost.github.io/?<gist-id>/<filename>
 ```
+
+To share a Markdown note with SVG figures, publish it as a gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround until there is tooling (hi-ogawa/dotfiles#77), create the gist first, then update its copy of the note so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>`. Keep the local note's relative links unchanged.
 
 Unlisted gists are readable by anyone with the URL, and GistHost pages share a third-party origin. Check for secrets, local paths, and sensitive data first, and give browser storage an app-specific prefix.
