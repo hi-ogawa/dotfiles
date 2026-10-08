@@ -78,5 +78,3 @@ cd vscode/markdown-preview-light
 npx @vscode/vsce package --skip-license --allow-missing-repository -o /tmp/markdown-preview-light.vsix
 code --install-extension /tmp/markdown-preview-light.vsix
 ```
-
-Context: https://github.com/hi-ogawa/dotfiles/issues/77
