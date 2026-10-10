@@ -1,7 +1,7 @@
 {
-  "name": "markdown-preview-light",
-  "displayName": "Markdown Preview Light",
-  "description": "Light Markdown preview under a dark editor theme",
+  "name": "markdown-preview-extras",
+  "displayName": "Markdown Preview Extras",
+  "description": "Light Markdown preview under a dark editor theme, with a floating table of contents",
   "publisher": "hi-ogawa",
   "version": "0.0.1",
   "private": true,
