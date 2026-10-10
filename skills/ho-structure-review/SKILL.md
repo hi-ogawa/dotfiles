@@ -10,6 +10,8 @@ description: >-
 
 Catch the structure and surface problems that human review keeps pointing at, before the human has to.
 
+This review covers structure and surface only. Correctness and verification belong to other reviews, so don't hunt for bugs or run the code or its tests. Judge the code as written, assuming it works.
+
 ## Maintenance Note
 
 For the research behind this skill, read `references/research.md` only when maintaining this skill.
