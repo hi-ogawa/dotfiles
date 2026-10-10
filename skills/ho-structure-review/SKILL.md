@@ -1,7 +1,7 @@
 ---
 name: ho-structure-review
 description: >-
-  Review a code change for the structure and surface problems that human review keeps catching in agent-written code, reading the diff as a newcomer. Use only when the user explicitly invokes "ho-structure-review".
+  Review a code change for the structure and surface problems that human review keeps catching in agent-written code, reading the changed code as a newcomer would, whole and in order. Use only when the user explicitly invokes "ho-structure-review".
 ---
 
 # Structure Review
