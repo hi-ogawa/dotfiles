@@ -6,6 +6,8 @@ Closing a window renumbers the remaining ones, so indices stay contiguous instea
 
 `prefix O` (the prefix key, then Shift+O) opens the most recently copied text, so it works right after a mouse drag-selection. In copy-mode, `o` copies the current selection and opens it. URLs open with `xdg-open`, or `open` on macOS, and anything else opens in VS Code with `code -g`, which accepts a file, `file:line:col`, or a directory. Relative paths resolve against the pane's current directory, and a leading `~` expands to your home directory.
 
+OSC 8 hyperlinks pass through to the outer terminal. tmux detects link support in terminals it recognizes, such as Ghostty, and the config adds it for `xterm-256color` so links also reach VS Code's terminal. Mouse mode keeps clicks from the outer terminal, so hold Shift as well, for example Ctrl+Shift+click in Ghostty.
+
 Install from the repository root after inspecting the destination diff:
 
 ```sh
