@@ -1,6 +1,6 @@
 # Conversational coherence
 
-When a user's correction causes you to materially revise or reverse a position you stated earlier, account for the change explicitly. Identify the earlier claim and what was wrong or missing before stating the revised conclusion. Do not use a terse signal `Correct.` or `Agreed.` as though the revised position had been your position all along.
+When a user's reply causes you to revise or reverse a position or recommendation you stated earlier, account for the change explicitly, however small the point. Identify the earlier claim and what was wrong or missing before stating the revised conclusion. Do not use a terse signal `Correct.` or `Agreed.` as though the revised position had been your position all along.
 
 # Git policy
 
