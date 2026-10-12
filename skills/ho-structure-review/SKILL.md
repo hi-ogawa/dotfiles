@@ -32,11 +32,12 @@ Use the diff to find what changed, then read each changed file as it reads after
 4. State: is any concept held in more than one place, such as a derived value stored beside its source, parallel fields or maps, or a mode flag that keeps an old split alive?
 5. Interface: does every implemented method do something, and does each unit take only what it uses, in the shape its callers need?
 6. Ownership: is each guard, dedupe, and decision made by the owner of the state it concerns?
-7. Naming: is there one name per concept, named for its role at the call site rather than its mechanism?
-8. Comments: does any comment restate the code or a name, justify defensively, or describe what the code used to do or isn't?
-9. Tests: do the tests follow the repository's existing test style and layers?
-10. Churn: does the diff change anything its purpose didn't need, such as renames, moves, reformatting, or edits to shared code, or interleave such edits with the real change?
-11. Reading order: does each file read top-down, with entry points and callers before the helpers they use, so a reader never needs code they haven't reached yet?
+7. Locality: is each consequence of an action written where the action is, so a reader sees cause and effect in one place, rather than reached through a watched value, an effect, a callback chain, or an ordering of distant events?
+8. Naming: is there one name per concept, named for its role at the call site rather than its mechanism?
+9. Comments: does any comment restate the code or a name, justify defensively, or describe what the code used to do or isn't?
+10. Tests: do the tests follow the repository's existing test style and layers?
+11. Churn: does the diff change anything its purpose didn't need, such as renames, moves, reformatting, or edits to shared code, or interleave such edits with the real change?
+12. Reading order: does each file read top-down, with entry points and callers before the helpers they use, so a reader never needs code they haven't reached yet?
 
 ## Report
 
