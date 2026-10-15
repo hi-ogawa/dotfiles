@@ -1,7 +1,7 @@
 ---
 name: ho-dev-notes
 description: >-
-  Personal local investigation notes under ~/.local/share/ho-dev-notes. Use only when the user explicitly mentions "ho-dev-notes". Do not trigger merely because a task involves bug investigation, PR review, architecture exploration, or code analysis.
+  Personal local investigation notes under ~/.local/share/ho-dev-notes, with a review mode for a first look at a change and a triage mode for diagnosing a bug. Use only when the user explicitly mentions "ho-dev-notes".
 ---
 
 # Dev Notes Convention
@@ -16,6 +16,15 @@ Keep durable working notes without committing them:
 - Bug investigation notes
 - Architecture explorations
 - Scratch files and experiments
+
+## Modes
+
+When the user names a mode, read its reference and follow it:
+
+- `review`: a first look at a PR, branch, or commit, building the context to understand and discuss the change. Read `references/review.md`.
+- `triage`: a diagnosis of a bug from an issue, a repro, or a sentence of context. Read `references/triage.md`.
+
+Without a mode, write the note the request calls for.
 
 ## Base Directory
 
@@ -75,7 +84,3 @@ When a note is meant to be shared (for example published as a gist), use a publi
 ```markdown
 [src/foo/bar.ts:42](https://github.com/<owner>/<repo>/blob/<commit-sha>/src/foo/bar.ts#L42)
 ```
-
-## Markdown Style
-
-Do not hard-wrap prose paragraphs in Markdown unless explicitly asked.
