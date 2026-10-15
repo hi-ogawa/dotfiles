@@ -67,7 +67,7 @@ wtmux list --all
 wtmux ui [--all]
 ~~~
 
-Choose a window from the current workspace with fzf, with a live preview of its screen. Each workspace is listed as a bold row followed by its windows, most recently active first. Enter on a window opens a new session view focused on that window, and Enter on a workspace row opens a new window at its checkout root. Ctrl-N opens a new window in the highlighted row's directory, or the current directory when nothing is highlighted. Ctrl-X stops the highlighted window, or forgets the highlighted workspace, and Ctrl-R refreshes the list. Requires fzf.
+Choose a window from the current workspace with fzf, with a live preview of its screen. Each workspace is listed as a heading with its window count, followed by a tree of its windows, most recently active first. Workspace rows have no preview. Enter on a window opens a new session view focused on that window, and Enter on a workspace row opens a new window at its checkout root. Ctrl-N opens a new window in the highlighted row's directory, or the current directory when nothing is highlighted. Ctrl-X stops the highlighted window, or forgets the highlighted workspace, and Ctrl-R refreshes the list. Requires fzf.
 
 Use --all to choose from every wtmux workspace. wtmux remembers each workspace it creates a session for, so the workspace stays listed after its last window closes until you forget it.
 
@@ -638,7 +638,7 @@ async function handleUiCommand(options) {
         "--bind=ctrl-n:print(new)+accept",
         `--bind=ctrl-x:execute-silent(${self} ui --internal-stop {2} {4})+${reload}`,
         `--bind=ctrl-r:${reload}`,
-        "--preview=if [ -n {1} ]; then tmux capture-pane -p -e -t {1}; else echo {6}; git -C {6} worktree list 2>/dev/null; fi",
+        "--preview=[ -z {1} ] || tmux capture-pane -p -e -t {1}",
         "--preview-window=down:50%",
       ],
       rows.join("\n"),
