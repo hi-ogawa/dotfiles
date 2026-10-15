@@ -1,7 +1,7 @@
 {
   "name": "markdown-preview-extras",
   "displayName": "Markdown Preview Extras",
-  "description": "Light Markdown preview under a dark editor theme, with a floating table of contents",
+  "description": "Light Markdown preview under a dark editor theme, with a dark/light switch and a floating table of contents",
   "publisher": "hi-ogawa",
   "version": "0.0.1",
   "private": true,
@@ -9,6 +9,6 @@
   "categories": ["Other"],
   "contributes": {
     "markdown.previewStyles": ["./style.css"],
-    "markdown.previewScripts": ["./toc.js"]
+    "markdown.previewScripts": ["./preview.js"]
   }
 }

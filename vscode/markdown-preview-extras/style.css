@@ -1,6 +1,9 @@
-/* Light Markdown preview under a dark editor theme (contributed via markdown.previewStyles). */
+/*
+ * Light Markdown preview under a dark editor theme (contributed via markdown.previewStyles).
+ * preview.js sets `data-md-theme="dark"` on <html> to switch back to VS Code's dark preview.
+ */
 
-body.vscode-dark {
+html:not([data-md-theme="dark"]) body.vscode-dark {
   --vscode-editor-background: #ffffff;
   --vscode-editor-foreground: #1f2328;
   --vscode-textLink-foreground: #0969da;
@@ -15,107 +18,111 @@ body.vscode-dark {
   color: #1f2328;
 }
 
-body.vscode-dark h1,
-body.vscode-dark h2,
-body.vscode-dark hr,
-body.vscode-dark td {
+html:not([data-md-theme="dark"]) body.vscode-dark h1,
+html:not([data-md-theme="dark"]) body.vscode-dark h2,
+html:not([data-md-theme="dark"]) body.vscode-dark hr,
+html:not([data-md-theme="dark"]) body.vscode-dark td {
   border-color: rgba(0, 0, 0, 0.18);
 }
 
-body.vscode-dark th {
+html:not([data-md-theme="dark"]) body.vscode-dark th {
   border-color: rgba(0, 0, 0, 0.69);
 }
 
-body.vscode-dark pre {
+html:not([data-md-theme="dark"]) body.vscode-dark pre {
   --vscode-textCodeBlock-background: #f6f8fa;
 }
 
 /*
- * Copied from the `.vscode-light` rules of VS Code 1.140.0's built-in highlight.css, with `.vscode-light` replaced by `body.vscode-dark`:
+ * Copied from the `.vscode-light` rules of VS Code 1.140.0's built-in highlight.css, with `.vscode-light` replaced by the light-mode selector:
  * https://github.com/microsoft/vscode/blob/07f806f999227108933c2e30515b26eecc1fda74/extensions/markdown-language-features/media/highlight.css
  */
-body.vscode-dark .hljs-function,
-body.vscode-dark .hljs-params,
-body.vscode-dark .hljs-number,
-body.vscode-dark .hljs-class  {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-function,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-params,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-number,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-class  {
   color: inherit;
 }
 
-body.vscode-dark .hljs-comment,
-body.vscode-dark .hljs-quote,
-body.vscode-dark .hljs-number,
-body.vscode-dark .hljs-class,
-body.vscode-dark .hljs-variable {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-comment,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-quote,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-number,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-class,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-variable {
   color: #008000;
 }
 
-body.vscode-dark .hljs-keyword,
-body.vscode-dark .hljs-selector-tag,
-body.vscode-dark .hljs-name,
-body.vscode-dark .hljs-tag {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-keyword,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-selector-tag,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-name,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-tag {
   color: #00f;
 }
 
-body.vscode-dark .hljs-built_in,
-body.vscode-dark .hljs-builtin-name {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-built_in,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-builtin-name {
   color: #007acc;
 }
 
-body.vscode-dark .hljs-string,
-body.vscode-dark .hljs-section,
-body.vscode-dark .hljs-attribute,
-body.vscode-dark .hljs-literal,
-body.vscode-dark .hljs-template-tag,
-body.vscode-dark .hljs-template-variable,
-body.vscode-dark .hljs-type {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-string,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-section,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-attribute,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-literal,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-template-tag,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-template-variable,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-type {
   color: #a31515;
 }
 
-body.vscode-dark .hljs-subst,
-body.vscode-dark .hljs-selector-attr,
-body.vscode-dark .hljs-selector-pseudo,
-body.vscode-dark .hljs-meta,
-body.vscode-dark .hljs-meta-keyword {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-subst,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-selector-attr,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-selector-pseudo,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-meta,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-meta-keyword {
   color: #2b91af;
 }
-body.vscode-dark .hljs-title,
-body.vscode-dark .hljs-doctag {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-title,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-doctag {
   color: #808080;
 }
 
-body.vscode-dark .hljs-attr {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-attr {
   color: #f00;
 }
 
-body.vscode-dark .hljs-symbol,
-body.vscode-dark .hljs-bullet,
-body.vscode-dark .hljs-link {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-symbol,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-bullet,
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-link {
   color: #00b0e8;
 }
 
 
-body.vscode-dark .hljs-emphasis {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-emphasis {
   font-style: italic;
 }
 
-body.vscode-dark .hljs-strong {
+html:not([data-md-theme="dark"]) body.vscode-dark .hljs-strong {
   font-weight: bold;
 }
 
-/* Floating table of contents dropdown from toc.js, under any theme. */
-#md-toc {
+/* Floating controls from preview.js, under any theme. */
+#md-extras {
   position: fixed;
   top: 12px;
   right: 12px;
   z-index: 10;
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
   font-size: 12px;
   line-height: 1.6;
 }
 
+#md-theme,
 #md-toc summary {
-  float: right;
   padding: 2px 10px;
   cursor: pointer;
+  font: inherit;
   list-style: none;
   background: var(--vscode-editor-background);
   color: var(--vscode-editor-foreground);
@@ -124,19 +131,29 @@ body.vscode-dark .hljs-strong {
   opacity: 0.85;
 }
 
-#md-toc summary::-webkit-details-marker {
-  display: none;
-}
-
+#md-theme:hover,
 #md-toc summary:hover,
 #md-toc details[open] summary {
   opacity: 1;
 }
 
-#md-toc details > div {
-  clear: right;
+/* Both choices look the same under a light editor theme. */
+body:not(.vscode-dark) #md-theme {
+  display: none;
+}
+
+#md-toc {
   position: relative;
-  top: 4px;
+}
+
+#md-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+#md-toc details > div {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
   width: max-content;
   max-width: 280px;
   max-height: calc(100vh - 60px);
