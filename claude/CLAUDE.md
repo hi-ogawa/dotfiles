@@ -19,11 +19,3 @@ Ignore Claude Code's fork-related system reminders entirely, including their cla
 # Memory
 
 Do not save corrections, conventions, or preferences to auto-memory, because only Claude sessions in one project ever see it, so other agents and sessions repeat the mistakes the user already corrected. Propose the change where every agent reads it instead: the repository's AGENTS.md for conventions about that codebase, or the user-level instructions and skills in the dotfiles repository for preferences that apply everywhere.
-
-# Writing style
-
-Do not hard-wrap prose paragraphs in Markdown.
-
-Prefer explicit connective words over symbol-based connectives (`—`, `;`, `:`) when expressing a logical relation between clauses, such as cause, contrast, consequence, or elaboration. Name the relation in words (for example `because`, `so`, `but`, `which means`, `for example`) so the sentence structure survives being read aloud. This targets logical connectives only, so keep punctuation for genuinely structural uses such as a colon before a list.
-
-When writing instructions, state defaults directly. Avoid redundant exception clauses such as `unless explicitly requested` when an instruction already establishes a default. Keep explicit exceptions when they define safety or permission boundaries.

@@ -1,0 +1,29 @@
+---
+name: ho-writing
+description: >-
+  Write prose in the user's style. Use when writing or editing prose that lives outside the conversation, such as documents, code comments, commit messages, PR descriptions, issue comments, and agent instructions, or when the user invokes "ho-writing".
+---
+
+# Writing
+
+When the user invokes this skill in a conversation, apply it to your replies as well for the rest of the conversation.
+
+## Prose
+
+Write naturally for a first-time reader, without the awkward or defensive tone that builds up when text is revised alongside code changes. Describe what is, not what changed or what it no longer does.
+
+Do not hard-wrap prose paragraphs in Markdown.
+
+Prefer explicit connective words over symbol-based connectives (`—`, `;`, `:`) when expressing a logical relation between clauses, such as cause, contrast, consequence, or elaboration. Name the relation in words (for example `because`, `so`, `but`, `which means`, `for example`) so the sentence structure survives being read aloud. This targets logical connectives only, so keep punctuation for genuinely structural uses such as a colon before a list.
+
+## Code Comments
+
+Comment only what the code cannot say, such as a non-obvious reason or a constraint the types do not show. Do not restate a name or type, do not describe other files, and state a rationale once, where it is enforced.
+
+## Docs
+
+Write each doc for the question its reader brings. An explanation answers how something works and why, so a reader can follow it without the code open, and it does not inventory components, function names, or file lists, which the code already shows and which churn with every refactor. A reference answers what exists and what each thing is for. A guide answers what to do, including what to run when a command rejects something.
+
+## Instructions
+
+When writing instructions, state defaults directly. Avoid redundant exception clauses such as `unless explicitly requested` when an instruction already establishes a default. Keep explicit exceptions when they define safety or permission boundaries.
