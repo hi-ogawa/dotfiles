@@ -628,7 +628,8 @@ async function handleUiCommand(options) {
         "--exact",
         "--delimiter=\t",
         "--with-nth=5",
-        "--header-lines=1",
+        // Keep input order while filtering, so matches stay grouped under their workspace.
+        "--no-sort",
         "--layout=reverse",
         `--header=${header}`,
         "--prompt=wtmux> ",
@@ -730,47 +731,58 @@ async function listUiRows(options, workspaceDirectory) {
     (left, right) => right.activity - left.activity || left.root.localeCompare(right.root),
   );
 
+  // Window columns align across every group, so the tree reads as one table under the headings.
   const now = Date.now() / 1000;
-  const entries = groups.flatMap((group) => [
-    {
-      workspaceRow: true,
-      fields: ["", "", "", group.workspace, group.root],
-      columns: [
-        basename(group.root),
-        "+",
-        statSync(group.root, { throwIfNoEntry: false })?.isDirectory()
-          ? formatCount(group.panes.length, "window")
-          : "missing",
-        group.panes.length > 0 ? formatDuration(now - group.activity) : "-",
-        "-",
-        group.root,
-      ],
-    },
-    ...group.panes.map((pane) => ({
-      fields: [pane.id, pane.windowId, pane.windowIndex, pane.workspace, pane.cwd],
-      columns: [
-        basename(pane.cwd),
-        pane.runName || pane.windowName,
-        pane.dead ? `exited(${pane.deadStatus})` : "running",
-        formatDuration(now - pane.windowActivity),
-        pane.command,
-        pane.title.replaceAll(/[\t\r\n]/g, " "),
-      ],
-    })),
-  ]);
-  const display = formatTable(
-    ["CHECKOUT", "WINDOW", "STATE", "IDLE", "COMMAND", "TITLE"],
-    entries.map((entry) => entry.columns),
-  ).split("\n");
-  return [
-    ["", "", "", "", display[0], ""].join("\t"),
-    ...entries.map((entry, index) => {
-      const [paneId, windowId, windowIndex, workspace, cwd] = entry.fields;
-      // Bold workspace rows so each group's windows read as belonging to the row above.
-      const text = entry.workspaceRow ? `\x1b[1m${display[index + 1]}\x1b[0m` : display[index + 1];
-      return [paneId, windowId, windowIndex, workspace, text, cwd].join("\t");
-    }),
-  ];
+  const windowPanes = groups.flatMap((group) => group.panes);
+  const windowColumns = padColumns(
+    windowPanes.map((pane) => [
+      pane.runName || pane.windowName,
+      formatCheckout(pane.cwd, resolveWorkspaceRoot(pane.workspace)),
+      formatDuration(now - pane.windowActivity),
+    ]),
+  );
+  const rows = [];
+  for (const group of groups) {
+    const missing = !statSync(group.root, { throwIfNoEntry: false })?.isDirectory();
+    const details = [shortenHome(group.root)];
+    if (missing) {
+      details.push(`${ANSI.red}missing${ANSI.reset}${ANSI.dim}`);
+    } else if (group.panes.length > 0) {
+      details.push(formatCount(group.panes.length, "window"), formatDuration(now - group.activity));
+    }
+    // Workspaces without windows are dimmed so live work stands out.
+    const name = group.panes.length > 0 ? `${ANSI.bold}${basename(group.root)}` : basename(group.root);
+    const heading = `${group.panes.length > 0 ? "" : ANSI.dim}${name}${ANSI.reset}  ${ANSI.dim}${details.join(" · ")}${ANSI.reset}`;
+    rows.push(["", "", "", group.workspace, heading, group.root]);
+
+    group.panes.forEach((pane, index) => {
+      const [windowName, checkout, idle] = windowColumns[windowPanes.indexOf(pane)];
+      const branch = index === group.panes.length - 1 ? "└" : "├";
+      const state = pane.dead ? `${ANSI.red}exited(${pane.deadStatus})${ANSI.reset} ` : "";
+      const title = pane.title.replaceAll(/[\t\r\n]/g, " ");
+      const text = `${ANSI.dim}  ${branch}${ANSI.reset} ${windowName}  ${ANSI.dim}${checkout}  ${idle}${ANSI.reset}  ${state}${title}`;
+      rows.push([pane.id, pane.windowId, pane.windowIndex, pane.workspace, text, pane.cwd]);
+    });
+  }
+  return rows.map((row) => row.join("\t"));
+}
+
+const ANSI = { reset: "\x1b[0m", bold: "\x1b[1m", dim: "\x1b[2m", red: "\x1b[31m" };
+
+// Name a window's directory only when it differs from its workspace checkout.
+function formatCheckout(cwd, root) {
+  if (cwd === root) {
+    return "";
+  }
+  if (cwd.startsWith(`${root}/`)) {
+    return cwd.slice(root.length + 1);
+  }
+  return cwd === homedir() ? "~" : basename(cwd);
+}
+
+function shortenHome(path) {
+  const home = homedir();
+  return path === home || path.startsWith(`${home}/`) ? `~${path.slice(home.length)}` : path;
 }
 
 async function handlePruneCommand(options) {
@@ -983,6 +995,14 @@ function formatTable(headers, rows) {
         .join("  "),
     )
     .join("\n");
+}
+
+// Pad every column to its widest cell, returning each row as its padded cells.
+function padColumns(rows) {
+  const widths = (rows[0] ?? []).map((_, index) =>
+    Math.max(...rows.map((row) => String(row[index]).length)),
+  );
+  return rows.map((row) => row.map((value, index) => String(value).padEnd(widths[index])));
 }
 
 function formatDuration(seconds) {
