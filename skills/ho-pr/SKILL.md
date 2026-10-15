@@ -12,7 +12,7 @@ Create the PR as a draft.
 - Then write a few short paragraphs of prose covering both why (what was broken, or the motivation) and what this PR does. A bullet list is fine when the prose introduces what it lists, but not as a stand-in for the explanation.
 - Accompany the prose with a minimal snippet, table, or diagram when it shows the change more effectively.
 - Leave out routine validation, such as lint, tests, or CI passing, which the checks already show and which says nothing about the change.
-- Describe behavior a user or reviewer sees, not internals such as function names, file paths, or types, because the diff already shows them and review keeps changing them. A description written this way only needs an update when a change alters the behavior, scope, or motivation, not after every commit.
+- Describe behavior a user or reviewer sees, not internals such as function names, file paths, or types, because the diff already shows them and review keeps changing them. That keeps the description stable while the PR iterates. Time updates following the iteration rule in `ho-writing`.
 - Title follows the repo's commit convention.
 - GitHub's stacked PRs only support a linear stack, and it refuses to retarget a PR inside one. When a PR depends on another in a way that would not form a linear stack, base it on `main`, link the dependency as `- depends on <url>`, and tell the user.
 

@@ -27,3 +27,7 @@ Write each doc for the question its reader brings. An explanation answers how so
 ## Instructions
 
 When writing instructions, state defaults directly. Avoid redundant exception clauses such as `unless explicitly requested` when an instruction already establishes a default. Keep explicit exceptions when they define safety or permission boundaries.
+
+## Iteration
+
+Text that accompanies work in progress, such as a PR description, an issue plan, or a design doc, costs an update on every change. While the work is iterating, update it only when the motivation, scope, or behavior a reader sees changes, and leave smaller drift for one pass at finalization, such as marking a PR ready for review or merging it. At that pass, reread it as a first-time reader and rewrite whatever no longer matches.
