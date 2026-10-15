@@ -59,7 +59,7 @@ claude -r --fork-session --dangerously-skip-permissions
 
 ## Session Search
 
-The OpenCode picker's `-q` searches full session content, but it has not been verified whether `claude -r "<search term>"` does too. Claude Code stores transcripts as JSONL files under `~/.claude/projects/<cwd-slug>/`, so `grep` over that directory works as a fallback. The [ho-sessions](../skills/ho-sessions/SKILL.md) skill currently reads only the OpenCode database.
+The OpenCode picker's `-q` searches full session content, but it has not been verified whether `claude -r "<search term>"` does too. Claude Code stores transcripts as JSONL files under `~/.claude/projects/<cwd-slug>/`, so `grep` over that directory works as a fallback.
 
 ## References
 
