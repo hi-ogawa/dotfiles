@@ -747,12 +747,13 @@ async function listUiRows(options, workspaceDirectory) {
     const details = [shortenHome(group.root)];
     if (missing) {
       details.push(`${ANSI.red}missing${ANSI.reset}${ANSI.dim}`);
-    } else if (group.panes.length > 0) {
-      details.push(formatCount(group.panes.length, "window"), formatDuration(now - group.activity));
+    } else {
+      details.push(formatCount(group.panes.length, "window"));
     }
-    // Workspaces without windows are dimmed so live work stands out.
-    const name = group.panes.length > 0 ? `${ANSI.bold}${basename(group.root)}` : basename(group.root);
-    const heading = `${group.panes.length > 0 ? "" : ANSI.dim}${name}${ANSI.reset}  ${ANSI.dim}${details.join(" · ")}${ANSI.reset}`;
+    if (group.panes.length > 0) {
+      details.push(formatDuration(now - group.activity));
+    }
+    const heading = `${ANSI.bold}${basename(group.root)}${ANSI.reset}  ${ANSI.dim}${details.join(" · ")}${ANSI.reset}`;
     rows.push(["", "", "", group.workspace, heading, group.root]);
 
     group.panes.forEach((pane, index) => {
