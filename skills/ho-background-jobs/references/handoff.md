@@ -22,6 +22,8 @@ Use one of these agent commands:
 
 Default to the unrestricted (YOLO mode) command for OpenCode and Codex, and to the standard command for Claude. Use the other variant when the user requests it.
 
+Write the prompt to a file in a temporary directory, and pass only a short instruction such as `'Read <prompt-file> and follow it.'` as `<initial-prompt>`. A prompt of about 1,000 characters or more passed as an argument can get `wtmux`, which is a node script, killed before it creates the window.
+
 ## Prompt Guidance
 
 Write the prompt as a concise, task-specific opening message for a fresh agent rather than a transcript or generic summary. Carry forward the user's intent and context that the new agent could not recover from the workspace, such as prior decisions, current work state, meaningful uncertainty, or important constraints.
