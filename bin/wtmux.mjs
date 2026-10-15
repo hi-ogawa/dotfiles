@@ -638,7 +638,7 @@ async function handleUiCommand(options) {
         `--bind=ctrl-x:execute-silent(${self} ui --internal-stop {2} {4})+${reload}`,
         `--bind=ctrl-r:${reload}`,
         "--preview=if [ -n {1} ]; then tmux capture-pane -p -e -t {1}; else echo {6}; git -C {6} worktree list 2>/dev/null; fi",
-        "--preview-window=down:70%",
+        "--preview-window=down:50%",
       ],
       rows.join("\n"),
     );
