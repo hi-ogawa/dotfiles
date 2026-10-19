@@ -68,6 +68,6 @@ Open it through GistHost:
 https://gisthost.github.io/?<gist-id>/<filename>
 ```
 
-When the user asks to share a Markdown note with SVG figures, publish it as a gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copy of the note so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>`. Keep the local note's relative links unchanged.
+When the user asks to share a Markdown note with SVG figures, publish it as a gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copy of the note so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>`. Keep the local note's relative links unchanged. Gist lists files by name, so upload the note under a name that sorts before its images, such as `0-<topic>.md`, which makes the gist open on the note.
 
 Unlisted gists are readable by anyone with the URL, and GistHost pages share a third-party origin. Check for secrets, local paths, and sensitive data first, and give browser storage an app-specific prefix.
