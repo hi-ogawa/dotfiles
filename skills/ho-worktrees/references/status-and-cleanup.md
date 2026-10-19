@@ -25,4 +25,5 @@ When the user asks to clean up or remove worktrees:
 
 1. Run a status query first, which also prunes stale entries.
 2. Collect stale worktrees.
-3. List them in a table with statuses and confirm with the user before removing. If the main worktree is not on the latest `main`, include restoring it as a row, following the main worktree check in `SKILL.md`.
+3. Remove the stale worktrees and their local branches. If the main worktree is not on the latest `main`, restore it following the main worktree check in `SKILL.md`.
+4. Report what was removed in a table with statuses, along with any worktree left in place because of an ambiguity, such as a branch matching several PRs, and ask about those.

@@ -14,7 +14,7 @@ Common intents:
 
 - **Create** — "worktree for pr 10466", "new worktree for issue 9812" → create following the naming convention.
 - **Find** — "where was I on the snapshot issue", "which worktree has pr 10466" → locate and describe the one relevant worktree.
-- **Clean** — "remove stale ones", "clean up" → read `references/status-and-cleanup.md`, identify candidates, and confirm before removing.
+- **Clean** — "remove stale ones", "clean up" → read `references/status-and-cleanup.md`, remove the stale ones, and report them.
 
 When this skill triggers without an explicit invocation, apply only the main worktree check, Create, and the steps after a merge, so the worktree exists before the first code change and is gone once its PR is merged. Find and Clean run only on request. Repositories whose convention is committing directly to `main` are out of scope.
 
