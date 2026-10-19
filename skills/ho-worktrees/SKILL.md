@@ -16,7 +16,7 @@ Common intents:
 - **Find** — "where was I on the snapshot issue", "which worktree has pr 10466" → locate and describe the one relevant worktree.
 - **Clean** — "remove stale ones", "clean up" → read `references/status-and-cleanup.md`, identify candidates, and confirm before removing.
 
-When this skill triggers without an explicit invocation, apply only the main worktree check and Create, so the worktree exists before the first code change. Find and Clean run only on request. Repositories whose convention is committing directly to `main` are out of scope.
+When this skill triggers without an explicit invocation, apply only the main worktree check, Create, and the steps after a merge, so the worktree exists before the first code change and is gone once its PR is merged. Find and Clean run only on request. Repositories whose convention is committing directly to `main` are out of scope.
 
 ## Naming Convention
 
@@ -43,6 +43,8 @@ Before creating a worktree, check the main worktree:
 - **Fast-forward fails**: stop and report the divergence. Do not reset.
 
 After noticing a merge into `main`, such as a PR you merged or saw land, fast-forward the main worktree the same way when it is on `main` and clean, and mention it, because the user may run tools or apps from it.
+
+After merging a PR at the user's request, also remove its worktree and local branch when the worktree is clean, and mention it. The merge already settled what the worktree was for, so this needs no separate confirmation. Other worktrees are cleaned up only on request.
 
 ## Creation
 
