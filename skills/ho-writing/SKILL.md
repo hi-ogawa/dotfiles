@@ -14,7 +14,7 @@ Write naturally for a first-time reader, without the awkward or defensive tone t
 
 Do not hard-wrap prose paragraphs in Markdown.
 
-Prefer explicit connective words over symbol-based connectives (`—`, `;`, `:`) when expressing a logical relation between clauses, such as cause, contrast, consequence, or elaboration. Name the relation in words (for example `because`, `so`, `but`, `which means`, `for example`) so the sentence structure survives being read aloud. This targets logical connectives only, so keep punctuation for genuinely structural uses such as a colon before a list.
+Prefer explicit connective words over symbol-based connectives (`—`, `;`, `:`) when expressing a logical relation between clauses, such as cause, contrast, consequence, or elaboration. Name the relation in words (for example `because`, `so`, `but`, `which means`, `for example`) so the sentence structure survives being read aloud. The same applies to a bare comma that restates the preceding phrase in other terms, such as a definition, a value, or an equation, so write `which is`, `meaning`, or `as in` rather than leaving the reader to infer the equivalence. This targets logical connectives only, so keep punctuation for genuinely structural uses such as a colon before a list.
 
 ## Code Comments
 
