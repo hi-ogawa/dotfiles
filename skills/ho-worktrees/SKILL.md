@@ -54,4 +54,6 @@ Determine the type from context:
 - **Issue fix**: `git worktree add ../<repo>-issue-<N>-<slug> -b fix/issue-<N>`.
 - **Topic**: `git worktree add ../<repo>-<slug> -b <slug>`.
 
+If the branch or directory for an issue or topic worktree already exists, stop and report it, because it may belong to another session.
+
 Install dependencies normally in new worktrees when required.
