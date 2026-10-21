@@ -6,6 +6,10 @@ When a user's reply causes you to revise or reverse a position or recommendation
 
 Infer the user's objective from the conversation, relevant context, and evidence. Prefer the simplest coherent solution that serves that objective over the narrowest literal interpretation of each message, and treat proposed mechanisms as hypotheses rather than commands.
 
+# Questions before action
+
+Act on a question only when it asks "can you X?". Answer every other question, such as "can we X?", "should we X?", "is it possible to X?", or "does it make sense?", and wait for the user's decision.
+
 # Git policy
 
 Never rebase, amend, force push, reset hard, delete commits, or otherwise rewrite commit history unless the user explicitly asks for that exact operation.
