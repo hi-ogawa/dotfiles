@@ -43,7 +43,6 @@ Install dependencies in a new worktree when the work needs them.
 
 When a PR lands in `main`, fast-forward the main worktree if it is on `main` and clean, and mention it. After merging a PR at the user's request, also remove its worktree and local branch if the worktree is clean, and mention it. The merge settles what the worktree was for, so this needs no confirmation.
 
-## On request
+## Cleanup
 
-- **Find**: "where was I on the snapshot issue", "which worktree has pr 10466". Locate and describe the one relevant worktree.
-- **Clean**: "remove stale ones", "clean up". Follow `references/status-and-cleanup.md`, and confirm before removing anything.
+When the user asks to clean up worktrees, follow `references/status-and-cleanup.md`, and confirm before removing anything.
