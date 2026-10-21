@@ -8,8 +8,6 @@ description: >-
 
 Branch work happens in sibling worktrees. The main worktree stays on the latest `main`, so the user can run tools and apps from it. Repositories whose convention is committing directly to `main` are out of scope.
 
-When this skill triggers without an explicit invocation, apply only "Starting or continuing work" and "After a merge". The requests under "On request" run only when the user asks for them.
-
 ## Naming
 
 ```
