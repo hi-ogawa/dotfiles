@@ -23,7 +23,7 @@ Choose a concise slug that reflects the work. Infer it from the broader issue or
 
 A worktree belongs to the work it was created for. To continue work, such as a PR you are asked to review or change, use the worktree that already has its branch checked out, whatever its directory name.
 
-For new work, run the main worktree check, then create a worktree. If the branch or directory name already exists, it belongs to other work, so pick a different slug, or ask when the name is fixed, as with `fix/issue-<N>`.
+For new work, run the main worktree check, then create a worktree. If its branch or directory name already exists, stop and report it, because it may be earlier work to continue or another session's work.
 
 - **PR**: `git worktree add --detach ../<repo>-pr-<N>-<slug>`, then `gh pr checkout <N>` as a separate command run in that worktree. Never run `gh pr checkout` in the main worktree.
 - **Issue fix**: `git worktree add ../<repo>-issue-<N>-<slug> -b fix/issue-<N>`.
