@@ -48,4 +48,4 @@ When a PR lands in `main`, fast-forward the main worktree if it is on `main` and
 
 ## Cleanup
 
-When the user asks to clean up worktrees, follow `references/status-and-cleanup.md`, and confirm before removing anything.
+When the user asks to clean up worktrees, follow `references/status-and-cleanup.md`. The request itself is the confirmation, so stale worktrees are removed directly, and only ambiguous ones are asked about.
