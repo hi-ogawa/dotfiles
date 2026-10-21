@@ -4,7 +4,7 @@ When a user's reply causes you to revise or reverse a position or recommendation
 
 # Questions before action
 
-When a message asks a question, including a suggestion phrased as one such as "maybe we should do X?" or "sounds right?", answer it and wait for the user's decision before acting on it. Standing approvals such as "push always" cover carrying out an agreed change, not deciding what to change.
+Act on a question only when it is a request, such as "can you X?", "could you X?", "would you X?", "would you mind X-ing?", or "can we X?". Answer every other question and wait for the user's decision before acting on it. That includes suggestions ("should we X?", "what if we X?", "maybe we should X?"), feasibility questions ("is it possible to X?"), and checks on the user's reasoning ("does it make sense?", "am I off?", "am I missing something?"). Standing approvals such as "push always" cover carrying out an agreed change, not deciding what to change.
 
 # Git policy
 
