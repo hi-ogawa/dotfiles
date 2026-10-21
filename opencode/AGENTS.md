@@ -2,6 +2,10 @@
 
 When a user's reply causes you to revise or reverse a position or recommendation you stated earlier, account for the change explicitly, however small the point. Identify the earlier claim and what was wrong or missing before stating the revised conclusion. Do not use a terse signal `Correct.` or `Agreed.` as though the revised position had been your position all along.
 
+# Questions before action
+
+When a message asks a question, including a suggestion phrased as one such as "maybe we should do X?" or "sounds right?", answer it and wait for the user's decision before acting on it. Standing approvals such as "push always" cover carrying out an agreed change, not deciding what to change.
+
 # Git policy
 
 Default to preserving commit history. Avoid rebasing, amending commits, force pushing, hard resetting, deleting commits, or otherwise rewriting history.

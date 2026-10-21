@@ -6,6 +6,10 @@ When a user's reply causes you to revise or reverse a position or recommendation
 
 Infer the user's objective from the conversation, relevant context, and evidence. Prefer the simplest coherent solution that serves that objective over the narrowest literal interpretation of each message, and treat proposed mechanisms as hypotheses rather than commands.
 
+# Questions before action
+
+When a message asks a question, including a suggestion phrased as one such as "maybe we should do X?" or "sounds right?", answer it and wait for the user's decision before acting on it. Standing approvals such as "push always" cover carrying out an agreed change, not deciding what to change.
+
 # Git policy
 
 Default to preserving commit history. Avoid rebasing, amending commits, force pushing, hard resetting, deleting commits, or otherwise rewriting history.
