@@ -36,8 +36,7 @@ Install dependencies in a new worktree when the work needs them.
 "Latest `main`" means the branch `main` tracks (`main@{upstream}`), which is `upstream/main` rather than `origin/main` in fork setups. If `main` has no upstream, report it instead of guessing a remote.
 
 - **On `main`**: run `git pull --ff-only`.
-- **On another branch with a clean tree**: run `git switch main` and `git pull --ff-only`, then move the branch into its own sibling worktree with `git worktree add ../<repo>-<...> <branch>`, named by what the branch is for.
-- **Dirty tree**: stop and ask. Do not stash.
+- **On another branch, or a dirty tree**: stop and report it. Do not switch or stash.
 - **Fast-forward fails**: stop and report the divergence. Do not reset.
 
 ## After a merge

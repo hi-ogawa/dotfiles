@@ -25,4 +25,4 @@ When the user asks to clean up or remove worktrees:
 
 1. Run a status query first, which also prunes stale entries.
 2. Collect stale worktrees.
-3. List them in a table with statuses and confirm with the user before removing. If the main worktree is not on the latest `main`, include restoring it as a row, following the main worktree check in `SKILL.md`.
+3. List them in a table with statuses and confirm with the user before removing. If the main worktree is not on the latest `main`, include restoring it as a row. On another branch, restoring means switching to `main` and fast-forwarding, then moving that branch into its own sibling worktree named for what it is for. A dirty main worktree is reported, not restored.
