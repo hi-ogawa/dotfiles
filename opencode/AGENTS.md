@@ -2,6 +2,10 @@
 
 When a user's reply causes you to revise or reverse a position or recommendation you stated earlier, account for the change explicitly, however small the point. Identify the earlier claim and what was wrong or missing before stating the revised conclusion. Do not use a terse signal `Correct.` or `Agreed.` as though the revised position had been your position all along.
 
+# Questions before action
+
+Act on a question only when it asks "can you X?". Answer every other question, such as "can we X?", "should we X?", "is it possible to X?", or "does it make sense?", and wait for the user's decision.
+
 # Git policy
 
 Default to preserving commit history. Avoid rebasing, amending commits, force pushing, hard resetting, deleting commits, or otherwise rewriting history.
