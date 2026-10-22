@@ -1,28 +1,31 @@
 # claude-desktop without Cowork
 
-The AUR [`claude-desktop`](https://aur.archlinux.org/packages/claude-desktop) package repackages Anthropic's official Linux build. On x86_64 it hard-depends on QEMU and UEFI firmware because Cowork runs its sandbox in a local VM, which pulls in about 19 packages. [`no-cowork.patch`](no-cowork.patch) makes that VM stack optional and drops the symlinks that map Debian's VM paths to Arch's, so Chat and Code install with no extra dependencies.
+The AUR [`claude-desktop`](https://aur.archlinux.org/packages/claude-desktop) package repackages Anthropic's official Linux build. On x86_64 it hard-depends on QEMU and UEFI firmware because Cowork runs its sandbox in a local VM, which pulls in about 19 packages. This directory holds a copy of that PKGBUILD without the VM stack and its path shims, so Chat and Code install with no extra dependencies. It builds for x86_64 only.
 
 ## Install
 
 ```bash
-git clone https://aur.archlinux.org/claude-desktop.git ~/code/installed/claude-desktop
-cd ~/code/installed/claude-desktop
-git apply ~/code/personal/dotfiles/aur/claude-desktop/no-cowork.patch
+cd ~/code/personal/dotfiles/aur/claude-desktop
 makepkg -si
 ```
 
 ## Upgrade
 
-The app does not update itself on Linux, so rebuild when the AUR package has a new version. Since the patched package keeps the AUR version, `yay -Syu` reports the upgrade like any other AUR package, but install it with these commands rather than through `yay`:
+The app does not update itself on Linux, and `yay -Syu` offers the stock AUR package, which brings the VM stack back. Skip it there and rebuild this copy instead, with the new version from the AUR page:
 
 ```bash
-cd ~/code/installed/claude-desktop
-git checkout PKGBUILD
-git pull
-git apply ~/code/personal/dotfiles/aur/claude-desktop/no-cowork.patch
+cd ~/code/personal/dotfiles/aur/claude-desktop
+sed -i 's/^pkgver=.*/pkgver=<new version>/' PKGBUILD
+updpkgsums
 makepkg -si
 ```
 
-If `git apply` rejects the patch, upstream changed the lines it touches. Edit `PKGBUILD` by hand to keep `qemu-system-x86`, `edk2-ovmf`, `socat`, and `virtiofsd` out of `depends`, delete the Cowork compatibility shims in `package()`, then refresh the patch with `git diff > ~/code/personal/dotfiles/aur/claude-desktop/no-cowork.patch`.
+`updpkgsums` comes from `pacman-contrib`.
 
-To use Cowork later, switch to the unpatched AUR package with `yay -S claude-desktop`.
+The AUR maintainer also adjusts dependencies and path shims between releases, which this copy does not pick up on its own. Compare against the latest AUR PKGBUILD when upgrading and port anything that is not Cowork or aarch64:
+
+```bash
+diff <(curl -s 'https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=claude-desktop') PKGBUILD
+```
+
+To use Cowork later, switch to the stock AUR package with `yay -S claude-desktop`.
