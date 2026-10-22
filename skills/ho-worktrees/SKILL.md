@@ -42,9 +42,9 @@ Install dependencies in a new worktree when the work needs them.
 - **On another branch, or a dirty tree**: stop and report it. Do not switch or stash.
 - **Fast-forward fails**: stop and report the divergence. Do not reset.
 
-## After a merge
+## After a merge or close
 
-When a PR lands in `main`, fast-forward the main worktree if it is on `main` and clean, and mention it. After merging a PR at the user's request, also remove its worktree and local branch if the worktree is clean, and mention it. The merge settles what the worktree was for, so this needs no confirmation.
+When a PR lands in `main`, fast-forward the main worktree if it is on `main` and clean, and mention it. After merging or closing a PR at the user's request, also remove its worktree and local branch if the worktree is clean, and mention it. Merging or closing settles what the worktree was for, so this needs no confirmation.
 
 ## Cleanup
 
