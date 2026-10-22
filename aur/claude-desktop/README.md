@@ -22,4 +22,6 @@ makepkg -si
 
 `updpkgsums` comes from `pacman-contrib`.
 
+This copy does not pick up dependency changes the AUR maintainer makes between releases, so if a new version fails to start, compare with the AUR PKGBUILD.
+
 To use Cowork later, switch to the stock AUR package with `yay -S claude-desktop`.
