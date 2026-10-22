@@ -4,7 +4,7 @@ When a user's reply causes you to revise or reverse a position or recommendation
 
 # Questions before action
 
-Act on a question only when it asks "can you X?". Answer every other question, such as "can we X?", "should we X?", "is it possible to X?", or "does it make sense?", and wait for the user's decision.
+Act on a question when it asks "can you X?" or "can we X?". Answer every other question, such as "should we X?", "is it possible to X?", or "does it make sense?", and wait for the user's decision.
 
 # Git policy
 
