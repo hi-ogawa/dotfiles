@@ -5,7 +5,7 @@ The AUR [`claude-desktop`](https://aur.archlinux.org/packages/claude-desktop) pa
 ## Install
 
 ```bash
-cd ~/code/personal/dotfiles/aur/claude-desktop
+cd aur/claude-desktop
 makepkg -si
 ```
 
@@ -14,7 +14,7 @@ makepkg -si
 The app does not update itself on Linux, and `yay -Syu` offers the stock AUR package, which brings the VM stack back. Skip it there and rebuild this copy instead, with the new version from the AUR page:
 
 ```bash
-cd ~/code/personal/dotfiles/aur/claude-desktop
+cd aur/claude-desktop
 sed -i 's/^pkgver=.*/pkgver=<new version>/' PKGBUILD
 updpkgsums
 makepkg -si
