@@ -1,7 +1,7 @@
 ---
 name: ho-local-repos
 description: >-
-  Use ~/code/ as a local repository library. Use only when the user explicitly writes "ho-local-repos".
+  Use ~/code/ as a local repository library. Use only when the user explicitly writes "ho-local-repos" or "ho-repos".
 ---
 
 # Local Repositories
