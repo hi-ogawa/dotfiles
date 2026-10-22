@@ -1,7 +1,7 @@
 ---
 name: ho-dev-notes
 description: >-
-  Personal local investigation notes under ~/.local/share/ho-dev-notes, with a review mode for a first look at a change and a triage mode for diagnosing a bug. Use only when the user explicitly mentions "ho-dev-notes".
+  Personal local investigation notes under ~/.local/share/ho-dev-notes, with a review mode for a first look at a change and a triage mode for diagnosing a bug. Use only when the user explicitly mentions "ho-dev-notes" or "ho-notes".
 ---
 
 # Dev Notes Convention
