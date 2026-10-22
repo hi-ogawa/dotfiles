@@ -24,6 +24,20 @@ Claude Code manages its own worktrees under `<repo>/.claude/worktrees/` (`claude
 
 - [Worktrees docs](https://code.claude.com/docs/en/worktrees.md)
 
+## Desktop App Folder Access
+
+The Claude desktop app's file and diff panes show only folders granted to the session. The session's own folder is granted, and Claude grants another with `request_directory` or moves the session with `change_directory`. `permissions.additionalDirectories` in `settings.json` gives Claude Code access but does not grant a folder to the panes, and a shell `cd` does not move them either.
+
+A grant asks the user to trust the folder as a workspace unless it sits inside an already trusted one. Trust is the same per-folder flag the CLI records in `~/.claude.json` when you accept its trust dialog, so trust a folder once per machine by starting `claude` in it:
+
+```bash
+cd ~/.local/share/ho-dev-notes && claude
+```
+
+After that, grants for [ho-dev-notes](../skills/ho-dev-notes/SKILL.md) happen without a prompt and notes open in the file pane. Trusting `~/code/personal` and `~/code/others` the same way covers sibling worktrees from [ho-worktrees](../skills/ho-worktrees/SKILL.md), because each one sits inside a trusted parent.
+
+Trust also lets a project's `.claude/settings.json` apply without a prompt, including hooks that run shell commands. Under `~/code/others` that includes pull requests from outside contributors, so check whether a PR touches `.claude/` or `.mcp.json` (`gh pr diff <N> --name-only`) before starting a session in its worktree.
+
 ## Notifications
 
 `settings.json` runs `notify.mjs` from two hooks:
