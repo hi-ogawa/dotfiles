@@ -22,10 +22,4 @@ makepkg -si
 
 `updpkgsums` comes from `pacman-contrib`.
 
-The AUR maintainer also adjusts dependencies and path shims between releases, which this copy does not pick up on its own. Compare against the latest AUR PKGBUILD when upgrading and port anything that is not Cowork or aarch64:
-
-```bash
-diff <(curl -s 'https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=claude-desktop') PKGBUILD
-```
-
 To use Cowork later, switch to the stock AUR package with `yay -S claude-desktop`.
