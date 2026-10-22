@@ -79,8 +79,6 @@ makepkg -si
 yay -S google-chrome visual-studio-code-bin ghostty jq htop nnn yazi ttf-roboto-mono noto-fonts-cjk
 ```
 
-- install Claude Desktop without Cowork, see [aur/claude-desktop](../../aur/claude-desktop/README.md)
-
 - install Homebrew https://brew.sh/
 
 ```bash
