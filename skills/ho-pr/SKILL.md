@@ -11,7 +11,7 @@ Create the PR as a draft.
 - Put related links first as bullets, e.g. `- closes <url>`, `- follow-up to <url>`, `- part of <url>`, `- stacked on <url>`, `- review artifact <url>`.
 - Put a `WIP 🤖` line right after the link bullets, which marks the PR as agent-written and not yet reviewed by the user. Keep it on every later edit, and leave removing it to the user.
 - Then write a few short paragraphs of prose covering both why (what was broken, or the motivation) and what this PR does. A bullet list is fine when the prose introduces what it lists, but not as a stand-in for the explanation.
-- Accompany the prose with a minimal snippet, table, or diagram when it shows the change more effectively.
+- Accompany the prose with a minimal snippet, table, or diagram when it shows the change more effectively. Introduce each one with a sentence that says what it shows, such as "The table shows the error for each way the poll can fail, before and after this PR", so the reader knows what to look for before reading it.
 - Leave out routine validation, such as lint, tests, or CI passing, which the checks already show and which says nothing about the change.
 - Describe behavior a user or reviewer sees, not internals such as function names, file paths, or types, because the diff already shows them and review keeps changing them. That keeps the description stable while the PR iterates. Time updates following the iteration rule in `ho-writing`.
 - Title follows the repo's commit convention.
