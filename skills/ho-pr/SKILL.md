@@ -17,7 +17,7 @@ Create the PR as a draft.
 
 The goal is a description a reviewer can skim for the most information per line. The points below are defaults that usually serve it, so judge each against the PR at hand and drop or bend any that would only add length.
 
-- Lead with what the PR does, and add the motivation when the linked issue or PR does not already give it.
+- Write the why and the what as separate short paragraphs, first what was broken or the motivation, then what this PR does, so a reader can find the change by skimming.
 - Show the change with a minimal snippet, table, list, or diagram when it says more than prose would.
 - Leave out routine validation, such as lint, tests, or CI passing, which the checks already show and which says nothing about the change.
 - Prefer behavior a user or reviewer sees over internals such as function names, file paths, or types, because the diff already shows them and review keeps changing them. Time updates following the iteration rule in `ho-writing`.
