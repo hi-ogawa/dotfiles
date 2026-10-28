@@ -12,7 +12,7 @@ Diagnose by reading, because reading the report and the relevant code usually fi
 
 Distill the report into the smallest case that should still trigger the bug, keeping only the load-bearing config, code, inputs, and steps. Put its files directly in the topic directory beside `TRIAGE.md`, never in a `repro/` subdirectory or inside the inspected repo, and document the install and run commands. For JavaScript projects, use `pnpm` unless the report depends on another package manager.
 
-Run the repro once when it depends only on the latest release of the inspected project's own packages and on files you wrote, and record the command, its output, and the exit code in the note. Stop after about two failed attempts and say what blocked it. Leave any other repro unrun and make running it the first follow-up, for example one that needs third-party packages, a build of the inspected repo, or code copied from the report.
+Run the repro once and record the command, its output, and the exit code in the note. Stop after about two failed attempts and say what blocked it. Install only dependencies you would trust anyway, such as the inspected project's latest release and well-known tools it integrates with, and never an unfamiliar package or code taken from the report. When the repro needs one of those, leave it unrun and make running it the first follow-up.
 
 ## Bug or Intended
 
