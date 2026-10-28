@@ -12,6 +12,8 @@ When the user invokes this skill in a conversation, apply it to your replies as 
 
 Write naturally for a first-time reader, without the awkward or defensive tone that builds up when text is revised alongside code changes. Describe what is, not what changed or what it no longer does.
 
+When a sentence is flagged during revision, first decide what the reader needs from it at that point in the section, then rewrite it for that purpose. Patching only the flagged words keeps a sentence that may not be doing its job.
+
 Do not hard-wrap prose paragraphs in Markdown.
 
 Prefer explicit connective words over symbol-based connectives (`—`, `;`, `:`) when expressing a logical relation between clauses, such as cause, contrast, consequence, or elaboration. Name the relation in words (for example `because`, `so`, `but`, `which means`, `for example`) so the sentence structure survives being read aloud. The same applies to a bare comma whose second phrase could be read as a restatement, an example, or a new fact, such as a definition or a value, so write `which is`, `meaning`, or `as in` rather than leaving the reader to infer the relation. A formula that restates the words right before it can stay after a bare comma, since it cannot be mistaken for a new fact. This targets logical connectives only, so keep punctuation for genuinely structural uses such as a colon before a list.
