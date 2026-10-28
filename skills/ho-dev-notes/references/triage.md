@@ -6,13 +6,13 @@ Work backward from a symptom to its root cause in existing code, and stop at a p
 
 Start from an issue (`gh issue view <n> --json number,url,title,body,comments,state,labels`), a local repro, or a description in the conversation. If it names no symptom, error, or expected behavior, say what is missing and ask.
 
-Diagnose by reading, because reading the report and the relevant code usually finds the cause and never gets stuck the way running things can. Follow error messages and stack traces into call sites and data flow, and check comments and `git log` or `git blame` near the suspect code. Do not run code, build, install, or edit the inspected repo. Apart from the repro below, run something only when the user asks or one quick run would settle what reading cannot, and give up after about two failed attempts.
+Diagnose by reading, because reading the report and the relevant code usually finds the cause and never gets stuck the way running things can. Follow error messages and stack traces into call sites and data flow, and check comments and `git log` or `git blame` near the suspect code. Do not run code, build, install, or edit the inspected repo. Apart from running the distilled repro as described below, run something only when the user asks or one quick run would settle what reading cannot, and give up after about two failed attempts.
 
 ## Repro
 
 Distill the report into the smallest case that should still trigger the bug, keeping only the load-bearing config, code, inputs, and steps. Put its files directly in the topic directory beside `TRIAGE.md`, never in a `repro/` subdirectory or inside the inspected repo, and document the install and run commands. For JavaScript projects, use `pnpm` unless the report depends on another package manager.
 
-Run the repro once when it is cheap, meaning it installs quickly and needs no build of the inspected repo, and record the command, its output, and the exit code in the note. Stop after about two failed attempts and say what blocked it. When it needs heavy setup, such as building the inspected repo or installing browsers, leave it unrun and make running it the first follow-up. Never run code copied from the report or a project it links to, because only code you wrote is known to be safe to run.
+Run the repro once when it depends only on the latest release of the inspected project's own packages and on files you wrote, and record the command, its output, and the exit code in the note. Stop after about two failed attempts and say what blocked it. Leave any other repro unrun and make running it the first follow-up, for example one that needs third-party packages, a build of the inspected repo, or code copied from the report.
 
 ## Bug or Intended
 
