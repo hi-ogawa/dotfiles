@@ -20,7 +20,7 @@ Name the relation between clauses in words, such as `because`, `so`, `but`, or `
 
 ## Revision
 
-Text that accompanies work in progress, such as a PR description, an issue plan, or a design doc, costs an update on every change. While the work is iterating, update it only when the motivation, scope, or behavior a reader sees changes, and leave smaller drift for one pass at finalization, such as marking a PR ready for review or merging it. At that pass, reread it as a first-time reader and rewrite whatever no longer matches. If a change that leaves all three alone still makes the text inaccurate, the text describes internal details. Remove them rather than keep updating them, because the diff already shows them and they keep changing while the work iterates.
+Text that accompanies work in progress, such as a PR description, an issue plan, or a design doc, costs an update on every change. While the work is iterating, update it only when the motivation, scope, or behavior a reader sees changes, and leave smaller drift for one pass at finalization, such as marking a PR ready for review or merging it. At that pass, reread it as a first-time reader and rewrite whatever no longer matches. If a change leaves the motivation, scope, and behavior alone but still makes the text inaccurate, the text describes internal details. Remove them rather than keep updating them, because the diff already shows them and they keep changing while the work iterates.
 
 When a sentence you wrote is flagged during revision, first decide what the reader needs from it at that point in the section, then rewrite it for that purpose. Patching only the flagged words keeps a sentence that may not be doing its job.
 
