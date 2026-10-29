@@ -34,6 +34,8 @@ Create commands:
 
 Install dependencies in a new worktree when the work needs them.
 
+Before changing code, read the repository's agent instructions, such as `AGENTS.md` or `CLAUDE.md`, from the worktree for the work. The copies loaded at session start come from the session's own checkout, which can be on an older commit, so their rules may no longer apply.
+
 ## Main worktree check
 
 "Latest `main`" means the branch `main` tracks (`main@{upstream}`), which is `upstream/main` rather than `origin/main` in fork setups. If `main` has no upstream, report it instead of guessing a remote.
