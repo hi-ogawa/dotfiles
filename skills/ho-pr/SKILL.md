@@ -20,7 +20,7 @@ The goal is a description a reviewer can skim for the most information per line.
 - Write the why and the what as separate short paragraphs, first what was broken or the motivation, then what this PR does, so a reader can find the change by skimming. For example, `Previously, <old behavior and why it is a problem>.` followed by `This PR <what it changes and what that does>.`
 - Show the change with a minimal snippet, table, list, or diagram when it says more than prose would.
 - Leave out routine validation, such as lint, tests, or CI passing, which the checks already show and which says nothing about the change.
-- Prefer behavior a user or reviewer sees over internals such as function names, file paths, or types, because the diff already shows them and review keeps changing them. Time updates following the iteration rule in `ho-writing`.
+- Prefer behavior a user or reviewer sees over internals such as function names, file paths, or types, because the diff already shows them, and they change with every round of review, so the description would keep going stale. Time updates following the Revision section in `ho-writing`.
 
 ## Editing
 
