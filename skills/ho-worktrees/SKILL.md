@@ -38,7 +38,7 @@ Install dependencies in a new worktree when the work needs them.
 
 "Latest `main`" means the branch `main` tracks (`main@{upstream}`), which is `upstream/main` rather than `origin/main` in fork setups. If `main` has no upstream, report it instead of guessing a remote. If `main` tracks `origin/main` while an `upstream` remote exists, report it instead of pulling from the fork.
 
-- **On `main`**: run `git pull --ff-only`. In a fork setup, then run `git push origin main`, so that the fork's `main`, which new app and cloud sessions start from, stays current.
+- **On `main`**: run `git pull --ff-only`. In a fork setup, then run `git push origin main` to keep the fork's `main` current.
 - **On another branch, or a dirty tree**: stop and report it. Do not switch or stash.
 - **Fast-forward or push fails**: stop and report the divergence. Do not reset or force push.
 
