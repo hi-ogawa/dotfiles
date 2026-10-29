@@ -14,6 +14,8 @@ Write naturally for a first-time reader, without the awkward or defensive tone t
 
 When a sentence is flagged during revision, first decide what the reader needs from it at that point in the section, then rewrite it for that purpose. Patching only the flagged words keeps a sentence that may not be doing its job.
 
+When the user asks to fix the English in text they wrote, fix only errors such as grammar, word choice, and tense, and keep their wording and sentence structure, because the text is in their voice. This holds however the request is phrased, such as "fix English issues" or "fix English bugs". If a sentence still reads unclearly, suggest a rewrite instead of applying it.
+
 Do not hard-wrap prose paragraphs in Markdown.
 
 Prefer explicit connective words over symbol-based connectives (`—`, `;`, `:`) when expressing a logical relation between clauses, such as cause, contrast, consequence, or elaboration. Name the relation in words (for example `because`, `so`, `but`, `which means`, `for example`) so the sentence structure survives being read aloud. The same applies to a bare comma whose second phrase could be read as a restatement, an example, or a new fact, such as a definition or a value, so write `which is`, `meaning`, or `as in` rather than leaving the reader to infer the relation. A formula that restates the words right before it can stay after a bare comma, since it cannot be mistaken for a new fact. This targets logical connectives only, so keep punctuation for genuinely structural uses such as a colon before a list.
