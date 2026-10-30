@@ -22,6 +22,6 @@ The goal is a description a reviewer can skim for the most information per line.
 - Leave out routine validation, such as lint, tests, or CI passing, which the checks already show and which says nothing about the change.
 - Prefer behavior a user or reviewer sees over internals such as function names, file paths, or types, because the diff already shows them, and they change with every round of review, so the description would keep going stale. Time updates following the Revision section in `ho-writing`.
 
-## Editing
+## Reading and Editing
 
-A PR description has other writers, such as the user, CI, and other sessions, so treat an edit as a read-modify-write. Read the live body right before writing, rewrite only the stale prose, and keep the rest as it is.
+A PR description has other writers, such as the user, CI, and other sessions, so the body you wrote earlier may no longer be what the PR says. Read the live body right before you edit it or say anything about what it contains. When you edit it, rewrite only the stale prose and keep the rest as it is.
