@@ -24,4 +24,4 @@ The goal is a description a reviewer can skim for the most information per line.
 
 ## Reading and Editing
 
-A PR description has other writers, such as the user, CI, and other sessions, so the body you wrote earlier may no longer be what the PR says. Read the live body right before you edit it or say anything about what it contains. When you edit it, rewrite only the stale prose and keep the rest as it is.
+A PR has other writers, such as the user, CI, and other sessions, so what you wrote or saw earlier may no longer be true. Fetch the PR right before you edit its description or say anything about its current state, such as what the description contains, whether checks pass, or whether it is merged. This includes a passing remark in a summary. When you edit the description, rewrite only the stale prose and keep the rest as it is.
