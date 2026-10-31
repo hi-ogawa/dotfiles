@@ -44,9 +44,7 @@ Install dependencies in a new worktree when the work needs them.
 
 ## After a merge or close
 
-When a PR lands in `main`, fast-forward the main worktree if it is on `main` and clean. When a PR the session worked on is merged or closed, also remove its worktree and local branch if the worktree is clean. Merging or closing settles what the worktree was for, so this needs no confirmation.
-
-Do this even when the session runs inside that worktree, as its last step from the main worktree.
+When a PR lands in `main`, fast-forward the main worktree if it is on `main` and clean. When a PR the session worked on is merged or closed, also remove its worktree and local branch if the worktree is clean, even when the session runs inside it. Merging or closing settles what the worktree was for, so this needs no confirmation.
 
 ## Cleanup
 
