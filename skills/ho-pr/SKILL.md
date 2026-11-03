@@ -37,6 +37,8 @@ gh gist create notes.md --desc "Screenshot description"
 gh gist clone <gist-id>
 ```
 
+Use `gh gist clone` rather than `git clone` on the printed URL, because `gh` uses the configured SSH protocol, and a push over HTTPS has no credentials.
+
 ## Reading and Editing
 
 A PR has other writers, such as the user, CI, and other sessions, so what you wrote or saw earlier may no longer be true. Fetch the PR right before you edit its description or say anything about its current state, such as what the description contains, whether checks pass, or whether it is merged. This includes a passing remark in a summary. When you edit the description, rewrite only the stale prose and keep the rest as it is. Mention the description to the user only when you edited it, not to report that it still matches.
