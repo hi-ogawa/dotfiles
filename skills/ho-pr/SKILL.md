@@ -24,7 +24,13 @@ The goal is a description a reviewer can skim for the most information per line.
 
 ## Screenshots
 
-Add a screenshot only when the user asks for one. Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo.
+Add a screenshot only when the user asks for one. Frame it in a mock browser window so it stands apart from the GitHub page, by running this skill's script from a project that has Playwright installed.
+
+```bash
+node <skill-dir>/scripts/frame-screenshot.mjs <input.png> <output.png>
+```
+
+Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo.
 
 ```markdown
 ![<what the image shows>](https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>)
