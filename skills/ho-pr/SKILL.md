@@ -24,9 +24,7 @@ The goal is a description a reviewer can skim for the most information per line.
 
 ## Screenshots
 
-Include a screenshot when a PR adds or heavily changes UI that is hard to describe in words, so a reviewer can see it without running the app.
-
-Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo. Anyone with the URL can read the gist, so check the image for sensitive data first.
+Add a screenshot only when the user asks for one. Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo. Anyone with the URL can read the gist, so check the image for sensitive data first.
 
 ```markdown
 ![<what the image shows>](https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>)
