@@ -32,12 +32,11 @@ Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an
 ![<what the image shows>](https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>)
 ```
 
-`gh gist create` rejects binary files such as PNG, so create the gist with a short text file, then clone it, commit the image, and push with `gh`'s credentials.
+`gh gist create` rejects binary files such as PNG, so create the gist with a short text file, then clone it, commit the image, and push.
 
 ```bash
 gh gist create notes.md --desc "Screenshot description"
-git clone https://gist.github.com/<gist-id>.git
-git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push
+gh gist clone <gist-id>
 ```
 
 ## Reading and Editing
