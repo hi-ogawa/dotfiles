@@ -83,6 +83,7 @@ scoop install anki
 - Setup SSH and GitHub:
   - `ssh-keygen -t ed25519 -C <email>`
   - https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+  - `ssh -T git@gist.github.com` to accept the host key once, because `gh gist clone` uses SSH
 
 ### Dotfiles: WSL vs Windows
 
