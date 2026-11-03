@@ -24,7 +24,7 @@ The goal is a description a reviewer can skim for the most information per line.
 
 ## Screenshots
 
-Add a screenshot only when the user asks for one. Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo. Anyone with the URL can read the gist, so check the image for sensitive data first.
+Add a screenshot only when the user asks for one. Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo. Skip this for a private repo, because anyone with the URL can read the gist.
 
 ```markdown
 ![<what the image shows>](https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>)
