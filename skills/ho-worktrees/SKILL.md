@@ -39,12 +39,12 @@ Install dependencies in a new worktree when the work needs them.
 "Latest `main`" means the branch `main` tracks (`main@{upstream}`), which is `upstream/main` rather than `origin/main` in fork setups. If `main` has no upstream, report it instead of guessing a remote. If `main` tracks `origin/main` while an `upstream` remote exists, report it instead of pulling from the fork.
 
 - **On `main`**: run `git pull --ff-only`. In a fork setup, then run `git push origin main` to keep the fork's `main` current.
-- **On another branch, or a dirty tree**: stop and report it. Do not switch or stash.
-- **Fast-forward or push fails**: stop and report the divergence. Do not reset or force push.
+- **On another branch, or with uncommitted changes to tracked files**: stop and report it. Do not switch or stash. Untracked files do not count, because `git pull --ff-only` refuses to overwrite them.
+- **Fast-forward or push fails**: stop and report the cause. Do not reset or force push.
 
 ## After a merge or close
 
-When a PR lands in `main`, fast-forward the main worktree if it is on `main` and clean. When a PR the session worked on is merged or closed, also remove its worktree and local branch if the worktree is clean, even when the session runs inside it. Merging or closing settles what the worktree was for, so this needs no confirmation.
+When a PR lands in `main`, fast-forward the main worktree if it passes the main worktree check. When a PR the session worked on is merged or closed, also remove its worktree and local branch if the worktree is clean, even when the session runs inside it. Merging or closing settles what the worktree was for, so this needs no confirmation.
 
 ## Cleanup
 
