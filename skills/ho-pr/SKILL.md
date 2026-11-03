@@ -22,6 +22,21 @@ The goal is a description a reviewer can skim for the most information per line.
 - Leave out routine validation, such as lint, tests, or CI passing, which the checks already show and which says nothing about the change.
 - Prefer behavior a user or reviewer sees over internals such as function names, file paths, or types, because the diff already shows them, and they change with every round of review, so the description would keep going stale. Time updates following the Revision section in `ho-writing`.
 
+## Screenshots
+
+Add a screenshot only when the user asks for one. Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo.
+
+```markdown
+![<what the image shows>](https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>)
+```
+
+`gh gist create` rejects binary files such as PNG, so create the gist with a short text file, then clone it, commit the image, and push.
+
+```bash
+gh gist create notes.md --desc "Screenshot description"
+gh gist clone <gist-id>
+```
+
 ## Reading and Editing
 
 A PR has other writers, such as the user, CI, and other sessions, so what you wrote or saw earlier may no longer be true. Fetch the PR right before you edit its description or say anything about its current state, such as what the description contains, whether checks pass, or whether it is merged. This includes a passing remark in a summary. When you edit the description, rewrite only the stale prose and keep the rest as it is. Mention the description to the user only when you edited it, not to report that it still matches.

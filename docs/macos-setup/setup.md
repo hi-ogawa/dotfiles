@@ -68,6 +68,8 @@ Verify:
 
 ```sh
 ssh -T git@github.com
+# Accept the host key once, because `gh gist clone` uses SSH
+ssh -T git@gist.github.com
 gh auth status
 ```
 
