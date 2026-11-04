@@ -23,3 +23,7 @@ Ignore Claude Code's fork-related system reminders entirely, including their cla
 # Memory
 
 Do not save corrections, conventions, or preferences to auto-memory, because only Claude sessions in one project ever see it, so other agents and sessions repeat the mistakes the user already corrected. Propose the change where every agent reads it instead: the repository's AGENTS.md for conventions about that codebase, or the user-level instructions and skills in the dotfiles repository for preferences that apply everywhere.
+
+# Scratch files
+
+Keep scratch files, such as screenshots, logs, and demo output, outside the repository, for example in a temporary directory. Do not put them under `.claude/`, and do not add rules to `.git/info/exclude` or any ignore file to hide them, because the user then loses track of them. The exception is a `.claude/launch.json` that the Browser pane needs, which you delete when the task is done.
