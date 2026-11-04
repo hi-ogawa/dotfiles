@@ -33,6 +33,7 @@ When the user asks to clean up or remove worktrees:
 
 VS Code's Open Recent list keeps removed worktrees, because VS Code never drops missing folders by itself. VS Code holds the list in memory and writes it back on its next change, so an edit made while VS Code is open is lost. The script below refuses to run in that case.
 
-1. Run `<skill-dir>/scripts/vscode-prune-recent.py`. It prints the entries that point to missing paths, removes them, and saves a backup next to the database.
-2. If it reports that VS Code is running, do not quit VS Code. Run it again with `--dry-run` to count the entries, then give the user the command to run after quitting VS Code.
-3. Report how many entries were removed, or how many are waiting for the user's run.
+1. Run `<skill-dir>/scripts/vscode-prune-recent.py --dry-run` to list the entries that point to missing paths. If there are none, stop.
+2. Run `<skill-dir>/scripts/vscode-prune-recent.py` to remove them. It saves a backup next to the database.
+3. If it reports that VS Code is running, do not quit VS Code. Give the user the command to run after quitting VS Code.
+4. Report how many entries were removed, or how many are waiting for the user's run.
