@@ -27,4 +27,12 @@ When the user asks to clean up or remove worktrees:
 2. Collect stale worktrees.
 3. Remove the stale worktrees and their local branches. If the main worktree is on `main` and clean, fast-forward it.
 4. Report what was removed in a table with statuses. Ask about anything left in place: a worktree that couldn't be classified with confidence, such as a branch matching several PRs, and a main worktree that is on another branch or dirty.
-5. Run `<skill-dir>/scripts/vscode-prune-recent.py` to remove missing folders, such as the removed worktrees, from VS Code's Open Recent list, because VS Code keeps them. It refuses to run while VS Code is open. In that case, tell the user to quit VS Code and run it themselves.
+5. Prune VS Code's Open Recent list as described in the next section.
+
+## VS Code Open Recent List
+
+VS Code's Open Recent list keeps removed worktrees, because VS Code never drops missing folders by itself. VS Code holds the list in memory and writes it back on its next change, so an edit made while VS Code is open is lost. The script below refuses to run in that case.
+
+1. Run `<skill-dir>/scripts/vscode-prune-recent.py`. It prints the entries that point to missing paths, removes them, and saves a backup next to the database.
+2. If it reports that VS Code is running, do not quit VS Code. Run it again with `--dry-run` to count the entries, then give the user the command to run after quitting VS Code.
+3. Report how many entries were removed, or how many are waiting for the user's run.
