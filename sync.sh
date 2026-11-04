@@ -9,7 +9,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Platform file mappings
 FILES_LINUX=(
   "bin/wtmux.mjs:$HOME/.local/bin/wtmux"
-  "bin/vscode-prune-recent.py:$HOME/.local/bin/vscode-prune-recent"
   "shell/.bashrc:$HOME/.bashrc"
   "shell/.zshrc:$HOME/.zshrc"
   "tmux/.tmux.conf:$HOME/.tmux.conf"
