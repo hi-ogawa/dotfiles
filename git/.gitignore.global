@@ -1,3 +1,5 @@
 .venv
 .vscode
-.claude/
+.claude/settings.local.json
+.claude/worktrees/
+.claude/launch.json
