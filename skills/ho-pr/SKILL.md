@@ -13,6 +13,10 @@ Create the PR as a draft.
 - Title follows the repo's commit convention.
 - GitHub's stacked PRs only support a linear stack, and it refuses to retarget a PR inside one. When a PR depends on another in a way that would not form a linear stack, base it on `main`, link the dependency as `- depends on <url>`, and tell the user.
 
+## Scope
+
+A PR is a draft for evaluating a change, so it shows the whole intended change. Scope it by intent, not by what avoids overlap with other open PRs. PRs that overlap, duplicate each other, or conflict are fine, because conflicts are resolved when one of them lands. Do not split, narrow, fold, or close a PR to avoid them.
+
 ## Description
 
 The goal is a description a reviewer can skim for the most information per line. The points below are defaults that usually serve it, so judge each against the PR at hand and drop or bend any that would only add length.
