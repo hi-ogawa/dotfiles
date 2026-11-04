@@ -28,16 +28,18 @@ The goal is a description a reviewer can skim for the most information per line.
 
 ## Screenshots
 
-Add a screenshot only when the user asks for one. When it shows the whole page, frame it in a mock browser window so it stands apart from the GitHub page, by running this skill's script, which needs ImageMagick.
+Add a screenshot only when the user asks for one. Show the whole page, so a reviewer can judge the change within the UI around it. A close-up of the changed component can follow as a second image. Take it from the real UI rather than from a preview that renders only part of the component.
+
+Frame a whole-page screenshot in a mock browser window so it stands apart from the GitHub page, by running this skill's script, which needs ImageMagick. Pass the capture's device pixel ratio as the scale, such as 2 for a capture at `deviceScaleFactor: 2`, because the frame is otherwise drawn at 1x and looks too small next to the page.
 
 ```bash
-<skill-dir>/scripts/frame-screenshot.sh <input.png> <output.png>
+<skill-dir>/scripts/frame-screenshot.sh <input.png> <output.png> [scale]
 ```
 
-Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo.
+Host it in an unlisted gist and embed its raw URL, because `gh` cannot upload an image to a PR description and a committed image would land in the repo. Set a width, because GitHub otherwise shows the image at its full pixel width. About 800 suits a whole page, and a component's on-screen CSS width suits a close-up.
 
-```markdown
-![<what the image shows>](https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>)
+```html
+<img src="https://gist.githubusercontent.com/<user>/<gist-id>/raw/<basename>" alt="<what the image shows>" width="<width>">
 ```
 
 `gh gist create` rejects binary files such as PNG, so create the gist with a short text file, then clone it, commit the image, and push.
