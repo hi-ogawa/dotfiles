@@ -28,7 +28,7 @@ The goal is a description a reviewer can skim for the most information per line.
 
 ## Screenshots
 
-Add a screenshot only when the user asks for one. When it shows the whole page, frame it in a mock browser window so it stands apart from the GitHub page, by running this skill's script, which needs ImageMagick.
+Add a screenshot only when the user asks for one. Decide case by case what it shows, such as the whole page or one component, so it carries enough of the UI to evaluate the change. Capture it at a device scale factor of 1, so the image shows at its on-screen size and the frame matches the page. When it shows the whole page, frame it in a mock browser window so it stands apart from the GitHub page, by running this skill's script, which needs ImageMagick.
 
 ```bash
 <skill-dir>/scripts/frame-screenshot.sh <input.png> <output.png>
