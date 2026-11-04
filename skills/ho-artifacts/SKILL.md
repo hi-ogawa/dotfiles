@@ -8,7 +8,7 @@ description: >-
 
 Turn a dev process (PR review, architecture exploration, bug triage, design exploration) into something visual when a picture, a layout, or interaction communicates better than plain Markdown.
 
-This skill delegates the content to you and fixes only the workflow around it. The deliverable is a local file next to its note, which the user opens directly. Share it only when the user asks. The mechanics below are required so artifacts stay easy to find. Everything else is your call.
+This skill delegates the content to you and fixes only the workflow around it. The deliverable is a local file next to the topic's notes, which the user opens directly. Share it only when the user asks. The mechanics below are required so artifacts stay easy to find. Everything else is your call.
 
 ## Authoring
 
@@ -44,11 +44,11 @@ The user reviews the draft and steers from there. `references/` holds material t
 
 ### Location
 
-Author artifacts inside the relevant `ho-dev-notes` topic directory, following that skill's convention, so they live next to their note. If there is no note, use a temporary directory.
+Author artifacts inside the relevant `ho-dev-notes` topic directory, following that skill's convention, so they live next to the topic's notes. If there is no topic directory, use a temporary directory.
 
 ### Markdown with SVG
 
-Put figures in an `images/` directory next to the note and embed them with relative links, which the local Markdown preview renders. Make each SVG show one point, and state that point in the image alt text. Give each SVG `width` and `height` equal to its `viewBox`, and size text in those units as page pixels, so a figure displays at its drawn size instead of stretching to the preview width. When a figure plots data, generate it with a small script kept beside it rather than drawing values by hand.
+Put figures in an `images/` directory in the topic directory and embed them with relative links, which the local Markdown preview renders. Make each SVG show one point, and state that point in the image alt text. Give each SVG `width` and `height` equal to its `viewBox`, and size text in those units as page pixels, so a figure displays at its drawn size instead of stretching to the preview width. When a figure plots data, generate it with a small script kept beside it rather than drawing values by hand.
 
 ### HTML
 
@@ -68,6 +68,6 @@ Open it through GistHost:
 https://gisthost.github.io/?<gist-id>/<filename>
 ```
 
-When the user asks to share a Markdown note with SVG figures, publish it as a gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copy of the note so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/img-<n>-<basename>`. Keep the local note's relative links unchanged. Gist lists files by name, so upload the notes as `<n>-<topic>.md` and the images as `img-<n>-<basename>`, each numbered in reading order from 0. This makes the gist open on the first note and keeps both groups in order.
+When the user asks to share Markdown notes with SVG figures, publish the topic's notes and figures as one gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copies of the notes so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/img-<n>-<basename>`. Keep the local notes' relative links unchanged. Gist lists files by name, so upload the notes as `<n>-<name>.md` and the images as `img-<n>-<basename>`, each numbered in reading order from 0 with the primary note first. Name each note for what it covers, such as the topic for the primary note. This makes the gist open on the primary note and keeps both groups in order.
 
 Unlisted gists are readable by anyone with the URL, and GistHost pages share a third-party origin. Check for secrets, local paths, and sensitive data first, and give browser storage an app-specific prefix.
