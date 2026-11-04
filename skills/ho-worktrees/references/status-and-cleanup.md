@@ -12,7 +12,7 @@ Gather what's needed to classify each non-main worktree:
 - **Git state** — dirty, commits ahead of main.
 - **PR state** — check every worktree branch for an associated PR via `gh`, regardless of whether the worktree path is PR-shaped. Use a PR number from a PR-shaped path as an additional lookup hint, not as the condition for checking PR state.
 
-When matching worktree branches to PRs, include open, merged, and closed PRs. If multiple PRs use the same branch name, prefer an open PR or one whose head commit matches the worktree; otherwise report the ambiguity instead of guessing.
+When matching worktree branches to PRs, include open, merged, and closed PRs. If multiple PRs use the same branch name, prefer an open PR or one whose head commit matches the worktree. When none of them is preferred, classify the worktree by any of them if they all give the same result, such as a merged PR and a closed one, which are both stale. Report the ambiguity only when they would give different results.
 
 Classification:
 
@@ -26,7 +26,7 @@ When the user asks to clean up or remove worktrees:
 1. Run a status query first, which also prunes stale entries.
 2. Collect stale worktrees.
 3. Remove the stale worktrees and their local branches. If the main worktree is on `main` and clean, fast-forward it.
-4. Report what was removed in a table with statuses. Ask about anything left in place: a worktree that couldn't be classified with confidence, such as a branch matching several PRs, and a main worktree that is on another branch or dirty.
+4. Report what was removed in a table with statuses. Ask about anything left in place: a worktree that couldn't be classified with confidence, such as a branch whose PRs would classify it differently, and a main worktree that is on another branch or dirty.
 5. Prune VS Code's Open Recent list as described in the next section.
 
 ## VS Code Open Recent List
