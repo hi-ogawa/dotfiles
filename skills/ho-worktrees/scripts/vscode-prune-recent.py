@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
 
+"""Remove entries for missing paths from VS Code's Open Recent list.
+
+Tested only with VS Code 1.144.1 on macOS 26.5. The script relies on VS Code
+internals that are not a public API:
+
+- the list is stored under KEY in SHARED_DB
+- each entry has a folderUri, fileUri, or workspace.configPath
+- a running VS Code holds GLOBAL_DB open, which lsof can detect
+
+On another platform or VS Code version, check these with --dry-run and lsof
+before a real run. If the running check misses VS Code, the edit is silently lost.
+"""
+
 import argparse
 import json
 import os
@@ -12,7 +25,7 @@ from urllib.parse import unquote, urlparse
 
 KEY = "history.recentlyOpenedPathsList"
 
-# Since VS Code 1.144, the recent list lives in storage shared with the agents window.
+# Older versions stored the list in GLOBAL_DB. It moved to storage shared with the agents window.
 SHARED_DB = Path.home() / ".vscode-shared/sharedStorage/state.vscdb"
 
 if sys.platform == "darwin":
