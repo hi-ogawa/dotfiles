@@ -41,12 +41,13 @@ ${XDG_DATA_HOME:-~/.local/share}/ho-dev-notes
   <project-name>/
     <topic-slug>/
       <note>.md
+      <other-note>.md
       artifacts...
 ```
 
 Use project directory name for `<project-name>`. If the project directory is a git worktree, check main worktree's directory name (the first item in `git worktree list`) for the project name. If the project is not a git repo, use a descriptive name.
 
-Each topic gets a directory, not only a markdown file, so related repros, logs, screenshots, or fixtures can sit beside the note. Use the primary filename that matches the workflow, such as `NOTE.md`, `TRIAGE.md`, or `REVIEW.md`.
+Each topic gets a directory, not only a markdown file, so related repros, logs, screenshots, or fixtures can sit beside the notes. A topic can hold several notes. The primary note uses the filename that matches the workflow, such as `NOTE.md`, `TRIAGE.md`, or `REVIEW.md`, and other notes take names that say what they cover.
 
 ## Note Header
 
