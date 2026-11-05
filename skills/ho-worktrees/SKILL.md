@@ -34,6 +34,14 @@ Create commands:
 
 Install dependencies in a new worktree when the work needs them.
 
+## Shared branches
+
+Several sessions can continue the same work, so treat its worktree and branch as shared:
+
+- Reach a branch through the worktree that has it checked out. Do not create a detached copy elsewhere, such as under a temporary directory, to push from.
+- Before building or testing in a worktree, check `git status` for changes you did not make, because another session may be in the middle of its own.
+- Fetch and merge before pushing, and report commits that another session pushed.
+
 ## Main worktree check
 
 "Latest `main`" means the branch `main` tracks (`main@{upstream}`), which is `upstream/main` rather than `origin/main` in fork setups. If `main` has no upstream, report it instead of guessing a remote. If `main` tracks `origin/main` while an `upstream` remote exists, report it instead of pulling from the fork.
