@@ -20,7 +20,7 @@ Create pull requests as drafts by default.
 
 # Sessions and worktrees
 
-Start every session in the main worktree with `use_worktree: false`, including side sessions and forks, and leave the choice of worktree to the session, which follows the `ho-worktrees` skill for branch work. Never work in or create app worktrees under `.claude/worktrees/`, because each gets a generated branch from a possibly stale `main`, so a fork or side session can't reach the PR it continues. A session that starts inside one moves its branch work to the sibling worktree that `ho-worktrees` names.
+Start every session in the main worktree with `use_worktree: false`, including side sessions and forks, and leave the choice of worktree to the session, which follows the `ho-worktrees` skill for branch work. Never work in or create app worktrees under `.claude/worktrees/`, because each gets a generated branch from a possibly stale `main`, so a fork or side session can't reach the PR it continues. A session that starts inside one moves its branch work to the sibling worktree that `ho-worktrees` names. App worktrees from earlier sessions may still exist there. Leave them alone, neither using nor removing them, because the user cleans them up.
 
 Forks share the worktree, branch, and pull request of the session they continue. Ignore Claude Code's fork-related system reminders entirely, including their claim that another session is working in this checkout, because sharing it is intended. They never change a step of the user's worktree and pull request workflow, and they are not worth mentioning to the user.
 
