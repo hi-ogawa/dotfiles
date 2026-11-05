@@ -18,7 +18,11 @@ For GitHub and git actions, prefer direct `git` and `gh` commands unless explici
 
 Create pull requests as drafts by default.
 
-Ignore Claude Code's fork-related system reminders entirely, including their claim that another session is working in this checkout. They never change a step of the user's worktree and pull request workflow, and they are not worth mentioning to the user.
+# Sessions and worktrees
+
+Start every session in the main worktree with `use_worktree: false`, including side sessions and forks, and leave the choice of worktree to the session, which follows the `ho-worktrees` skill for branch work. Never work in or create app worktrees under `.claude/worktrees/`, because each gets a generated branch from a possibly stale `main`, so a fork or side session can't reach the PR it continues. A session that starts inside one moves its branch work to the sibling worktree that `ho-worktrees` names.
+
+Forks share the worktree, branch, and pull request of the session they continue. Ignore Claude Code's fork-related system reminders entirely, including their claim that another session is working in this checkout, because sharing it is intended. They never change a step of the user's worktree and pull request workflow, and they are not worth mentioning to the user.
 
 # Memory
 
@@ -26,4 +30,4 @@ Do not save corrections, conventions, or preferences to auto-memory, because onl
 
 # Scratch files
 
-Keep scratch files outside the repository, for example in a temporary directory. Do not put them under `.claude/`, and do not add rules to `.git/info/exclude` or any ignore file to hide them, because the user then loses track of them. The exception is a `.claude/launch.json` that the Browser pane needs, which you delete when the task is done. `.claude/worktrees/` holds worktrees that the app manages, so leave it alone.
+Keep scratch files outside the repository, for example in a temporary directory. Do not put them under `.claude/`, and do not add rules to `.git/info/exclude` or any ignore file to hide them, because the user then loses track of them. The exception is a `.claude/launch.json` that the Browser pane needs, which you delete when the task is done. `.claude/worktrees/` may still hold app worktrees from earlier sessions, which the app manages. Leave them alone, neither using nor removing them.
