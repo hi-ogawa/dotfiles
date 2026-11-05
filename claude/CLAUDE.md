@@ -30,4 +30,4 @@ Do not save corrections, conventions, or preferences to auto-memory, because onl
 
 # Scratch files
 
-Keep scratch files outside the repository, for example in a temporary directory. Do not put them under `.claude/`, and do not add rules to `.git/info/exclude` or any ignore file to hide them, because the user then loses track of them. The exception is a `.claude/launch.json` that the Browser pane needs, which you delete when the task is done. `.claude/worktrees/` may still hold app worktrees from earlier sessions. Leave them alone, neither using nor removing them, because the user cleans them up.
+Keep scratch files outside the repository, for example in a temporary directory. Do not put them under `.claude/`, and do not add rules to `.git/info/exclude` or any ignore file to hide them, because the user then loses track of them. The exception is a `.claude/launch.json` that the Browser pane needs, which you delete when the task is done. `.claude/worktrees/` may still hold app worktrees from earlier sessions, which the app manages. Leave them alone, neither using nor removing them.
