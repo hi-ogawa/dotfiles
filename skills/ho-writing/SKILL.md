@@ -14,6 +14,8 @@ Write naturally for a first-time reader, without the awkward or defensive tone t
 
 Write plain, simple English that readers at any level of English can follow, including non-native readers. Prefer short sentences, common words, and one idea per sentence over sophisticated phrasing, even when the result feels boring.
 
+Do not write in the first person in text you write for others to read, such as PR descriptions, issues, and commit messages. State what was done or found, such as "Verified with …" or "This PR …", because readers can't tell who "I" is.
+
 Do not hard-wrap prose paragraphs in Markdown.
 
 Name the relation between clauses in words, such as `because`, `so`, `but`, or `which means`, rather than leaving it to a dash, a semicolon, a colon, or a comma the reader could misread. Keep punctuation for structure, such as a colon before a list.
