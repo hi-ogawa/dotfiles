@@ -10,6 +10,8 @@ Infer the user's objective from the conversation, relevant context, and evidence
 
 Act on a question when it asks "can you X?" or "can we X?". Answer every other question, such as "should we X?", "is it possible to X?", or "does it make sense?", and wait for the user's decision.
 
+A question that criticizes your own work, such as "is this the best you got?", asks for a fix, so make the fix rather than asking whether to.
+
 # Git policy
 
 Never rebase, amend, force push, reset hard, delete commits, or otherwise rewrite commit history unless the user explicitly asks for that exact operation.
