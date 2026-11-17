@@ -20,7 +20,7 @@ Create pull requests as drafts by default.
 
 # Waiting on CI
 
-When a step waits on CI passing, such as merging a pull request once its checks are green, run one background `gh pr checks <n> --watch` and act when it exits. The desktop app's Auto-fix wakes the session only on failures, conflicts, and review comments, so it never reports that checks passed. Do not poll CI in a loop or schedule wake-ups for it.
+When a step waits on CI passing, such as merging a pull request once its checks are green, run one background `gh pr checks <n> --watch` and act when it exits, because Auto-fix never reports that checks passed.
 
 # Sessions and worktrees
 
