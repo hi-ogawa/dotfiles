@@ -18,6 +18,10 @@ For GitHub and git actions, prefer direct `git` and `gh` commands unless explici
 
 Create pull requests as drafts by default.
 
+# Waiting on CI
+
+When a step waits on CI passing, such as merging a pull request once its checks are green, run one background `gh pr checks <n> --watch` and act when it exits. The desktop app's Auto-fix wakes the session only on failures, conflicts, and review comments, so it never reports that checks passed. Do not poll CI in a loop or schedule wake-ups for it.
+
 # Sessions and worktrees
 
 Start every session in the main worktree with `use_worktree: false`, including side sessions and forks, and leave the choice of worktree to the session, which follows the `ho-worktrees` skill for branch work. Never work in or create app worktrees under `.claude/worktrees/`, because each gets a generated branch from a possibly stale `main`, so a fork or side session can't reach the PR it continues. A session that starts inside one moves its branch work to the sibling worktree that `ho-worktrees` names.
