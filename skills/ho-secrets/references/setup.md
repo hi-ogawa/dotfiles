@@ -12,7 +12,11 @@ install -m 755 bws ~/.local/bin/bws
 cd /; rm -rf $d
 ```
 
-`bwsx` comes from the dotfiles repository, synced from `bin/bwsx.sh` by `./sync.sh apply bwsx`.
+Link `bwsx` from this skill onto `PATH`:
+
+```bash
+ln -s ~/.agents/skills/ho-secrets/scripts/bwsx.sh ~/.local/bin/bwsx
+```
 
 In the Bitwarden web app, the user creates a machine account for this machine under Secrets Manager, gives it read access to only the projects it needs, and creates an access token for it. The user pastes the token at the hidden prompt to save it where `bwsx` reads it:
 
