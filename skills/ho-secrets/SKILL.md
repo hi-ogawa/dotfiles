@@ -6,7 +6,7 @@ description: >-
 
 # Secrets
 
-`bwsx` is `bws` with this machine's Secrets Manager access token, read from `~/.config/bws/token`. Use it like `bws`, for example `bwsx secret list`.
+`<skill-dir>/scripts/bwsx.sh`, written `bwsx` below, is `bws` with this machine's Secrets Manager access token, read from `~/.config/bws/token`. Use it like `bws`, for example `bwsx secret list`.
 
 `bwsx run '<command>'` runs a command with each secret set as an environment variable named after its key. Quote the command as one string, because `bws run` joins its arguments into one `sh -c` script, and single quotes keep your own shell from expanding the variables first. A key with a hyphen, such as `api-token`, is still set, but only `printenv api-token` reads it, so prefer keys like `api_token`.
 
