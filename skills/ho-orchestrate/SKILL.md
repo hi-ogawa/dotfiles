@@ -20,13 +20,7 @@ When an issue undoes or extends an earlier change, read what that change touched
 
 Discuss a new idea here first. Check whether an issue already covers it, write the issue, and then start a session for it.
 
-## Conflicts between sessions
-
-This session is the only one that sees all the work, so it checks how the pieces interact:
-
-- Before starting a session, check whether an open PR or a running session touches the same files or code. Run one writer at a time on the same files.
-- Order dependent work. When one issue rewrites code that another builds on, settle which goes first before either starts.
-- When one of two overlapping PRs merges, the other merges `main` and reruns CI before it merges.
+Overlap between PRs does not hold back starting work, as ho-pr says. This session is the only one that sees every PR, so once the PRs exist, it points out overlaps and ordering questions to the user. When one of two overlapping PRs lands, it tells the other PR's session to merge `main`.
 
 ## Briefs
 
