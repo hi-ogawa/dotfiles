@@ -64,6 +64,13 @@ Via **gnome-tweaks**:
 
 ### Install apps
 
+- disable `-debug` split packages for AUR builds (makepkg default since 2024)
+
+```bash
+mkdir -p ~/.config/pacman
+grep '^OPTIONS=' /etc/makepkg.conf | sed 's/ debug/ !debug/' > ~/.config/pacman/makepkg.conf
+```
+
 - install Yay
 
 ```bash
