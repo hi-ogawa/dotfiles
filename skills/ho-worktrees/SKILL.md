@@ -36,7 +36,7 @@ Install dependencies in a new worktree when the work needs them.
 
 ## Starting another session
 
-When starting another session for branch work, start it in the main worktree without a worktree of the app's own, and have its brief load this skill before it changes anything. The session then creates or reuses its worktree by these conventions. A session started inside an app worktree treats that one as its existing worktree and never applies them.
+When starting another session for branch work, start it in the main worktree, not in a worktree that the tool creates for it, and have its brief load this skill before it changes anything. The session then creates or reuses its worktree by these conventions. A session started in a tool-created worktree treats that one as its existing worktree and never applies them.
 
 ## Main worktree check
 

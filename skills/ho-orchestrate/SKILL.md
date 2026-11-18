@@ -1,12 +1,12 @@
 ---
 name: ho-orchestrate
 description: >-
-  Run a Claude Code desktop session as the main session that coordinates other sessions. Use only when the user says this session coordinates or orchestrates other sessions, or explicitly invokes "ho-orchestrate".
+  Run this session as the main session that coordinates other agent sessions. Use only when the user says this session coordinates or orchestrates other sessions, or explicitly invokes "ho-orchestrate".
 ---
 
 # Orchestrate
 
-This session keeps the overall picture and hands the work to other sessions. The app's own instructions for starting sessions cover the mechanics, such as writing a brief, treating a session's note as its report rather than proof, linking sessions, and archiving them. This skill covers what a coordinator decides on top of that.
+This session keeps the overall picture and hands the work to other sessions, which it can start, message, and read. This skill covers what a coordinator decides, not how to operate those sessions.
 
 ## Role
 
