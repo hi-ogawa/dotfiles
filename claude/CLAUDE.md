@@ -35,3 +35,7 @@ Do not save corrections, conventions, or preferences to auto-memory, because onl
 # Scratch files
 
 Keep scratch files outside the repository, for example in a temporary directory. Do not put them under `.claude/`, and do not add rules to `.git/info/exclude` or any ignore file to hide them, because the user then loses track of them. The exception is a `.claude/launch.json` that the Browser pane needs, which you delete when the task is done. `.claude/worktrees/` may still hold app worktrees from earlier sessions, which the app manages. Leave them alone, neither using nor removing them.
+
+# Secrets
+
+Use secrets from Bitwarden Secrets Manager only through `bwsx`, which runs a command with them as environment variables, for example `bwsx 'curl -u "$API_USER:$API_PASS" https://example.com'`. Never print a secret's value, because it then stays in the transcript and in your context. So never run `bws secret get`, `bws secret list`, or `bws run` directly, never echo a variable that holds a secret, and never dump the environment. Check that a secret works by using it, not by showing it. Never read `~/.config/bws/token`. If you don't know a secret's name, ask the user. Never use `bw`, the password manager CLI, because the vault is for the user alone.

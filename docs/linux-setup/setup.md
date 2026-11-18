@@ -112,6 +112,32 @@ curl -s https://api.github.com/meta | jq -r '.ssh_keys[] | "github.com " + ., "g
 
 Alternatively, run `ssh -T git@github.com` and `ssh -T git@gist.github.com` and accept each host key after comparing it with [GitHub's published fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints).
 
+### Secrets
+
+Secrets that agents may use live in Bitwarden Secrets Manager, and `bwsx` (synced from `bin/bwsx.sh`) runs a command with them as environment variables. Personal secrets stay in the regular vault, which agents can't open without the master password.
+
+Install `bws` from the official release rather than the AUR, because the AUR packages have third-party maintainers. Check `gh release list --repo bitwarden/sdk-sm` for the latest `bws-v*` tag.
+
+```bash
+d=$(mktemp -d); cd $d
+gh release download bws-v2.1.0 --repo bitwarden/sdk-sm \
+  -p 'bws-x86_64-unknown-linux-gnu-2.1.0.zip' -p 'bws-sha256-checksums-2.1.0.txt'
+grep 'bws-x86_64-unknown-linux-gnu-2.1.0.zip' bws-sha256-checksums-2.1.0.txt | sha256sum -c -
+unzip -q bws-x86_64-unknown-linux-gnu-2.1.0.zip
+install -m 755 bws ~/.local/bin/bws
+cd /; rm -rf $d
+```
+
+In the Bitwarden web app, create a machine account for this machine under Secrets Manager. Give it read access to only the projects that agents may use, then create an access token for it. Paste the token at the hidden prompt to save it where `bwsx` reads it:
+
+```bash
+mkdir -p ~/.config/bws
+(umask 077; read -rs t; printf '%s' "$t" > ~/.config/bws/token)
+bwsx 'echo ok'
+```
+
+Don't export `BWS_ACCESS_TOKEN` in the shell profile, because every process, agents included, would then inherit it. Name secrets in UPPER_SNAKE case so they work as environment variable names.
+
 ## References
 
 - [Arch Wiki - Installation guide](https://wiki.archlinux.org/title/Installation_guide)

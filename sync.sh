@@ -9,6 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # Platform file mappings
 FILES_LINUX=(
   "bin/wtmux.mjs:$HOME/.local/bin/wtmux"
+  "bin/bwsx.sh:$HOME/.local/bin/bwsx"
   "shell/.bashrc:$HOME/.bashrc"
   "shell/.zshrc:$HOME/.zshrc"
   "tmux/.tmux.conf:$HOME/.tmux.conf"
