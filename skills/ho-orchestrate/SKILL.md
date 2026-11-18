@@ -6,36 +6,40 @@ description: >-
 
 # Orchestrate
 
-This session keeps the overall picture and hands the work to other sessions, which it can start, message, and read. This skill covers what a coordinator decides, not how to operate those sessions.
+The user drives several streams of work at once. Other sessions do the work, and this session holds the whole picture. The goal is that work keeps moving and the user spends attention only on decisions that need them.
 
-## Role
+## Keep the map
 
-Route work, check results, and report. Leave code changes, commits, and actions on accounts or services to the sessions. Small text edits on GitHub are fine here, such as filing an issue or fixing a PR description. When the user approves a step in this session, such as merging a reviewed PR, act on it here.
+Know what is in flight: open issues and PRs, running sessions, and what the user cares about most. Rebuild it from its sources, such as `gh` and the session list, rather than from memory, because both change while you work.
 
-## Landscape
+Triage each new task against the map. Check whether an issue already covers it, what it overlaps, and the history of the code it touches, such as an earlier change it undoes or extends. Discuss a new idea here first, write the issue, and then start a session.
 
-Before the first task, learn what is already in flight: open issues and PRs, the sessions running, and the project's overview docs. Triage each new task against that rather than on its own.
+Overlap between PRs does not hold back work, as ho-pr says. Once the PRs exist, point out overlaps and ordering questions to the user. When one of two overlapping PRs lands, tell the other PR's session to merge `main`.
 
-When an issue undoes or extends an earlier change, read what that change touched, not only what the issue lists.
+## Move the work
 
-Discuss a new idea here first. Check whether an issue already covers it, write the issue, and then start a session for it.
+Give each task its own session, running to the task's outcome, normally a merged PR. Grounding, a design discussion, or a mockup are checkpoints where the session waits for the user, not where it stops.
 
-Overlap between PRs does not hold back starting work, as ho-pr says. This session is the only one that sees every PR, so once the PRs exist, it points out overlaps and ordering questions to the user. When one of two overlapping PRs lands, it tells the other PR's session to merge `main`.
+A brief gives the goal, pointers to start from, constraints, and the checkpoints. Label a guess as a guess, so the session checks it instead of inheriting it. Before starting a session that may change code, load ho-worktrees and follow its section on starting another session.
 
-## Briefs
+Decide who steers each session when it starts. When the user steers it, report its status and leave its questions to the user. When it is delegated to this session, answer routine questions, check its results, and bring the user only the real decisions.
 
-A session's endpoint is the task's endpoint, normally a merged PR. Grounding, a design discussion, and a mockup are checkpoints where the session waits for the user. A session stops early only when the user says so.
+When a session stops, work out what it waits on: the user, another session, or nothing because it is done. Then route it, so no session sits idle without a reason.
 
-Give pointers and constraints, not conclusions. Label a guess as a guess, so the session checks it instead of inheriting it.
+## Spend the user's attention well
 
-Decide who steers each session when it starts. When the user steers it, report its status and never answer its questions. When it is delegated to this session, answer routine questions and bring the user only the real decisions.
+Bring the user one decision at a time, with what they need to make it and a recommendation. Report outcomes in a line or two and leave out state the user can already see.
 
-Before starting a session that may change code, load ho-worktrees and follow its section on starting another session.
+Pass on the user's decisions exactly, quoting their words. If an extra step seems worth it, suggest it rather than adding it.
 
-## Relaying
+Act on an approval the user gives here. A session may refuse an approval relayed to it for a step that is hard to undo, such as a merge, so when the session needs the approval itself, send the user there.
 
-Pass on the user's decision exactly, quoting their words. Add no steps they did not ask for. If an extra step seems worth it, suggest it to the user instead.
+When a short reply could apply to more than one session, say which one you assumed.
 
-A child session may refuse a relayed approval for a step that is hard to undo, such as a merge. So an approval given here is acted on here, and an approval the child needs is given by the user in that session.
+## Stay light
 
-When a short reply from the user could apply to more than one session, say which one you assumed.
+This session keeps the map only while its own context stays small. Quick reads, status checks, small text edits on GitHub, and acting on the user's approvals happen here. Exploring code, changing it, and long waits go to sessions.
+
+## Close the loop
+
+Every loose end has one owner. When a PR lands, update whatever depended on it, suggest archiving its session, and check the map for what to start next.
