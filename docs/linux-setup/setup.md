@@ -99,9 +99,11 @@ cd ~/code/personal/dotfiles
 ssh-keygen -t ed25519 -C <email>
 # Add key to GitHub: https://github.com/settings/keys
 gh auth login
-# Accept the host key once, because `gh gist clone` uses SSH
-ssh -T git@gist.github.com
+# Trust GitHub's published host keys, because agents can't answer the first-connection prompt
+curl -s https://api.github.com/meta | jq -r '.ssh_keys[] | "github.com " + ., "gist.github.com " + .' >> ~/.ssh/known_hosts
 ```
+
+Alternatively, run `ssh -T git@github.com` and `ssh -T git@gist.github.com` and accept each host key after comparing it with [GitHub's published fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints).
 
 ## References
 
