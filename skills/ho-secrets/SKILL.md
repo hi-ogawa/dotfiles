@@ -8,7 +8,7 @@ description: >-
 
 `bwsx` is `bws` with this machine's Secrets Manager access token, read from `~/.config/bws/token`. Use it like `bws`, for example `bwsx secret list`.
 
-`bwsx run '<command>'` runs a command with each secret set as an environment variable named after its key. Quote the command as one string, because `bws run` joins its arguments into one `sh -c` script, and single quotes keep your own shell from expanding the variables first. A key with a hyphen, such as `zamak-password`, is still set, but only `printenv zamak-password` reads it, so prefer keys like `zamak_password`.
+`bwsx run '<command>'` runs a command with each secret set as an environment variable named after its key. Quote the command as one string, because `bws run` joins its arguments into one `sh -c` script, and single quotes keep your own shell from expanding the variables first. A key with a hyphen, such as `api-token`, is still set, but only `printenv api-token` reads it, so prefer keys like `api_token`.
 
 Prefer `bwsx run` to printing values, because anything printed stays in the transcript. `bwsx secret list` prints values too, so pipe it through `jq -r '.[].key'` to see names only.
 
