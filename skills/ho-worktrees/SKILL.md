@@ -1,7 +1,7 @@
 ---
 name: ho-worktrees
 description: >-
-  Conventions for worktree-related workflows. Use when the user invokes "ho-wt" or "ho-worktrees", before changing code in a repository for work that goes through a branch or pull request, or when checking out a pull request locally for review or testing.
+  Conventions for worktree-related workflows. Use when the user invokes "ho-wt" or "ho-worktrees", before changing code in a repository for work that goes through a branch or pull request, before starting another session that will do such work, or when checking out a pull request locally for review or testing.
 ---
 
 # Worktrees
@@ -33,6 +33,10 @@ Create commands:
 - **Topic**: `git worktree add ../<repo>-<slug> -b <slug>`.
 
 Install dependencies in a new worktree when the work needs them.
+
+## Starting another session
+
+When starting another session for branch work, start it in the main worktree without a worktree of the app's own, and have its brief load this skill before it changes anything. The session then creates or reuses its worktree by these conventions. A session started inside an app worktree treats that one as its existing worktree and never applies them.
 
 ## Main worktree check
 

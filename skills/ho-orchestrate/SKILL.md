@@ -36,7 +36,7 @@ Give pointers and constraints, not conclusions. Label a guess as a guess, so the
 
 Decide who steers each session when it starts. When the user steers it, report its status and never answer its questions. When it is delegated to this session, answer routine questions and bring the user only the real decisions.
 
-A session that may change code follows ho-worktrees, so start it in the main worktree without an app worktree and point it to that skill.
+Before starting a session that may change code, load ho-worktrees and follow its section on starting another session.
 
 ## Relaying
 
