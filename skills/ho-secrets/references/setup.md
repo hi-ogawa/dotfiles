@@ -12,10 +12,9 @@ install -m 755 bws ~/.local/bin/bws
 cd /; rm -rf $d
 ```
 
-In the Bitwarden web app, the user creates a machine account for this machine under Secrets Manager, gives it read access to only the projects it needs, and creates an access token for it. The user pastes the token at the hidden prompt to save it where `scripts/bwsx.sh` reads it:
+In the Bitwarden web app, the user creates a machine account for this machine under Secrets Manager, gives it read access to only the projects it needs, and creates an access token for it. The user runs `save-token.sh` in their own terminal and pastes the token at its hidden prompt. It trims whitespace, rejects empty input, and prints the token's length:
 
 ```bash
-mkdir -p ~/.config/bws
-(umask 077; read -rs t; printf '%s' "$t" > ~/.config/bws/token)
+<skill-dir>/scripts/save-token.sh
 <skill-dir>/scripts/bwsx.sh project list
 ```
