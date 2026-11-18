@@ -1,7 +1,7 @@
 ---
 name: ho-secrets
 description: >-
-  Use secrets from Bitwarden Secrets Manager without exposing their values. Use when a task needs a credential, API key, password, or token, or before running `bws` or `bw`.
+  Use secrets from Bitwarden Secrets Manager through bwsx without exposing their values. Use only when the user explicitly invokes "ho-secrets".
 ---
 
 # Secrets
