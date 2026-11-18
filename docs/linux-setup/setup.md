@@ -114,7 +114,7 @@ Alternatively, run `ssh -T git@github.com` and `ssh -T git@gist.github.com` and 
 
 ### Secrets
 
-Secrets that agents may use live in Bitwarden Secrets Manager, and `bwsx` (synced from `bin/bwsx.sh`) runs a command with them as environment variables. Personal secrets stay in the regular vault, which agents can't open without the master password.
+Secrets that agents may use live in Bitwarden Secrets Manager, and `bwsx` (synced from `bin/bwsx.sh`) runs a command with them as environment variables. The `ho-secrets` skill tells agents to use only `bwsx`. Personal secrets stay in the regular vault, which agents can't open without the master password.
 
 Install `bws` from the official release rather than the AUR, because the AUR packages have third-party maintainers. Check `gh release list --repo bitwarden/sdk-sm` for the latest `bws-v*` tag.
 
