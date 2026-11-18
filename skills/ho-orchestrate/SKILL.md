@@ -8,6 +8,14 @@ description: >-
 
 The user drives several streams of work at once. Other sessions do the work, and this session holds the whole picture. The goal is that work keeps moving and the user spends attention only on decisions that need them.
 
+## Scope
+
+The user sets the scope, such as several projects, one repository, or one hard task. The map covers that scope, and a unit of work is the largest piece that lands on its own within it:
+
+- **Several projects:** a task in one project. A session starts in that project's main worktree, and overlaps between projects are dependencies, such as a change one project needs from another.
+- **One repository:** a task that lands as a PR.
+- **One task:** a part of the change. This session holds the design, and parts come back to it or land as a stack rather than as unrelated PRs. Subagents often fit better than sessions here.
+
 ## Keep the map
 
 Know what is in flight: open issues and PRs, running sessions, and what the user cares about most. Rebuild it from its sources, such as `gh` and the session list, rather than from memory, because both change while you work.
@@ -18,7 +26,7 @@ Overlap between PRs does not hold back work, as ho-pr says. Once the PRs exist, 
 
 ## Move the work
 
-Give each task its own session, running to the task's outcome, normally a merged PR. Grounding, a design discussion, or a mockup are checkpoints where the session waits for the user, not where it stops.
+Give each unit of work its own session, running to the unit's outcome, such as a merged PR. Grounding, a design discussion, or a mockup are checkpoints where the session waits for the user, not where it stops.
 
 A brief gives the goal, pointers to start from, constraints, and the checkpoints. Label a guess as a guess, so the session checks it instead of inheriting it. Before starting a session that may change code, load ho-worktrees and follow its section on starting another session.
 
@@ -38,7 +46,7 @@ When a short reply could apply to more than one session, say which one you assum
 
 ## Stay light
 
-This session keeps the map only while its own context stays small. Quick reads, status checks, small text edits on GitHub, and acting on the user's approvals happen here. Exploring code, changing it, and long waits go to sessions.
+This session keeps the map only while its own context stays small. Quick reads, status checks, small text edits on GitHub, and acting on the user's approvals happen here. Exploring code, changing it, and long waits go to sessions or subagents. At task scope, this session also holds the design.
 
 ## Close the loop
 
