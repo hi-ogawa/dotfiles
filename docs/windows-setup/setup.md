@@ -75,7 +75,7 @@ scoop install anki
 - Install tools
   - `sudo apt update`
   - setup Homebrew https://docs.brew.sh/Homebrew-on-Linux
-    - `brew install yazi gh`
+    - `brew install yazi gh jq`
 
 - Setup dotfiles from WSL (see https://github.com/hi-ogawa/dotfiles):
   - `git clone https://github.com/hi-ogawa/dotfiles` and `./sync.sh apply`
@@ -83,7 +83,9 @@ scoop install anki
 - Setup SSH and GitHub:
   - `ssh-keygen -t ed25519 -C <email>`
   - https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
-  - `ssh -T git@gist.github.com` to accept the host key once, because `gh gist clone` uses SSH
+  - Trust GitHub's published host keys, because agents can't answer the first-connection prompt:
+    `curl -s https://api.github.com/meta | jq -r '.ssh_keys[] | "github.com " + ., "gist.github.com " + .' >> ~/.ssh/known_hosts`
+  - Alternatively, run `ssh -T git@github.com` and `ssh -T git@gist.github.com` and accept each host key after comparing it with [GitHub's published fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints).
 
 ### Dotfiles: WSL vs Windows
 
