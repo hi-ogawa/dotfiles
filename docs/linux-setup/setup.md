@@ -114,7 +114,7 @@ Alternatively, run `ssh -T git@github.com` and `ssh -T git@gist.github.com` and 
 
 ### Secrets
 
-Secrets that agents may use live in Bitwarden Secrets Manager, and `bwsx` (synced from `bin/bwsx.sh`) runs a command with them as environment variables. Invoke the `ho-secrets` skill to tell an agent how to use it safely. Personal secrets stay in the regular vault, which agents can't open without the master password.
+Secrets that agents may use live in Bitwarden Secrets Manager, and `bwsx` (synced from `bin/bwsx.sh`) runs `bws` with the saved token. Personal secrets stay in the regular vault, which agents can't open without the master password.
 
 Install `bws` from the official release rather than the AUR, because the AUR packages have third-party maintainers. Check `gh release list --repo bitwarden/sdk-sm` for the latest `bws-v*` tag.
 
@@ -133,10 +133,10 @@ In the Bitwarden web app, create a machine account for this machine under Secret
 ```bash
 mkdir -p ~/.config/bws
 (umask 077; read -rs t; printf '%s' "$t" > ~/.config/bws/token)
-bwsx 'echo ok'
+bwsx project list
 ```
 
-Don't export `BWS_ACCESS_TOKEN` in the shell profile, because every process, agents included, would then inherit it. Name secrets in UPPER_SNAKE case so they work as environment variable names.
+Name secrets in UPPER_SNAKE case, because `bwsx run` sets each one as an environment variable named after its key.
 
 ## References
 
