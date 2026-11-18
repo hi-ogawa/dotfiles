@@ -112,10 +112,6 @@ curl -s https://api.github.com/meta | jq -r '.ssh_keys[] | "github.com " + ., "g
 
 Alternatively, run `ssh -T git@github.com` and `ssh -T git@gist.github.com` and accept each host key after comparing it with [GitHub's published fingerprints](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints).
 
-### Secrets
-
-To read Bitwarden Secrets Manager from the shell and agents, follow the [ho-secrets setup](../../skills/ho-secrets/references/setup.md).
-
 ## References
 
 - [Arch Wiki - Installation guide](https://wiki.archlinux.org/title/Installation_guide)
