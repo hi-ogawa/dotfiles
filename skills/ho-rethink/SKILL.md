@@ -1,7 +1,7 @@
 ---
 name: ho-rethink
 description: >-
-  Re-evaluate a position the agent is anchored on, such as an implementation defended by its spec, from evidence and first principles, escalating to a fresh subagent when needed. Use only when the user explicitly invokes "ho-rethink".
+  Re-evaluate a position the agent is anchored on, such as an implementation defended by its spec, from its own prior judgment, evidence, and first principles, escalating to a fresh subagent when needed. Use only when the user explicitly invokes "ho-rethink".
 ---
 
 # Rethink
@@ -10,7 +10,9 @@ The user thinks you are arguing from history rather than merits, such as defendi
 
 ## Re-evaluate
 
-Set aside where the current choice came from. A spec, plan, or earlier draft written before the implementation, especially one written by an agent, is an earlier guess about the problem, not an authority over it. Restate the problem from the code, the evidence, and the user's actual requirements, and judge the choice from that alone.
+First state your own prior. Before you look at the evidence again, say what you would conclude from your own knowledge of the domain alone, as if no spec, source, or earlier answer existed. Do this first because the material you found is often the anchor itself, such as a list, a search result, or a spec. Rethinking from that material tends to rebuild the same rationale.
+
+Then set aside where the current choice came from. A spec, plan, or earlier draft written before the implementation, especially one written by an agent, is an earlier guess about the problem, not an authority over it. Restate the problem from the code, the evidence, and the user's actual requirements, and judge the choice from that alone. Compare the result with your prior. Where they disagree, say so plainly and work out which one is wrong, rather than explaining the evidence away or deferring to it.
 
 If the challenge holds, change the implementation, say which earlier claim was wrong, and point out which part of the spec the change departs from. If the choice still holds, defend it on its merits without citing where it came from.
 
