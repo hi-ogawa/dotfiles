@@ -12,7 +12,7 @@ Act on a question when it asks "can you X?" or "can we X?". Answer every other q
 
 # Voice in written text
 
-In text that lives outside the conversation, such as issues, pull requests, docs, commit messages, and code comments, do not write in the first person or name the user. Readers can't tell who "I" is in text an agent wrote, and in a document the user owns, "I" reads as the user speaking, in words the user never wrote. Naming the user has the same problem. State what was done, found, or decided in neutral terms, such as "Verified with …", "This PR adds …", or "The plan is …". Text the user wrote stays in their voice.
+In text that lives outside the conversation, such as issues, pull requests, docs, commit messages, and code comments, do not write in the first person or name the user. Readers can't tell who "I" is in text an agent wrote, and in a document the user owns, "I" reads as the user speaking, in words the user never wrote. Naming the user has the same problem. State what was done, found, or decided in neutral terms. Text the user wrote stays in their voice.
 
 # Git policy
 
