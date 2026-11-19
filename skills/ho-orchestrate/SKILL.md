@@ -8,13 +8,9 @@ description: >-
 
 The user drives several streams of work at once. Other sessions do the work, and this session holds the whole picture. The goal is that work keeps moving and the user spends attention only on decisions that need them.
 
-## Scope
-
-The user sets the scope, such as several repositories, one repository, or one hard task within a repository. The map covers that scope.
-
 ## Keep the map
 
-Know what is in flight: open issues and PRs, running sessions, and what the user cares about most. Rebuild it from its sources, such as `gh` and the session list, rather than from memory, because both change while you work.
+Know what is in flight within the scope the user sets, such as several repositories, one repository, or one hard task within a repository. This covers open issues and PRs, running sessions, and what the user cares about most. Rebuild it from its sources, such as `gh` and the session list, rather than from memory, because both change while you work.
 
 Write the map to a short status file in the shared notes folder, with one row per piece of work: the session that owns it, what it waits on, and its PR. Tell the user only what changed, in a line.
 
