@@ -10,9 +10,7 @@ The user drives several streams of work at once. Other sessions do the work, and
 
 ## Keep the map
 
-Know what is in flight within the scope the user sets, such as several repositories, one repository, or one hard task within a repository. This covers open issues and PRs, running sessions, and what the user cares about most. Rebuild it from its sources, such as `gh` and the session list, rather than from memory, because both change while you work.
-
-Write the map to a short status file in the shared notes folder, with one row per piece of work: the session that owns it, what it waits on, and its PR. Tell the user only what changed, in a line.
+Know what is in flight within the scope the user sets, such as several repositories, one repository, or one hard task within a repository, and what the user cares about most. Keep it in a short status file in the shared notes folder, with one row per piece of work: the session that owns it, what it waits on, and its PR. Tell the user only what changed, in a line.
 
 Triage each new task against the map. Check whether an issue already covers it, what it overlaps, and the history of the code it touches, such as an earlier change it undoes or extends. Discuss a new idea here first, write the issue, and then start a session.
 
