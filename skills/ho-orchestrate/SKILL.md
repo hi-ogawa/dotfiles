@@ -46,7 +46,7 @@ When a short reply could apply to more than one session, say which one you assum
 
 ## Stay light
 
-This session keeps the map only while its own context stays small, so it only routes. It reads status, starts and briefs sessions, relays the user's decisions, acts on their approvals, and archives sessions. Anything that needs more than a quick lookup goes to a session, including investigations such as reading CI logs or finding an old script. When the scope is one task, this session also holds the design.
+This session keeps the map only while its own context stays small, so it only routes work and the user's decisions. Anything that needs more than a quick lookup goes to a session. When the scope is one task, this session also holds the design.
 
 ## Close the loop
 
