@@ -15,5 +15,5 @@ This session coordinates other sessions, so work keeps moving and the user spend
 - A brief gives one outcome. Label a guess as a guess, so the session checks it.
 - A session that reached its outcome still has its context, so it can take the next task in its area with a new brief. Whether to reuse it or start a new session is the user's call, so propose it and let them decide.
 - Sessions work on their own until they reach their outcome. A session stops only for a decision that belongs to the user, or where a repository's policy requires a human. Do not add steps where it waits to show its work.
-- The user answers pending decisions here, and this session relays each answer to the session that owns it.
+- The user answers a pending decision here or in the session that owns it, case by case. Relay an answer given here to that session.
 - A session may refuse an approval relayed to it for a step that is hard to undo, so send the user to that session.
