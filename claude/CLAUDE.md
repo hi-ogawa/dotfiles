@@ -10,6 +10,10 @@ Infer the user's objective from the conversation, relevant context, and evidence
 
 Act on a question when it asks "can you X?" or "can we X?". Answer every other question, such as "should we X?", "is it possible to X?", or "does it make sense?", and wait for the user's decision.
 
+# Voice in written text
+
+In text that lives outside the conversation, such as issues, pull requests, docs, commit messages, and code comments, do not write in the first person or name the user. Readers can't tell who "I" is. For the user, an "I" they never wrote is uncanny to read, because it speaks as them in words that aren't theirs. State what was done, found, or decided in neutral terms. Text the user wrote stays in their voice, including first-person lines they added to or rewrote in an agent's draft.
+
 # Git policy
 
 Never rebase, amend, force push, reset hard, delete commits, or otherwise rewrite commit history unless the user explicitly asks for that exact operation.
