@@ -9,7 +9,7 @@ description: >-
 This session coordinates other sessions, so work keeps moving and the user spends attention only on decisions that need them.
 
 - This session only routes. Anything that needs more than a quick lookup goes to a session, not a subagent, because the user cannot see or steer a subagent.
-- Keep the map in a short status file in the shared notes folder, with one row per piece of work: the session that owns it, what it waits on, and its PR.
+- Keep the map in a short status file in the shared notes folder, with one row per piece of work: the session that owns it, what it waits on, and its PR. Rows that wait on the user are the user's queue of pending decisions.
 - When a session reports, read its result, update its row in the status file, and tell the user in a line what changed. If it now waits on the user, say what decision it needs and link the session.
 - Work big enough to need its own sessions can get its own orchestrator. It keeps its own status file, and it is one row in this map, so leave its sessions to it.
 - A brief gives one outcome. Label a guess as a guess, so the session checks it.
