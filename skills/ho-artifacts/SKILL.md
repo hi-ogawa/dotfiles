@@ -1,7 +1,7 @@
 ---
 name: ho-artifacts
 description: >-
-  Author visual artifacts, either Markdown notes with SVG figures or self-contained HTML pages, iterate on them locally (alongside ho-dev-notes), and share them via gists on request. Use only when the user explicitly invokes "ho-artifacts".
+  Author visual artifacts, either Markdown notes with Mermaid or SVG figures, or self-contained HTML pages, iterate on them locally (alongside ho-dev-notes), and share them via gists on request. Use only when the user explicitly invokes "ho-artifacts".
 ---
 
 # Artifacts
@@ -17,7 +17,7 @@ This skill delegates the content to you and fixes only the workflow around it. T
 Pick the lightest medium that carries the material, because a richer medium that Markdown could equally replace only costs iteration time:
 
 1. **Markdown alone** when text, tables, and code blocks are enough. That is a plain `ho-dev-notes` note, not an artifact.
-2. **Markdown with SVG figures** when the explanation needs pictures but each picture can be static. Narrative explanations usually belong here: short steps in Markdown, each paired with a figure that shows exactly that step's point.
+2. **Markdown with figures** when the explanation needs pictures but each picture can be static. Narrative explanations usually belong here: short steps in Markdown, each paired with a figure that shows exactly that step's point.
 3. **HTML** only when the material needs what a page alone gives: motion or manipulation that is itself the point, a layout Markdown cannot express such as a UI mockup or a dense side-by-side comparison, or computation from inputs or data.
 
 A Markdown note can link to a small HTML page for the one part that needs it. Do not add interaction as a stand-in for an explanation, or prose as a stand-in for a picture. When the request leaves the medium open, pick one and name it in your reply so the user can redirect before the details matter.
@@ -46,9 +46,11 @@ The user reviews the draft and steers from there. `references/` holds material t
 
 Author artifacts inside the relevant `ho-dev-notes` topic directory, following that skill's convention, so they live next to the topic's notes. If there is no topic directory, use a temporary directory.
 
-### Markdown with SVG
+### Markdown with figures
 
-Put figures in an `images/` directory in the topic directory and embed them with relative links, which the local Markdown preview renders. Make each SVG show one point, and state that point in the image alt text. Give each SVG `width` and `height` equal to its `viewBox`, and size text in those units as page pixels, so a figure displays at its drawn size instead of stretching to the preview width. Start each SVG with an opaque background, because a transparent figure with dark text is unreadable in a dark-themed preview or gist. When a figure plots data, generate it with a small script kept beside it rather than drawing values by hand.
+Use a fenced `mermaid` block for a diagram whose point is its structure, such as a flowchart, call graph, sequence diagram, or state machine, because the renderer does the layout and the source stays reviewable as text. Draw an SVG when the point depends on where things sit, such as an annotated layout, a highlighted region, or geometry, or when Mermaid's layout buries the point. Make each figure show one point, and state that point in the image alt text, or in `accTitle` and `accDescr` lines for a Mermaid block.
+
+Put SVG figures in an `images/` directory in the topic directory and embed them with relative links, which the local Markdown preview renders. Give each SVG `width` and `height` equal to its `viewBox`, and size text in those units as page pixels, so a figure displays at its drawn size instead of stretching to the preview width. Start each SVG with an opaque background, because a transparent figure with dark text is unreadable in a dark-themed preview or gist. When a figure plots data, generate it with a small script kept beside it rather than drawing values by hand.
 
 ### HTML
 
@@ -68,6 +70,6 @@ Open it through GistHost:
 https://gisthost.github.io/?<gist-id>/<filename>
 ```
 
-When the user asks to share Markdown notes with SVG figures, publish the topic's notes and figures as one gist and send the user the gist URL, because gist renders the Markdown itself. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copies of the notes so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/img-<n>-<basename>`. Keep the local notes' relative links unchanged. Gist lists files by name, so upload the notes as `<n>-<name>.md` and the images as `img-<n>-<basename>`, each numbered in reading order from 0 with the primary note first. Name each note for what it covers, such as the topic for the primary note. This makes the gist open on the primary note and keeps both groups in order.
+When the user asks to share Markdown notes with figures, publish the topic's notes and figures as one gist and send the user the gist URL, because gist renders the Markdown itself, including Mermaid blocks. Gist breaks relative image links and has no directories, so as a temporary workaround, create the gist first, then update its copies of the notes so each image link points to `https://gist.githubusercontent.com/<user>/<gist-id>/raw/img-<n>-<basename>`. Keep the local notes' relative links unchanged. Gist lists files by name, so upload the notes as `<n>-<name>.md` and the images as `img-<n>-<basename>`, each numbered in reading order from 0 with the primary note first. Name each note for what it covers, such as the topic for the primary note. This makes the gist open on the primary note and keeps both groups in order.
 
 Unlisted gists are readable by anyone with the URL, and GistHost pages share a third-party origin. Check for secrets, local paths, and sensitive data first, and give browser storage an app-specific prefix.
