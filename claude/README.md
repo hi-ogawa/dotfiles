@@ -49,6 +49,8 @@ Trust also lets a project's `.claude/settings.json` apply without a prompt, incl
 
 The script calls the OS directly, so it does not depend on terminal notification support or tmux passthrough. It supports Linux `notify-send`, WSL through PowerShell [BurntToast](https://github.com/Windos/BurntToast), and macOS `osascript`. Requires Node.js on `PATH`. It is a copy of [`../codex/notify.mjs`](../codex/notify.mjs) with the title and message adjusted for Claude Code, so port fixes by hand.
 
+The script exits early in Claude desktop app sessions (`CLAUDE_CODE_ENTRYPOINT=claude-desktop`), because the app shows its own notifications for them.
+
 Claude Code also has built-in desktop notifications in iTerm2, Ghostty, and Kitty. `preferredNotifChannel` is set to `notifications_disabled` so they do not duplicate the hook. Hooks still run with that value.
 
 - [Terminal notifications](https://code.claude.com/docs/en/terminal-config#get-a-terminal-bell-or-notification)
