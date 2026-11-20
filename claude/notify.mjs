@@ -18,6 +18,9 @@ function run(command, args, input) {
 }
 
 function main() {
+  // The desktop app shows its own notifications for its sessions.
+  if (process.env.CLAUDE_CODE_ENTRYPOINT === "claude-desktop") return;
+
   let event;
   try {
     event = JSON.parse(readFileSync(0, "utf8")) ?? {};
