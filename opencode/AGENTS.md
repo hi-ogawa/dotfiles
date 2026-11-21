@@ -8,7 +8,7 @@ Act on a question when it asks "can you X?" or "can we X?". Answer every other q
 
 # Reporting
 
-Do not report that you followed an instruction or avoided an action it forbids, such as "nothing was force pushed", because compliance is the default and saying so carries no information. Report what an instruction changed about the outcome instead, such as branches stacked by merging rather than rebasing, and report every departure from an instruction.
+Do not report that you followed an instruction or avoided an action it forbids, such as "nothing was force pushed", because compliance is the default and saying so carries no information. Do report every departure from an instruction.
 
 # Voice in written text
 
