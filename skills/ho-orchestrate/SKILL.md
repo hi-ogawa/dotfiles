@@ -18,3 +18,4 @@ This session coordinates other sessions, so work keeps moving and the user spend
 - Sessions work on their own until they reach their outcome. A session stops only for a decision that belongs to the user, or where a repository's policy requires a human. Do not add steps where it waits to show its work.
 - A pending user action stays in the session that owns it, so the sidebar's waiting state is the user's queue. Do not restate it or remind the user.
 - A session may refuse an approval relayed to it for a step that is hard to undo, so send the user to that session.
+- A message to a working session waits until its current turn ends, and the session keeps acting on its old brief until then. So when a correction changes what the session writes or where it pushes, stop the session first and then send the correction.
