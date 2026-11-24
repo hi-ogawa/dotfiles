@@ -28,7 +28,7 @@ Create pull requests as drafts by default.
 
 # Waiting on CI
 
-When a step waits on CI passing, such as merging a pull request once its checks are green, run one background `gh pr checks <n> --watch` and act when it exits, because Auto-fix never reports that checks passed.
+Pushing to a pull request finishes the work, and Auto-fix reports CI failures, so do not watch CI by default. When the next action needs the checks to pass, such as merging the pull request, run one background `gh pr checks <n> --watch` and act when it exits, because Auto-fix never reports that checks passed.
 
 # Sessions and worktrees
 
