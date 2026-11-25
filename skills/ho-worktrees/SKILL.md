@@ -24,6 +24,15 @@ Choose a concise slug that reflects the work. Infer it from the broader issue or
 Get a worktree for the work before changing code:
 
 - **The work already has a worktree**, such as a PR you are asked to review or change: use the worktree that has its branch checked out, whatever its directory name.
+- **The worktree is behind its PR**: fetch the PR's branch, then fast-forward with `git merge --ff-only`. If the PR's branch was force-pushed, the branch cannot fast-forward. Check that the worktree is clean and that the old branch has no commits of the user's, and stop and report if either check fails. Then keep the old head under a dated name with no upstream, and check out a new branch that tracks the PR's branch:
+
+  ```sh
+  git branch -m <branch> <branch>-<MMDD>
+  git branch --unset-upstream <branch>-<MMDD>
+  git switch -c <branch> --track <remote>/<branch>   # run in the worktree
+  ```
+
+  Do not leave a PR worktree on a detached HEAD, because editors and `gh` find the PR through the upstream of the checked-out branch.
 - **Otherwise**: run the main worktree check, then create one with the commands below. If the branch or directory name you would use already exists, stop and report it, because it may be earlier work or another session's work.
 
 Create commands:
