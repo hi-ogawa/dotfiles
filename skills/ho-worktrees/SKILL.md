@@ -23,8 +23,7 @@ Choose a concise slug that reflects the work. Infer it from the broader issue or
 
 Get a worktree for the work before changing code:
 
-- **The work already has a worktree**, such as a PR you are asked to review or change: use the worktree that has its branch checked out, whatever its directory name.
-- **The worktree is behind its PR**: run `gh pr checkout <N>` in the worktree, which fast-forwards its branch. If the PR's branch was force-pushed, the command refuses because the branch cannot fast-forward. Then check that the worktree is clean and that the old branch has no commits of the user's, and stop and report if either check fails. Otherwise run `gh pr checkout <N> --force`, which resets the branch to the PR's head. When the old head is still useful, such as for comparing a reviewed PR before and after, save it first with `git branch <branch>-<MMDD> <branch>`. Do not leave a PR worktree on a detached HEAD, because editors and `gh` find the PR through the upstream of the checked-out branch.
+- **The work already has a worktree**, such as a PR you are asked to review or change: use the worktree that has its branch checked out, whatever its directory name. Bring it to the PR's latest head by running `gh pr checkout <N>` in it again, and add `--force` when the PR's branch was force-pushed and the local branch has no unpushed commits.
 - **Otherwise**: run the main worktree check, then create one with the commands below. If the branch or directory name you would use already exists, stop and report it, because it may be earlier work or another session's work.
 
 Create commands:
