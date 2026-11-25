@@ -23,7 +23,7 @@ Choose a concise slug that reflects the work. Infer it from the broader issue or
 
 Get a worktree for the work before changing code:
 
-- **The work already has a worktree**, such as a PR you are asked to review or change: use the worktree that has its branch checked out, whatever its directory name.
+- **The work already has a worktree**, such as a PR you are asked to review or change: use the worktree that has its branch checked out, whatever its directory name. Bring it to the PR's latest head by running `gh pr checkout <N>` in it again, and add `--force` when the PR's branch was force-pushed and the local branch has no unpushed commits.
 - **Otherwise**: run the main worktree check, then create one with the commands below. If the branch or directory name you would use already exists, stop and report it, because it may be earlier work or another session's work.
 
 Create commands:
