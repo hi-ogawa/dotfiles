@@ -20,11 +20,7 @@ In text that lives outside the conversation, such as issues, pull requests, docs
 
 # Git policy
 
-Default to preserving commit history. Avoid rebasing, amending commits, force pushing, hard resetting, deleting commits, or otherwise rewriting history.
-
-For GitHub and git actions, prefer direct `git` and `gh` commands unless explicitly asked otherwise. This includes reading GitHub resources: to view or summarize an issue, PR, comments, checks, or releases, use `gh` (for example `gh issue view <n> --json` or `gh api`), never fetch a github.com URL directly (for example with curl or a web tool). Fetching gets server-rendered HTML and silently drops dynamically loaded content such as comments, so it will make you report discussions as empty when they are not.
-
-Create pull requests as drafts by default.
+Never rewrite commit history (rebase, amend, force push, reset hard) unless the user asks for that exact operation.
 
 # Git commit attribution
 
